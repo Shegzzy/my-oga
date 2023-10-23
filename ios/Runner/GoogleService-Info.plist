@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>762957034592-ro1f81oft238tc4psnsf5tdo1rbl9ro8.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.762957034592-ro1f81oft238tc4psnsf5tdo1rbl9ro8</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBAYeOPzhxY7ioggU4eW4yk1IzzVHcgGaY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>762957034592</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.myoga.myoga</string>
+	<key>PROJECT_ID</key>
+	<string>myoga-80daa</string>
+	<key>STORAGE_BUCKET</key>
+	<string>myoga-80daa.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:762957034592:ios:ff41836b719c7e0bb23f05</string>
+	<key>DATABASE_URL</key>
+	<string>https://myoga-80daa-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

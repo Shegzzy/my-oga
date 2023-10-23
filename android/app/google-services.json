@@ -1,0 +1,115 @@
+{
+  "project_info": {
+    "project_number": "762957034592",
+    "firebase_url": "https://myoga-80daa-default-rtdb.firebaseio.com",
+    "project_id": "myoga-80daa",
+    "storage_bucket": "myoga-80daa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762957034592:android:49881b5a3880e06db23f05",
+        "android_client_info": {
+          "package_name": "com.myoga.myoga"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762957034592-92ki6mlm0e964h9qn1pdff68cp1hrd0q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myoga",
+            "certificate_hash": "05c02c3062a524d985b0e120db9cd2f337d1a043"
+          }
+        },
+        {
+          "client_id": "762957034592-ofsvvosf6koneejoggq2e8tgmh79qmsv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myoga",
+            "certificate_hash": "dcd4d64fe071158f1db7931db829a15d7a7c75f3"
+          }
+        },
+        {
+          "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwph5iP61uHokKAovxY2PT3TuvMjJkFzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "762957034592-dr650cbiniu96n78akujhi93o0fm9jkb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myOgaRider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762957034592:android:56d23cf4edd710dab23f05",
+        "android_client_info": {
+          "package_name": "com.myoga.myogarider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762957034592-562st3drt7gj6lv4lc6dtatpqlqc2isn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myogarider",
+            "certificate_hash": "dcd4d64fe071158f1db7931db829a15d7a7c75f3"
+          }
+        },
+        {
+          "client_id": "762957034592-8semvid7nk8jvk99p0ru200qprc4s2hh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myogarider",
+            "certificate_hash": "05c02c3062a524d985b0e120db9cd2f337d1a043"
+          }
+        },
+        {
+          "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwph5iP61uHokKAovxY2PT3TuvMjJkFzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "762957034592-dr650cbiniu96n78akujhi93o0fm9jkb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myOgaRider"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

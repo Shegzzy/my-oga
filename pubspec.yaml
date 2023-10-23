@@ -1,0 +1,108 @@
+name: myoga
+description: A Logistics Hailing Platform
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.1 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+  get: ^4.6.5
+  get_storage: ^2.0.3
+  cloud_firestore: ^4.9.3
+  lite_rolling_switch: ^1.0.0
+  firebase_core: ^2.17.0
+  firebase_auth: ^4.10.1
+  flutter_bloc: ^8.1.1
+  firebase_database: ^10.0.9
+  firebase_storage: ^11.0.10
+  firebase_messaging: ^14.6.9
+  equatable: ^2.0.5
+  sms_autofill: ^2.2.0
+  google_fonts: ^4.0.4
+  liquid_swipe: ^3.0.0
+  smooth_page_indicator: ^1.0.0+2
+  flutter_otp_text_field: ^1.1.1
+  otp_timer_button: ^1.1.0
+  line_awesome_flutter: ^2.0.0
+  google_maps_flutter: ^2.2.2
+  url_launcher: ^6.1.10
+  location: ^4.4.0
+  geolocator: ^9.0.2
+  http: ^0.13.5
+  provider: ^6.0.5
+  flutter_polyline_points: ^1.0.0
+  animated_text_kit: ^4.2.2
+  font_awesome_flutter: ^10.3.0
+  draggable_fab: ^0.1.4
+  image_picker: ^0.8.6
+  fl_country_code_picker: ^0.0.4
+  random_string: ^2.3.1
+  flutter_local_notifications: ^13.0.0
+  shared_preferences: ^2.0.17
+  flutter_native_splash: ^2.0.0
+  app_settings: ^4.2.0
+  flutter_paystack: ^1.0.7
+  flutter_rating_bar: ^4.0.1
+  intl: ^0.17.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: "^0.11.0"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 19 # android min sdk min:16, default 21
+  adaptive_icon_foreground: "assets/images/logo_adaapt.png"
+  adaptive_icon_background: "#ffffff"
+
+flutter_native_splash:
+  color: "#f7f6f1"
+  image: assets/images/image_light.png
+  branding: assets/images/app_icon.png
+  color_dark: "#272727"
+  image_dark: assets/images/image_dark.png
+  branding_dark: assets/images/app_icon.png
+
+  android_12:
+    image: assets/images/image_light.png
+    icon_background_color: "#f7f6f1"
+    image_dark: assets/images/image_dark.png
+    icon_background_color_dark: "#272727"
+
+# The following section is specific to Flutter packages.
+flutter:
+
+
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/icons/
+  #   - images/a_dot_ham.jpeg
+
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
