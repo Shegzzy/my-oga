@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myoga/configMaps.dart';
 import 'package:myoga/services/controllers/Assistant/requestController.dart';
 import 'package:myoga/services/models/allUsers.dart';
+import 'package:myoga/utils/formatter/formatter.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/address.dart';
@@ -55,12 +56,12 @@ class AssistanceMethods {
     return directionDetails;
   }
 
-  static int calculateFares(DirectionDetails directionDetails, String? rate){
+  static String calculateFares(DirectionDetails directionDetails, String? rate){
     double? intRate = double.tryParse(rate!);
     double minimumPrice = 1100;
     double startingPrice = 600;
     // double timeTravelledFares = (directionDetails.durationValue! / 60) * intRate!;
-    double distanceTravelledFares = (directionDetails.distanceValue! / 1000) * intRate!;
+    double distanceTravelledFares = (directionDetails.distanceValue!/1000) * intRate!;
     double totalFare = minimumPrice + distanceTravelledFares + startingPrice;
     double percentageToAdd = 0.35 * totalFare;
 
@@ -70,7 +71,7 @@ class AssistanceMethods {
     //double totalNaira = totalFare * 740;
     int roundedTotal = totalTripFare.round();
 
-    return roundedTotal.truncate();
+    return MyOgaFormatter.currencyFormatter(double.parse(roundedTotal.truncate().toString()));
   }
 
   //static void getCurrentOnlineUserInfo() async {

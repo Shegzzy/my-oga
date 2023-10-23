@@ -626,10 +626,10 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                   borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 17.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Column(
                     children: [
-                      Text("Select Delivery Mode", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+                      Text("Select Delivery Mode", style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center,),
                       const SizedBox(height: 10.0,),
                       Flexible(
                         child: FutureBuilder<List<DeliveryModeModel>?>(
@@ -647,7 +647,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                         snapshot.data![index].name,
                                         snapshot.data![index].name,
                                         snapshot.data![index].duration,
-                                        "${AssistanceMethods.calculateFares(tripDirectionDetails, snapshot.data![index].rate)}",
+                                        AssistanceMethods.calculateFares(tripDirectionDetails, snapshot.data![index].rate!),
                                         tripDirectionDetails.distanceText!
                                     );
                                   },
@@ -680,31 +680,34 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                       //    tripDirectionDetails.distanceText!
                       //),
                       const SizedBox(height: 20.0,),
-                      DropdownButtonFormField(
-                        value: _selectedPaymentVal,
-                        items: _paymentMethodList
-                            .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        ))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedPaymentVal = val as String;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down_circle,
-                          color: Colors.deepPurple,
-                        ),
-                        dropdownColor: Colors.deepPurple.shade50,
-                        decoration: const InputDecoration(
-                          labelText: "Select Payment Method",
-                          prefixIcon: Icon(
-                            Icons.wallet,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButtonFormField(
+                          value: _selectedPaymentVal,
+                          items: _paymentMethodList
+                              .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          ))
+                              .toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedPaymentVal = val as String;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
                             color: Colors.deepPurple,
                           ),
-                          border: OutlineInputBorder(),
+                          dropdownColor: Colors.deepPurple.shade50,
+                          decoration: const InputDecoration(
+                            labelText: "Select Payment Method",
+                            prefixIcon: Icon(
+                              Icons.wallet,
+                              color: Colors.deepPurple,
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0,),
@@ -823,10 +826,10 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               ),
               height: requestDriverContainer,
               child: Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Text("Order Placed", style: Theme.of(context).textTheme.bodyText1,),
+                    Text("Order Placed", style: Theme.of(context).textTheme.headlineSmall,),
                     const SizedBox(height: 12.0,),
                     SizedBox(
                       width: double.infinity,
@@ -849,8 +852,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                           ),
                         ],
                         isRepeatingAnimation: true,
-                        onTap: () {
-                        },
+                        onTap: () {},
+
                       ),
                     ),
                     const SizedBox(height: 12.0,),
@@ -998,9 +1001,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     var dropOffLatlng = LatLng(finalPos!.latitude!, finalPos.longitude!);
 
     var details = await AssistanceMethods.obtainPlaceDirectionDetails(pickUpLatlng, dropOffLatlng);
-    setState(() {
-      tripDirectionDetails = details!;
-    });
+    if(mounted){
+      setState(() {
+        tripDirectionDetails = details!;
+      });
+    }
 
     PolylinePoints polylinePoints = PolylinePoints();
     List<PointLatLng> decodedPolylinePointsResult = polylinePoints.decodePolyline(details?.encodedPoints ?? "");
@@ -1015,19 +1020,21 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
     polylineSet.cast();
 
-    setState(() {
-      Polyline polyline = Polyline(
-        color: Colors.pink,
-        polylineId: const PolylineId("PolylineID"),
-        jointType: JointType.round,
-        points: pLineCoordinates,
-        width: 5,
-        startCap: Cap.roundCap,
-        endCap: Cap.roundCap,
-        geodesic: true,
-      );
-      polylineSet.add(polyline);
-    });
+    if(mounted){
+      setState(() {
+        Polyline polyline = Polyline(
+          color: Colors.pink,
+          polylineId: const PolylineId("PolylineID"),
+          jointType: JointType.round,
+          points: pLineCoordinates,
+          width: 5,
+          startCap: Cap.roundCap,
+          endCap: Cap.roundCap,
+          geodesic: true,
+        );
+        polylineSet.add(polyline);
+      });
+    }
 
     LatLngBounds latLngBounds;
     if(pickUpLatlng.latitude > dropOffLatlng.latitude && pickUpLatlng.longitude > dropOffLatlng.longitude){
@@ -1059,10 +1066,12 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       markerId: const MarkerId("dropOffId"),
     );
 
-    setState(() {
-      markersSet.add(pickUpLocMarker);
-      markersSet.add(dropOffLocMarker);
-    });
+    if(mounted){
+      setState(() {
+        markersSet.add(pickUpLocMarker);
+        markersSet.add(dropOffLocMarker);
+      });
+    }
 
     Circle pickUpLocCircle = Circle(
       fillColor: Colors.blueAccent,
@@ -1082,9 +1091,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       circleId: const CircleId("dropOffId"),
     );
 
-    setState(() {
-      circlesSet.add(pickUpLocCircle);
-      circlesSet.add(dropOffLocCircle);
-    });
+    if(mounted){
+      setState(() {
+        circlesSet.add(pickUpLocCircle);
+        circlesSet.add(dropOffLocCircle);
+      });
+    }
   }
 }
