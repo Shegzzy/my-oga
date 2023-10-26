@@ -56,13 +56,13 @@ class AssistanceMethods {
     return directionDetails;
   }
 
-  static String calculateFares(DirectionDetails directionDetails, String? rate){
+  static String calculateFares(DirectionDetails directionDetails, String? rate, String? minimumPrice, String? startPrice){
     double? intRate = double.tryParse(rate!);
-    double minimumPrice = 1100;
-    double startingPrice = 600;
+    double? intMinimumPrice = double.tryParse(minimumPrice!);
+    double? intStartPrice = double.tryParse(startPrice!);
     // double timeTravelledFares = (directionDetails.durationValue! / 60) * intRate!;
     double distanceTravelledFares = (directionDetails.distanceValue!/1000) * intRate!;
-    double totalFare = minimumPrice + distanceTravelledFares + startingPrice;
+    double totalFare = intMinimumPrice! + distanceTravelledFares + intStartPrice!;
     double percentageToAdd = 0.35 * totalFare;
 
     double totalTripFare = totalFare + percentageToAdd;

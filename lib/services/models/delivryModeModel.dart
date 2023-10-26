@@ -11,6 +11,8 @@ class DeliveryModeModel {
   final String? startPrice;
 
   const DeliveryModeModel({
+    this.minimumPrice,
+    this.startPrice,
     this.id,
     this.name,
     this.duration,
@@ -22,6 +24,8 @@ class DeliveryModeModel {
       "name": name,
       "duration": duration,
       "rate": rate,
+      "minimumPrice": minimumPrice,
+      "startPrice": startPrice
     };
   }
 
@@ -38,6 +42,8 @@ class DeliveryModeModel {
       name: data["name"],
       duration: data["duration"],
       rate: data["rate"],
+      minimumPrice: data["minimumPrice"],
+      startPrice: data["startPrice"]
     );
   }
 

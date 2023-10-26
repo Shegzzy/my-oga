@@ -647,7 +647,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                         snapshot.data![index].name,
                                         snapshot.data![index].name,
                                         snapshot.data![index].duration,
-                                        AssistanceMethods.calculateFares(tripDirectionDetails, snapshot.data![index].rate!),
+                                        AssistanceMethods.calculateFares(tripDirectionDetails,
+                                          snapshot.data![index].rate!,
+                                          snapshot.data![index].minimumPrice!,
+                                          snapshot.data![index].startPrice
+                                        ),
                                         tripDirectionDetails.distanceText!
                                     );
                                   },
