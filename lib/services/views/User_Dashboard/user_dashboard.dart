@@ -129,6 +129,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     await NotificationService().getDeviceToken().then((token) {
       if (kDebugMode) {
         print(" YOUR TOKEN IS: $token");
+        print(" YOUR Pref TOKEN IS: ${prefs.getString("token")}");
       }
       setState(() {
         _token = token;
@@ -143,8 +144,8 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
   void updateToken () async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _userID = prefs.getString("aUserID");
+    final userIDd = prefs.getString("userID");
     if(_userID != null){
-      final userIDd = prefs.getString("userID");
       await _db.collection("Users").doc(userIDd).update({
         "Token": _token
       });

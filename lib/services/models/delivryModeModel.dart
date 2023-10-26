@@ -7,6 +7,8 @@ class DeliveryModeModel {
   final String? name;
   final String? duration;
   final String? rate;
+  final String? minimumPrice;
+  final String? startPrice;
 
   const DeliveryModeModel({
     this.id,
