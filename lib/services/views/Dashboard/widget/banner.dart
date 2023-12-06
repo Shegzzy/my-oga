@@ -38,9 +38,9 @@ class DashboardBanners extends StatelessWidget {
                 ),
                 const SizedBox(height: 20.0),
                 Text("Book a rider with just a click", style: txtTheme
-                    .headline4, maxLines: 2, overflow: TextOverflow
+                    .headlineMedium, maxLines: 2, overflow: TextOverflow
                     .ellipsis,),
-                Text("Easy, Piss", style: txtTheme.bodyText2,
+                Text("Easy, Piss", style: txtTheme.bodyMedium,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,),
               ],

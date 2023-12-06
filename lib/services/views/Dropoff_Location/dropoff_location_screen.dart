@@ -56,8 +56,8 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
           children: [
             Container(
               height: 200.0,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black87.withOpacity(0.001) : Colors.white,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(

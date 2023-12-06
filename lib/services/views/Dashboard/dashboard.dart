@@ -25,8 +25,8 @@ class Dashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Hey, My Oga", style: txtTheme.bodyText2),
-              Text("My Bookings", style: txtTheme.headline2),
+              Text("Hey, My Oga", style: txtTheme.bodyMedium),
+              Text("My Bookings", style: txtTheme.displayMedium),
               const SizedBox(height: 20.0),
 
 
@@ -40,7 +40,7 @@ class Dashboard extends StatelessWidget {
               const SizedBox(height: 20.0),
 
               Text("Drivers",
-                style: txtTheme.headline4?.apply(fontSizeFactor: 1.2),),
+                style: txtTheme.headlineMedium?.apply(fontSizeFactor: 1.2),),
               DashboardDrivers(txtTheme: txtTheme),
             ],
           ),

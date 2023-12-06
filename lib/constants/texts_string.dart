@@ -1,6 +1,6 @@
 // Generic text
 const String moLogin = "Login";
-const String moSignup = "Register";
+const String moSignup = " Register";
 
 const String moSplashText = "Welcome";
 const String moAppName = "My Oga";

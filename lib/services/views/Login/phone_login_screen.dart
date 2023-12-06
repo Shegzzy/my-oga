@@ -46,11 +46,11 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                   Text(moLoginPhone, style: Theme
                       .of(context)
                       .textTheme
-                      .headline4,),
+                      .headlineMedium,),
                   Text(moLoginPhoneSubtitle, textAlign: TextAlign.center, style: Theme
                       .of(context)
                       .textTheme
-                      .bodyText1,),
+                      .bodyLarge,),
                 ],
               ),
               const SizedBox(
@@ -91,7 +91,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                                 child: countryCode.flagImage,
                               ),
                             ),
-                            Text(countryCode.dialCode, style: Theme.of(context).textTheme.bodyText2,),
+                            Text(countryCode.dialCode, style: Theme.of(context).textTheme.bodyMedium,),
                             const Icon(Icons.keyboard_arrow_down_rounded),
                           ],
                         ),

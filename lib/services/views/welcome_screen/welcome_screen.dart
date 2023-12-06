@@ -34,12 +34,12 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   Text(
                     moWelcomeTitle,
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
                   Text(
                     moWelcomeSubtitle,
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
                 ],

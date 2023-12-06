@@ -307,7 +307,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
                             children: [
                               const Icon(LineAwesomeIcons.search, color: moSecondarColor,),
                               const SizedBox(width: 10.0,),
-                              Text("Search Location", style: Theme.of(context).textTheme.headline6, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                              Text("Search Location", style: Theme.of(context).textTheme.titleLarge, maxLines: 1, overflow: TextOverflow.ellipsis,),
                             ],
                           ),
                         ),
@@ -332,12 +332,12 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
                                   padding: const EdgeInsets.all(2.0),
                                   child: Text( Provider.of<AppData>(context).pickUpLocation != null
                                     ? Provider.of<AppData>(context).pickUpLocation!.placeName!
-                                    : "Your Address", style: Theme.of(context).textTheme.bodyText1, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                    : "Your Address", style: Theme.of(context).textTheme.bodyLarge, maxLines: 1, overflow: TextOverflow.ellipsis,),
                                 ),
                                 const SizedBox(height: 4.0,),
                                 Padding(
                                   padding: const EdgeInsets.all(2.0),
-                                  child: Text("current location address", style: Theme.of(context).textTheme.bodyText2, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                  child: Text("current location address", style: Theme.of(context).textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
                                 ),
                               ],
                             ),
