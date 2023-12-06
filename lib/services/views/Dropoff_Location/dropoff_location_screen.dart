@@ -97,7 +97,9 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(width: 1.0, color: PButtonColor),
                                   ),
-                                  label: const Text("PickUp"),
+                                  label: Text("PickUp", style: TextStyle(
+                                    color: isDark ? Colors.white.withOpacity(0.9) : Colors.black38
+                                  )),
                                   contentPadding: const EdgeInsets.only(
                                       left: 11.0, top: 8.0, bottom: 8.0),
                                 ),
@@ -140,7 +142,9 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(width: 1.0, color: PButtonColor),
                                   ),
-                                  label: const Text("Drop-Off"),
+                                  label: Text("Drop-Off", style: TextStyle(
+                                      color: isDark ? Colors.white.withOpacity(0.9) : Colors.black38
+                                  )),
                                   contentPadding: const EdgeInsets.only(
                                       left: 11.0, top: 8.0, bottom: 8.0),
                                 ),
