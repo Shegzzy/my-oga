@@ -39,7 +39,7 @@ class AssistanceMethods {
     String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM";
 
     var res = await RequestAssistanceController.getRequest(directionUrl);
-    print("Direction Response: $res");
+    // print("Direction Response: $res");
 
     if(res == "failed"){
       return null;
@@ -71,7 +71,7 @@ class AssistanceMethods {
     //double totalNaira = totalFare * 740;
     int roundedTotal = totalTripFare.round();
 
-    return MyOgaFormatter.currencyFormatter(double.parse(roundedTotal.truncate().toString()));
+    return roundedTotal.truncate().toString();
   }
 
   //static void getCurrentOnlineUserInfo() async {

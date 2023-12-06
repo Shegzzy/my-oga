@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.myoga.myoga">
+    package="com.myoga.myoga_user">
 
     <!-- Permissions options for the `location` group -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,7 +13,7 @@
 
 
     <application
-        android:label="My Oga"
+        android:label="My Oga User"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

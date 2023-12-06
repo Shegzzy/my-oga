@@ -7,6 +7,7 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
+import 'package:myoga/utils/formatter/formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:random_string/random_string.dart';
@@ -125,8 +126,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title ?? "", style: Theme.of(context).textTheme.headline4,),
-                      Text("$subtitle hours" ?? "", style: Theme.of(context).textTheme.bodyText2,),
+                      Text(title ?? "", style: Theme.of(context).textTheme.headlineMedium,),
+                      Text("$subtitle hours" ?? "", style: Theme.of(context).textTheme.bodyMedium,),
                     ],
                   ),
                 ],
@@ -135,8 +136,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(price, style: Theme.of(context).textTheme.headline4,),
-                  Text(distance, style: Theme.of(context).textTheme.bodyText2,),
+                  Text(MyOgaFormatter.currencyFormatter(double.parse(price)), style: Theme.of(context).textTheme.headlineMedium,),
+                  Text(distance, style: Theme.of(context).textTheme.bodyMedium,),
                 ],
               ),
             ],
