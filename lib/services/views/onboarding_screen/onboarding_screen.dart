@@ -64,87 +64,84 @@ final PageController _pageController = PageController(initialPage: 0);
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: moPrimaryColor,
+      backgroundColor: isDark ? PDarkColor.withOpacity(0.99) :  moPrimaryColor,
       body: SafeArea(
-          child: Container(
-            color: isDark ? PDarkColor : moPrimaryColor,
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 23,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    onPageChanged: (value){
-                      setState(() {
-                        currentPage = value;
-                      });
-                    },
-                    itemCount: onBoardingContent.length,
-                    itemBuilder: (context, index) => Column(
-                      children: [
-                        SizedBox(height: height * 10,),
-                        Text(
-                          onBoardingContent[index].title,
-                          style: Theme.of(context).textTheme.displaySmall,
-                          textAlign: TextAlign.center,
-                  ),
-                        SizedBox(height: height * 5,),
-                        Container(
-                          height: height * 40,
-                          child: Image.asset(onBoardingContent[index].image,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        SizedBox(height: height * 5,),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          children: [
-                            TextSpan(text: 'MY OGA, ', style: TextStyle(color: isDark ? moPrimaryColor : PButtonColor)),
-                            const TextSpan(text: 'SEND ME ', style: TextStyle(color: moAccentColor)),
-                          ],
-                        ),),
-                        SizedBox(height: height * 3,),
-                      ],
-                    ),
-              ),
-            ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
+          child: Column(
+            children: [
+              Expanded(
+                flex: 23,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (value){
+                    setState(() {
+                      currentPage = value;
+                    });
+                  },
+                  itemCount: onBoardingContent.length,
+                  itemBuilder: (context, index) => Column(
                     children: [
-                      currentPage == onBoardingContent.length - 1
-                          ? OnBoardTextBtn(name: 'Get Started', onPress: () => Get.to(() => const WelcomeScreen()), bgColor: PButtonColor,)
-                          : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          OnBoardNavBtn(
-                            name: "Skip",
-                            onPress: () {
-                              Get.to(() => const WelcomeScreen());
-                            },
-                          ),
-                          Row(
-                            children: List.generate(onBoardingContent.length,
-                                    (index) => dotIndicator(index)
-                            ),
-                          ),
-                          OnBoardNavBtn(
-                            name: "Next",
-                            onPress: () {
-                              _pageController.nextPage(duration: const Duration(milliseconds: 400), curve: Curves.easeInOut,);
-                            },
-                          ),
-                        ],
+                      SizedBox(height: height * 10,),
+                      Text(
+                        onBoardingContent[index].title,
+                        style: Theme.of(context).textTheme.displaySmall,
+                        textAlign: TextAlign.center,
+                ),
+                      SizedBox(height: height * 5,),
+                      Container(
+                        height: height * 40,
+                        child: Image.asset(onBoardingContent[index].image,
+                          fit: BoxFit.contain,
+                        ),
                       ),
+                      SizedBox(height: height * 5,),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                        style: Theme.of(context).textTheme.headlineMedium,
+                        children: [
+                          TextSpan(text: 'MY OGA, ', style: TextStyle(color: isDark ? moPrimaryColor : PButtonColor)),
+                          const TextSpan(text: 'SEND ME ', style: TextStyle(color: moAccentColor)),
+                        ],
+                      ),),
+                      SizedBox(height: height * 3,),
                     ],
                   ),
+            ),
+          ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    currentPage == onBoardingContent.length - 1
+                        ? OnBoardTextBtn(name: 'Get Started', onPress: () => Get.to(() => const WelcomeScreen()), bgColor: PButtonColor,)
+                        : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OnBoardNavBtn(
+                          name: "Skip",
+                          onPress: () {
+                            Get.to(() => const WelcomeScreen());
+                          },
+                        ),
+                        Row(
+                          children: List.generate(onBoardingContent.length,
+                                  (index) => dotIndicator(index)
+                          ),
+                        ),
+                        OnBoardNavBtn(
+                          name: "Next",
+                          onPress: () {
+                            _pageController.nextPage(duration: const Duration(milliseconds: 400), curve: Curves.easeInOut,);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(height: height * 5,),
-            ],
-      ),
-          )),
+              ),
+              SizedBox(height: height * 5,),
+          ],
+      )),
     );
   }
 }
