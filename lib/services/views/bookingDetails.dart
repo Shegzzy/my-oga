@@ -277,7 +277,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                   children: [
                                     Flexible(
                                       child: Text("Payment Mode: ${bookingData.payment_method}",
-                                        style: theme.textTheme.headline6,
+                                        style: theme.textTheme.titleLarge,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -285,12 +285,12 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                     const SizedBox(width: 10,),
                                     Flexible(
                                       child: Text("Ride Type: ",
-                                        style: theme.textTheme.headline6,
+                                        style: theme.textTheme.titleLarge,
                                         overflow: TextOverflow.ellipsis,),
                                     ),
                                     Flexible(
                                       child: Text(bookingData.rideType ?? "" ,
-                                        style: theme.textTheme.headline6,
+                                        style: theme.textTheme.titleLarge,
                                         overflow: TextOverflow.ellipsis,),
                                     ),
                                   ],
@@ -304,9 +304,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                   endIndent: 2,
                                 ),
                                 const SizedBox(height: 15,),
-                                Text("Pick Up", style: theme.textTheme.bodyText1,),
+                                Text("Pick Up", style: theme.textTheme.bodyLarge,),
                                 const SizedBox(height: 5,),
-                                Flexible(child: Text(bookingData.pickup_address??"", style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis,)),
+                                Flexible(child: Text(bookingData.pickup_address??"", style: theme.textTheme.titleLarge, overflow: TextOverflow.ellipsis,)),
                                 const SizedBox(height: 15,),
                                 const Divider(
                 color: Colors.black,

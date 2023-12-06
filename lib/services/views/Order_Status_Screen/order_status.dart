@@ -143,20 +143,26 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int1 == 1 ? Colors.purple : Colors.grey,),
+                              Int1 == 1 ?
+                              const Icon(Icons.circle, size: 20, color: Colors.purple)
+                              :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey),
                               const SizedBox(width: 15,),
-                              Text("Order Assigned", style: theme.textTheme.titleLarge),
+                              Int1 == 1 ? Text("Order Assigned", style: theme.textTheme.titleLarge)
+                              : const Text("Order Assigned", style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              )),
 
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Container(
+                            padding: const EdgeInsets.only(left: 9),
+                            child: SizedBox(
                               height: 25,
                               child: Row(
-                                  children:const [
+                                  children: [
                                     VerticalDivider(
-                                      color: Colors.grey,
+                                      color: Int1 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
                                       thickness: 2,
 
@@ -169,20 +175,25 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int2 == 1 ? Colors.purple : Colors.grey,),
+                              Int2 == 1 ? const Icon(Icons.circle, size: 20, color: Colors.purple)
+                                  :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey,),
                               const SizedBox(width: 15,),
-                              Text("Out For Pickup",style: theme.textTheme.titleLarge),
+                              Int2 == 1 ? Text("Out For Pickup",style: theme.textTheme.titleLarge)
+                              :const Text("Out For Pickup", style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              )),
 
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Container(
+                            padding: const EdgeInsets.only(left: 9),
+                            child: SizedBox(
                               height: 25,
                               child: Row(
-                                  children:const [
+                                  children: [
                                     VerticalDivider(
-                                      color: Colors.grey,
+                                      color: Int2 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
                                       thickness: 2,
 
@@ -195,20 +206,25 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int3 == 1 ? Colors.purple : Colors.grey,),
+                              Int3 == 1 ? const Icon(Icons.circle, size: 20, color: Colors.purple)
+                              :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey,),
                               const SizedBox(width: 15,),
-                              Text("Arrive at Pickup Location", style: theme.textTheme.titleLarge),
+                              Int3 == 1 ? Text("Arrive at Pickup Location", style: theme.textTheme.titleLarge)
+                              :const Text("Arrive at Pickup Location", style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              )),
 
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Container(
+                            padding: const EdgeInsets.only(left: 9),
+                            child: SizedBox(
                               height: 25,
                               child: Row(
-                                  children:const [
+                                  children: [
                                     VerticalDivider(
-                                      color: Colors.grey,
+                                      color: Int3 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
                                       thickness: 2,
 
@@ -221,20 +237,25 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int4 == 1 ? Colors.purple : Colors.grey,),
+                              Int4 == 1 ? const Icon(Icons.circle, size: 20, color: Colors.purple)
+                              :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey,),
                               const SizedBox(width: 15,),
-                              Text("Parcel Picked", style: theme.textTheme.titleLarge),
+                              Int4 == 1 ? Text("Parcel Picked", style: theme.textTheme.titleLarge)
+                              : const Text("Parcel Picked", style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),),
 
                             ],
                           ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 9),
                             child: SizedBox(
                               height: 25,
                               child: Row(
                                   children:[
                                     VerticalDivider(
-                                      color: Colors.grey,
+                                      color: Int4 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
                                       thickness: 2,
 
@@ -247,20 +268,26 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int5 == 1 ? Colors.purple : Colors.grey,),
+                              Int5 == 1 ? const Icon(Icons.circle, size: 20, color: Colors.purple)
+                              : const Icon(Icons.circle_outlined, size: 20, color: Colors.grey),
                               const SizedBox(width: 15,),
-                              Text("On the way to Drop Location", style: theme.textTheme.titleLarge),
+                              Int5 == 1 ? Text("On the way to Drop Location", style: theme.textTheme.titleLarge)
+                              :const Text("On the way to Drop Location", style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                              ),
 
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 10),
+                            padding: EdgeInsets.only(left: 9),
                             child: Container(
                               height: 25,
-                              child: const Row(
+                              child: Row(
                                   children:[
                                     VerticalDivider(
-                                      color: Colors.grey,
+                                      color: Int5 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
                                       thickness: 2,
 
@@ -273,10 +300,15 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
                           Row(
                             children: [
-                              Icon(Icons.circle_outlined, size: 20, color: Int6 == 1 ? Colors.purple : Colors.grey,),
+                              Int6 == 1 ? const Icon(Icons.circle, size: 20, color: Colors.purple)
+                              :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey,),
                               const SizedBox(width: 15,),
-                              Text("Arrived at Drop Location", style: theme.textTheme.headline6),
-
+                              Int6 == 1 ? Text("Arrived at Drop Location", style: theme.textTheme.titleLarge)
+                              : const Text("Arrived at Drop Location", style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ],
                           ),
 

@@ -95,7 +95,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                       children: [
                                         Flexible(child: Text(snapshot.data![index].bookingNumber ?? "",
                                             style: Theme.of(context).textTheme.headlineMedium,
-                                            maxLines: 2,
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis)),
                                         Flexible(child: snapshot.data![index].status == 'completed' ? GestureDetector(
                                           onTap: (){
@@ -113,7 +113,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                             overflow: TextOverflow.ellipsis)),
                                       ],
                                     ),
-                                    const SizedBox(height: 20,),
+                                    // const SizedBox(height: 20,),
                                     Row(
                                       children: [
                                         ElevatedButton(
