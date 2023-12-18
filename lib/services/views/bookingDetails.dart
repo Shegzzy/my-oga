@@ -223,7 +223,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                 const SizedBox(height: 15,),
                                 Center(
                                   child: Text("BN: ${bookingData.bookingNumber}",
-                                    style: theme.textTheme.bodyLarge,),
+                                    style: theme.textTheme.headlineSmall,),
                                 ),
                                 const SizedBox(height: 15,),
                                 Row(
