@@ -164,7 +164,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     VerticalDivider(
                                       color: Int1 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
-                                      thickness: 2,
+                                      thickness: 5,
 
                                     ),
                                   ]
@@ -195,7 +195,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     VerticalDivider(
                                       color: Int2 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
-                                      thickness: 2,
+                                      thickness: 5,
 
                                     ),
                                   ]
@@ -226,7 +226,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     VerticalDivider(
                                       color: Int3 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
-                                      thickness: 2,
+                                      thickness: 5,
 
                                     ),
                                   ]
@@ -257,7 +257,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     VerticalDivider(
                                       color: Int4 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
-                                      thickness: 2,
+                                      thickness: 5,
 
                                     ),
                                   ]
@@ -289,7 +289,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     VerticalDivider(
                                       color: Int5 == 1 ? Colors.purple : Colors.grey,
                                       width: 2,
-                                      thickness: 2,
+                                      thickness: 5,
 
                                     ),
                                   ]

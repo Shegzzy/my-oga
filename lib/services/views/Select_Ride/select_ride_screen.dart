@@ -103,6 +103,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   Widget SelectDeveryMode(IconData icon, String? index, String? title, String? subtitle, String price, String distance,){
     amount = price;
+    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return GestureDetector(
       onTap: (){
         setState(() {
@@ -112,7 +113,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: (selectedDelivery == index) ? Colors.greenAccent : Colors.grey[100],
+          color: isDark ? (selectedDelivery == index) ? Colors.purple : Colors.black12.withOpacity(0.5) : (selectedDelivery == index) ? Colors.greenAccent : Colors.grey[100],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -148,6 +149,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   }
 
   Widget SelectRide(IconData icon, String index, String text){
+    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return GestureDetector(
       onTap: (){
         setState(() {
@@ -157,7 +159,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: (selectedRide == index) ? Colors.greenAccent : Colors.grey[100],
+          color: isDark ? (selectedRide == index) ? Colors.purple : Colors.black12.withOpacity(0.5) : (selectedRide == index) ? Colors.greenAccent : Colors.grey[100],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -165,7 +167,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             children: [
               Icon(icon, size: 50.0, color: (selectedRide == index) ? Colors.white : Colors.grey,),
               const SizedBox(width: 16.0,),
-              Text(text, style: Theme.of(context).textTheme.headline4,),
+              Text(text, style: Theme.of(context).textTheme.headlineMedium,),
             ],
           ),
         ),
@@ -328,7 +330,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
    SharedPreferences prefs = await SharedPreferences.getInstance();
    final userEmail = prefs.getString("userEmail");
    int? price = int.tryParse(amount??"")! * 100;
-   final bookingNum = randomAlphaNumeric(10);
+   final bookingNum = MyOgaFormatter.generateBookingNumber();
    final user = FirebaseAuth.instance.currentUser!;
    bookingNumber = bookingNum;
    var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
@@ -477,6 +479,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   
   @override
   Widget build(BuildContext context) {
+    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     getPlaceDirection();
     String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
     pickUpLocation = placeAddress ?? "";
@@ -486,6 +489,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       appBar: const DashboardAppBar(),
       body: Stack(
         children: [
+          // Map
           GoogleMap(
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
             mapType: MapType.normal,
@@ -506,6 +510,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             },
           ),
           //Hamburger Drawer
+
           ///Ride Container Details
           Positioned(
             bottom: 0.0,
@@ -518,9 +523,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               duration: const Duration(milliseconds: 160),
               child: Container(
                 height: rideDetailsContainer,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey.shade900 : Colors.white,
+                  borderRadius: const BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -571,7 +576,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                               Icons.arrow_drop_down_circle,
                               color: Colors.deepPurple,
                             ),
-                            dropdownColor: Colors.deepPurple.shade100,
+                            dropdownColor: isDark ? Colors.grey.shade900 : Colors.deepPurple.shade100,
                             decoration: const InputDecoration(
                               labelText: "Select Package Type",
                               prefixIcon: Icon(
@@ -598,7 +603,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                     displayRideDetailsContainer();
                                   }
                                   },
-                                child: Text(moProceed.toUpperCase(), style: const TextStyle(color: Colors.white),),
+                                child: Text(moProceed.toUpperCase()),
                               ),
                             ),
                           ),
@@ -610,6 +615,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               ),
             ),
           ),
+
           ///Price Container Details
           Positioned(
             bottom: 0.0,
@@ -622,8 +628,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               duration: const Duration(milliseconds: 160),
               child: Container(
                 height: ridePriceContainer,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.black87.withOpacity(0.9) : Colors.white,
                   borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
                 ),
                 child: Padding(
@@ -729,7 +735,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                     backgroundColor: Colors.white,
                                     colorText: Colors.red);
                               } else {
-                                final bookingNum = randomAlphaNumeric(10);
+                                final bookingNum = MyOgaFormatter.generateBookingNumber();
                                 final user = FirebaseAuth.instance.currentUser!;
                                 bookingNumber = bookingNum;
                                 var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
@@ -819,6 +825,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               ),
             ),
           ),
+
           ///Booking Processing / Looking for rider sheet
           Positioned(
             bottom: 0.0,
@@ -881,7 +888,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(moPickupHintText,
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.bodyLarge,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -897,7 +904,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             child: Padding(
                               padding: const EdgeInsets.all(1.0),
                               child: Text(pickUpLocation,
-                                style: Theme.of(context).textTheme.headline6,
+                                style: Theme.of(context).textTheme.titleLarge,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -926,7 +933,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(moDropOffHintText,
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.bodyLarge,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -942,7 +949,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             child: Padding(
                               padding: const EdgeInsets.all(1.0),
                               child: Text(dropOffLocation,
-                                style: Theme.of(context).textTheme.headline6,
+                                style: Theme.of(context).textTheme.titleLarge,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -952,8 +959,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                       ],
                     ),
                     const SizedBox(height: 12.0,),
-                    Text("Distance: ${tripDirectionDetails.distanceText}", style: Theme.of(context).textTheme.bodyText2,),
-                    Text("Duration: ${tripDirectionDetails.durationText}", style: Theme.of(context).textTheme.bodyText2,),
+                    Text("Distance: ${tripDirectionDetails.distanceText}", style: Theme.of(context).textTheme.bodyMedium,),
+                    Text("Duration: ${tripDirectionDetails.durationText}", style: Theme.of(context).textTheme.bodyMedium,),
                     const SizedBox(height: 12.0,),
                     GestureDetector(
                       onTap: (){
@@ -974,7 +981,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                     const SizedBox(height: 5.0,),
                     SizedBox(
                       width: double.infinity,
-                      child: Text("Cancel Booking", style: Theme.of(context).textTheme.bodyText2, textAlign: TextAlign.center,),
+                      child: Text("Cancel Booking", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
                     ),
                   ],
                 ),
