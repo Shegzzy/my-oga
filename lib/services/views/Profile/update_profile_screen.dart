@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:myoga/services/models/user_model.dart';
 import 'package:myoga/services/views/Profile/profile_screen.dart';
+import 'package:myoga/utils/formatter/formatter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/colors.dart';
@@ -205,7 +206,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                   style: const TextStyle(fontSize: 12),
                                                   children: [
                                                     TextSpan(
-                                                        text: userData.dateCreated ?? "",
+                                                        text: MyOgaFormatter.dateFormatter(DateTime.parse(userData.dateCreated ?? "")),
                                                         style: const TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             fontSize: 12))

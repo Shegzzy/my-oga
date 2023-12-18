@@ -92,7 +92,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                               ],
                             ),
                             const SizedBox(height: 10.0),
-                            Text(moProfilePics, style: Theme.of(context).textTheme.headlineMedium),
+                            Text(moProfilePics, style: Theme.of(context).textTheme.titleLarge),
                             const SizedBox(height: 15.0),
                             const Divider(),
                             Column(
@@ -101,7 +101,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(moProfileInfoHead, style: Theme.of(context).textTheme.bodyLarge,),
+                                    Text(moProfileInfoHead, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20.0,),
@@ -110,7 +110,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileName, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.fullname == null || userData.fullname == "" ? "Complete profile" : userData.fullname!, style: Theme.of(context).textTheme.bodyText1,),
+                                    Text(userData.fullname == null || userData.fullname == "" ? "Complete profile" : userData.fullname!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -118,7 +118,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileEmail, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.email == null || userData.email == "" ? "Complete profile" : userData.email!, style: Theme.of(context).textTheme.bodyText1,),
+                                    Text(userData.email == null || userData.email == "" ? "Complete profile" : userData.email!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -126,7 +126,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfilePhone, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.phoneNo == null || userData.phoneNo == "" ? "Complete profile" : userData.phoneNo!,  style: Theme.of(context).textTheme.bodyText1,),
+                                    Text(userData.phoneNo == null || userData.phoneNo == "" ? "Complete profile" : userData.phoneNo!,  style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -134,7 +134,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileAddress, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.address == null || userData.address == "" ? "Complete profile" : userData.address!, style: Theme.of(context).textTheme.bodyText1,),
+                                    Text( userData.address == null || userData.address == "" ? "Complete profile" : userData.address!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -142,7 +142,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Date of Birth", style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.dateOfBirth == null || userData.dateOfBirth == "" ? "Complete profile" : userData.dateOfBirth!, style: Theme.of(context).textTheme.bodyText1,),
+                                    Text( userData.dateOfBirth == null || userData.dateOfBirth == "" ? "Complete profile" : userData.dateOfBirth!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -150,7 +150,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Gender", style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.gender == null || userData.gender == "" ? "Complete profile" : userData.gender!, style: Theme.of(context).textTheme.bodyLarge,),
+                                    Text( userData.gender == null || userData.gender == "" ? "Complete profile" : userData.gender!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 30.0,),
