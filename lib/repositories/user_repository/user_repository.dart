@@ -170,13 +170,15 @@ class UserRepository extends GetxController {
       final phone = userId!.phoneNumber;
       UserModel userInfo = await getUserDetailsWithPhone(phone!);
       final snapshot = await _db.collection("Bookings").where("Customer ID", isEqualTo: userInfo.id).get();
-      final bookingData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).toList();
+      List<BookingModel> bookingData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).toList();
+      bookingData.sort((a,b) => DateTime.parse(b.created_at!).compareTo(DateTime.parse(a.created_at!)));
       return bookingData;
     }
     else {
       UserModel userInfo = await getUserDetailsWithEmail(email);
       final snapshot = await _db.collection("Bookings").where("Customer ID", isEqualTo: userInfo.id).get();
-      final bookingData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).toList();
+      List<BookingModel> bookingData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).toList();
+      bookingData.sort((a,b) => DateTime.parse(b.created_at!).compareTo(DateTime.parse(a.created_at!)));
       return bookingData;
     }
 
