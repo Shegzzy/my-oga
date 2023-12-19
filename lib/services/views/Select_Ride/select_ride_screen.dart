@@ -102,12 +102,14 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
    String message = "";
 
   Widget SelectDeveryMode(IconData icon, String? index, String? title, String? subtitle, String price, String distance,){
-    amount = price;
+
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return GestureDetector(
       onTap: (){
         setState(() {
           selectedDelivery = index!;
+          amount = price;
+          print(amount);
         });
       },
       child: Container(
@@ -122,7 +124,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             children: [
               Row(
                 children: [
-                  Icon(icon, size: 50.0, color: (selectedDelivery == index) ? Colors.white : Colors.grey,),
+                  Icon(icon, size: 50.0, color: selectedDelivery == index ? Colors.white : Colors.grey,),
                   const SizedBox(width: 16.0,),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,22 +255,22 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Notice!", style: Theme.of(context).textTheme.bodyText1,),
+                Text("Notice!", style: Theme.of(context).textTheme.bodyLarge,),
                 const SizedBox(height: 20,),
                 Text("No Driver Found ",
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 5,),
                 Text("if assigned",
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 5,),
                 Text("you will be notified",
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
