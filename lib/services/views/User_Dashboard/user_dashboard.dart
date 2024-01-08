@@ -16,6 +16,7 @@ import '../../../repositories/user_repository/user_repository.dart';
 import '../../../widgets/progressDialog.dart';
 import '../../controllers/Assistant/assistanceMethods.dart';
 import 'package:myoga/services/models/user_model.dart';
+import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/profile_controller.dart';
 import '../../notifi_services.dart';
 import '../Dashboard/widget/appbar.dart';
@@ -48,6 +49,8 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
   ProfileController _controller = Get.put(ProfileController());
   final _db = FirebaseFirestore.instance;
   late StreamSubscription<UserModel> _subscription;
+  final GetXSwitchState getXSwitchState = Get.find();
+
 
 
   List<LatLng> pLineCoordinates = [];
@@ -188,7 +191,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     getPref();
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return Scaffold(
       appBar: const DashboardAppBar(),
       body: Stack(

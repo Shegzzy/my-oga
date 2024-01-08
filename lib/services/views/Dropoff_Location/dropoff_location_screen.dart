@@ -45,7 +45,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   Widget build(BuildContext context) {
     var isDark = getXSwitchState.isDarkMode;
     String? placeAddress = Provider.of<AppData>(context).pickUpLocation?.placeName;
-    pickUpTextEditingController.text = placeAddress ??"";
+    pickUpTextEditingController.text = placeAddress ?? "";
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
