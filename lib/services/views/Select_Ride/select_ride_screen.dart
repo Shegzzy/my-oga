@@ -17,6 +17,7 @@ import '../../../constants/colors.dart';
 import '../../../constants/image_strings.dart';
 import '../../../constants/texts_string.dart';
 import '../../controllers/Assistant/assistanceMethods.dart';
+import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/signup_controller.dart';
 import '../../controllers/profile_controller.dart';
 import '../../models/booking_model.dart';
@@ -57,6 +58,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     //getPlaceDirection();
   }
   final Completer<GoogleMapController> _controllerGoogleMap = Completer<GoogleMapController>();
+  final GetXSwitchState getXSwitchState = Get.find();
+
   late GoogleMapController newGoogleMapController;
 
   DirectionDetails tripDirectionDetails =  DirectionDetails();
@@ -103,7 +106,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   Widget SelectDeveryMode(IconData icon, String? index, String? title, String? subtitle, String price, String distance,){
 
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return GestureDetector(
       onTap: (){
         setState(() {
@@ -151,7 +154,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   }
 
   Widget SelectRide(IconData icon, String index, String text){
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return GestureDetector(
       onTap: (){
         setState(() {
@@ -195,7 +198,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       bottomPaddingOfMap = 380.0;
       drawerOpen = false;
       if(mounted){
-        timer= Timer.periodic(const Duration(seconds: 60), (timer){
+        timer= Timer.periodic(const Duration(seconds: 120), (timer){
           checkOrderStatus(bookingNumber);
         });
       }
@@ -244,33 +247,33 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   Future<void>showNoDriverAlert(BuildContext context) async {
     return await showDialog(context: context, builder: (context){
       return StatefulBuilder(builder: (context, setState){
+        var isDark = getXSwitchState.isDarkMode;
         return AlertDialog(
+          title: Center(child: Text("Notice!", style: Theme.of(context).textTheme.titleLarge,)),
           content: Container(
-            width: double.infinity,
-            height: 400,
+            // width: double.infinity,
+            height: 280,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? Colors.black12.withOpacity(0.01) : Colors.white,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Notice!", style: Theme.of(context).textTheme.bodyLarge,),
-                const SizedBox(height: 20,),
                 Text("No Driver Found ",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.labelLarge,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 5,),
                 Text("if assigned",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.labelLarge,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 5,),
                 Text("you will be notified",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.labelLarge,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -481,7 +484,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     getPlaceDirection();
     String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
     pickUpLocation = placeAddress ?? "";
@@ -526,7 +529,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
               child: Container(
                 height: rideDetailsContainer,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey.shade900 : Colors.white,
+                  color: isDark ? Colors.black87 : Colors.white,
                   borderRadius: const BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
                 ),
                 child: Padding(
@@ -632,7 +635,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                 height: ridePriceContainer,
                 decoration: BoxDecoration(
                   color: isDark ? Colors.black87.withOpacity(0.9) : Colors.white,
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
+                  borderRadius: const BorderRadius.only(topRight: Radius.circular(16.0), topLeft: Radius.circular(16.0),),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -817,7 +820,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                               //PackageDetails packageData = await userRepo.getPackageDetails(userInfo.id!)
                             },
 
-                            child: Text(moProceed.toUpperCase(), style: const TextStyle(color: Colors.white),),
+                            child: Text(moProceed.toUpperCase()),
                           ),
                         ),
                       ),
@@ -834,9 +837,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             left: 0.0,
             right: 0.0,
             child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0),),
-                color: Colors.white,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0),),
+                color: isDark ? Colors.black87 : Colors.white,
               ),
               height: requestDriverContainer,
               child: Padding(
@@ -882,34 +885,22 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                           width: 10.0,
                         ),
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              //borderRadius: BorderRadius.circular(1.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(moPickupHintText,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(moPickupHintText,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              //borderRadius: BorderRadius.circular(1.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Text(pickUpLocation,
-                                style: Theme.of(context).textTheme.titleLarge,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(pickUpLocation,
+                              style: Theme.of(context).textTheme.titleLarge,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -927,34 +918,22 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                           width: 10.0,
                         ),
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              //borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(moDropOffHintText,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(moDropOffHintText,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              //borderRadius: BorderRadius.circular(1.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Text(dropOffLocation,
-                                style: Theme.of(context).textTheme.titleLarge,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(dropOffLocation,
+                              style: Theme.of(context).textTheme.titleLarge,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
