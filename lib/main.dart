@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
+import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:myoga/services/views/onboarding_screen/onboarding_screen.dart';
 import 'package:myoga/services/views/welcome_screen/welcome_screen.dart';
@@ -22,25 +23,25 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print(message.notification?.body.toString());
     print(message.data.toString());
   }
-
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   ///to load on Boarding Screen for the first time only
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await GetStorage.init();
-  runApp(const MyApp());
+  runApp(MyApp());
   _init();
 }
 
 
-_init()async{
+_init() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("userID");
-  if(token != null){
+  if (token != null) {
     _checkUserType();
   }
   else {
@@ -51,12 +52,13 @@ _init()async{
 _checkUserType() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final iD = prefs.getString("aUserID");
-  if(iD == null){
+  if (iD == null) {
     final iDd = prefs.getString("userID");
-    final userDoc = await FirebaseFirestore.instance.collection("Users").doc(iDd).get();
-    if(userDoc.exists){
+    final userDoc = await FirebaseFirestore.instance.collection("Users").doc(
+        iDd).get();
+    if (userDoc.exists) {
       Get.offAll(() => const UserDashboard());
-    } else{
+    } else {
       Get.snackbar("Error", "No Access",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.white,
@@ -82,7 +84,7 @@ _checkUserType() async {
 _checkSeen() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final seen = prefs.getBool('seenOnboard');
-  if(seen == true){
+  if (seen == true) {
     Get.offAll(() => const WelcomeScreen());
   }
   else {
@@ -91,21 +93,26 @@ _checkSeen() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GetXSwitchState getXSwitchState = Get.put(GetXSwitchState());
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppData(),
-      child: GetMaterialApp(
-        theme: MyOgaTheme.lightTheme,
-        darkTheme: MyOgaTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        debugShowCheckedModeBanner: false,
-        defaultTransition: Transition.leftToRightWithFade,
-        transitionDuration: const Duration(milliseconds: 100),
-        home: const Scaffold(body: Center(child: CircularProgressIndicator(color: moAccentColor,backgroundColor: Colors.white,),)),
-      ),
-    );
+    return GetBuilder<GetXSwitchState>(builder: (_) {
+      return ChangeNotifierProvider(
+        create: (context) => AppData(),
+        child: GetMaterialApp(
+          theme: getXSwitchState.isDarkMode ? MyOgaTheme.darkTheme : MyOgaTheme
+              .lightTheme,
+          themeMode: ThemeMode.system,
+          debugShowCheckedModeBanner: false,
+          defaultTransition: Transition.leftToRightWithFade,
+          transitionDuration: const Duration(milliseconds: 100),
+          home: const Scaffold(body: Center(child: CircularProgressIndicator(
+            color: moAccentColor, backgroundColor: Colors.white,),)),
+        ),
+      );
+    });
   }
 }

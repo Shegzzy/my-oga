@@ -11,6 +11,7 @@ import '../../../constants/texts_string.dart';
 import '../../../widgets/progressDialog.dart';
 import '../../controllers/Assistant/requestController.dart';
 import '../../controllers/Data_handler/appData.dart';
+import '../../controllers/getXSwitchStateController.dart';
 import '../../models/address.dart';
 import '../../models/booking_address_model.dart';
 import '../../models/placePrediction.dart';
@@ -30,6 +31,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   TextEditingController dropOffTextEditingController = TextEditingController();
   TextEditingController pickUpTextEditingController = TextEditingController();
   List<PlacePredictions> dropOffPlacePredictionList = [];
+  final GetXSwitchState getXSwitchState = Get.find();
 
 @override
   void dispose() {
@@ -41,7 +43,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     String? placeAddress = Provider.of<AppData>(context).pickUpLocation?.placeName;
     pickUpTextEditingController.text = placeAddress ??"";
     return Scaffold(
