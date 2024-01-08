@@ -41,6 +41,11 @@ class GetXSwitchState extends GetxController {
       isNotify.value = switchDataController.read('notifyData');
       update();
     }
+
+    if(switchDataController.read('themeMode') != null){
+      _isDarkMode.value = switchDataController.read('themeMode');
+      update();
+    }
   }
 
 }
