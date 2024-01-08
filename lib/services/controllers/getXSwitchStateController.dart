@@ -7,6 +7,7 @@ class GetXSwitchState extends GetxController {
 
   RxBool isOnline = false.obs;
   RxBool isNotify = false.obs;
+  RxBool isDark = false.obs;
   final switchDataController = GetStorage();
 
   changeSwitchState(bool val){

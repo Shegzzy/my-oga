@@ -36,7 +36,7 @@ class AssistanceMethods {
   }
 
   static Future<DirectionDetails?> obtainPlaceDirectionDetails(LatLng initialPosition, LatLng finalPosition) async {
-    String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM";
+    String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=$mapKay";
 
     var res = await RequestAssistanceController.getRequest(directionUrl);
     // print("Direction Response: $res");

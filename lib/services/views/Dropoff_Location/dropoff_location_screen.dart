@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/configMaps.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/colors.dart';
@@ -198,7 +199,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   void findDropPlace(String placeName) async {
 
     if(placeName.length > 1){
-      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM&components=country:ng";
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKay&components=country:ng";
 
       var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
 
@@ -248,9 +249,9 @@ class DropOffPredictionTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 8.0,),
-                    Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headline6,),
+                    Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
                     const SizedBox(height: 2.0,),
-                    Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyText2,),
+                    Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
                     const SizedBox(height: 8.0,),
                   ],
                 ),
@@ -269,7 +270,7 @@ class DropOffPredictionTile extends StatelessWidget {
         builder: (BuildContext context) => const ProgressDialog(message: "Setting Location, Please wait....",)
     );
 
-    String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM";
+    String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKay";
     var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
     if(res == "failed"){
       return;

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import '../../../constants/texts_string.dart';
@@ -30,7 +29,7 @@ class _SettingScreenState extends State<SettingScreen> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => Get.back(), icon: const Icon(LineAwesomeIcons.angle_left)),
-        title: Text(moSetting, style: Theme.of(context).textTheme.headline4),
+        title: Text(moSetting, style: Theme.of(context).textTheme.headlineMedium),
         backgroundColor: Colors.transparent,
         centerTitle: true,
       ),
@@ -43,7 +42,7 @@ class _SettingScreenState extends State<SettingScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(moPushNotification, style: Theme.of(context).textTheme.headline4,),
+                Text(moPushNotification, style: Theme.of(context).textTheme.headlineMedium,),
                 const SizedBox(width: 30.0,),
                 Switch(
                   value: getController.isNotify.value,
@@ -57,17 +56,17 @@ class _SettingScreenState extends State<SettingScreen> {
               ],
             ),
             const SizedBox(height: 20.0,),
-            Text(moPrivacy, style: Theme.of(context).textTheme.headline4,),
+            Text(moPrivacy, style: Theme.of(context).textTheme.headlineMedium,),
             const SizedBox(height: 20.0,),
-            Text(moTerms, style: Theme.of(context).textTheme.headline4,),
+            Text(moTerms, style: Theme.of(context).textTheme.headlineMedium,),
             const SizedBox(height: 20.0,),
-            Text(moAbout, style: Theme.of(context).textTheme.headline4,),
+            Text(moAbout, style: Theme.of(context).textTheme.headlineMedium,),
             const SizedBox(height: 20.0,),
             GestureDetector(
               onTap: (){
                 Get.to(() => const SupportScreen());
               },
-                child: Text("Support", style: Theme.of(context).textTheme.headline4,)
+                child: Text("Support", style: Theme.of(context).textTheme.headlineMedium,)
             ),
           ],
         ),
