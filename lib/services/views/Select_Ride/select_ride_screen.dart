@@ -87,7 +87,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   double ridePriceContainer = 0;
 
   bool drawerOpen = true;
-  late var timer;
+  late Timer timer;
+  int counter = 0;
   String? amount;
   late DocumentReference bookingRequestReference;
   late Future<List<DeliveryModeModel>?> modeFuture;
@@ -198,8 +199,14 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       bottomPaddingOfMap = 380.0;
       drawerOpen = false;
       if(mounted){
-        timer= Timer.periodic(const Duration(seconds: 120), (timer){
+        timer = Timer.periodic(const Duration(seconds: 2), (timer){
+          counter += 2;
           checkOrderStatus(bookingNumber);
+
+          if(counter >= 120){
+            timer.cancel();
+            showNoDriverAlert(context);
+          }
         });
       }
     });
@@ -212,12 +219,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
           _orderStats = event;
         });
       });
+
       if(!mounted){return;}
+
       if(_orderStats?.driverID != null){
         showDriverModal(context);
-      } else {
-        if(!mounted){return;}
-        showNoDriverAlert(context);
       }
     } else{
       return;

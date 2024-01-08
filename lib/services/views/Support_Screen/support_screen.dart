@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 
 import '../../../constants/colors.dart';
 import '../../controllers/profile_controller.dart';
@@ -15,7 +16,7 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
-
+  final GetXSwitchState getXSwitchState = GetXSwitchState();
   late Future<List<SupportModel>?> userFuture;
   ProfileController controller = Get.put(ProfileController());
 
@@ -38,18 +39,18 @@ class _SupportScreenState extends State<SupportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => Get.back(),
             icon: const Icon(LineAwesomeIcons.angle_left)),
-        title: Text("Support Tickets", style: Theme.of(context).textTheme.headline4),
+        title: Text("Support Tickets", style: Theme.of(context).textTheme.headlineMedium),
         centerTitle: true,
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
 
         ///Future Builder
         child: FutureBuilder<List<SupportModel>?>(
@@ -68,9 +69,9 @@ class _SupportScreenState extends State<SupportScreen> {
                       },
                       child: SizedBox(
                         width: 380,
-                        height: 210,
+                        height: 250,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 10.0, top: 5.0),
+                          padding: const EdgeInsets.only(top: 10.0),
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -84,7 +85,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(child: Text(snapshot.data![index].ticketNumber ?? "",
-                                        style: Theme.of(context).textTheme.headline4,
+                                        style: Theme.of(context).textTheme.headlineMedium,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis)),
                                     Flexible(child: Text(snapshot.data![index].status ?? "",
@@ -100,8 +101,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Text(snapshot.data![index].subject ?? "", style: Theme.of(context).textTheme.bodyText1, maxLines: 2, overflow: TextOverflow.ellipsis,),
-                                        Text(snapshot.data![index].message ?? "", style: Theme.of(context).textTheme.bodyText1, maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                        Text(snapshot.data![index].subject ?? "", style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                        Text(snapshot.data![index].message ?? "", style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
                                       ],
                                     ),
                                   ),
@@ -110,12 +111,12 @@ class _SupportScreenState extends State<SupportScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Flexible(child: Text("N${snapshot.data![index].type ?? ""}",
-                                        style: Theme.of(context).textTheme.bodyText1,
+                                    Flexible(child: Text(snapshot.data![index].type ?? "",
+                                        style: Theme.of(context).textTheme.bodyLarge,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis)),
                                     Flexible(child: Text(snapshot.data![index].dateCreated ??"",
-                                        style: Theme.of(context).textTheme.bodyText1,
+                                        style: Theme.of(context).textTheme.bodyLarge,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis)),
                                   ],
@@ -151,7 +152,7 @@ class _SupportScreenState extends State<SupportScreen> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text("Create New Ticket", style: Theme.of(context).textTheme.headline6,),
+          Text("Create New Ticket", style: Theme.of(context).textTheme.titleLarge,),
           const SizedBox(width: 10,),
           FloatingActionButton(
             onPressed: () {

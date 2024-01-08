@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 import 'package:myoga/services/views/ratingScreen.dart';
 import 'package:myoga/utils/formatter/formatter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,6 +32,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
 
   ProfileController controller = Get.put(ProfileController());
   final userController = Get.put(UserRepository());
+  final GetXSwitchState getXSwitchState = GetXSwitchState();
   DriverModel? _driverModel;
 
   @override
@@ -55,6 +57,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   // }
 
   Future<void> showDriverDialog(BuildContext context) async {
+    var isDark = getXSwitchState.isDarkMode;
     return await showDialog(
         context: context,
         builder: (context) {
@@ -64,7 +67,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                 width: double.infinity,
                 height: 520,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? Colors.black12.withOpacity(0.01) : Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Column(
