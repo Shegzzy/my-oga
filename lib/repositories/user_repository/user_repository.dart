@@ -207,6 +207,13 @@ class UserRepository extends GetxController {
     return bookinData;
   }
 
+  ///Fetch Order Status of a booking
+  Future<OrderStatusModel> getBookingOrderStatus(String bookingNumber) async {
+    final snapshot = await _db.collection("Order_Status").where("Booking Number", isEqualTo: bookingNumber).get();
+    final orderStatusData = snapshot.docs.map((e) => OrderStatusModel.fromSnapshot(e)).single;
+    return orderStatusData;
+  }
+
   /// Getting Driver Details 2
   Future<DriverModel> getDriverById(String id) =>
       _db.collection("Drivers").doc(id).get().then((doc) {
@@ -233,6 +240,13 @@ class UserRepository extends GetxController {
     );
   }
 
-
+  Stream<BookingModel> getBookingStatusData(String num){
+    return _db.collection("Bookings")
+        .where("Booking Number", isEqualTo: num)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((document) => BookingModel.fromSnapshot(document)).first
+    );
+  }
 
 }

@@ -147,8 +147,8 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                               const Icon(Icons.circle, size: 20, color: Colors.purple)
                               :const Icon(Icons.circle_outlined, size: 20, color: Colors.grey),
                               const SizedBox(width: 15,),
-                              Int1 == 1 ? Text("Order Assigned", style: theme.textTheme.titleLarge)
-                              : const Text("Order Assigned", style: TextStyle(
+                              Int1 == 1 ? Text("Service Started", style: theme.textTheme.titleLarge)
+                              : const Text("Service Started", style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,
                               )),

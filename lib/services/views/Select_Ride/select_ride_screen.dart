@@ -93,11 +93,13 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   late DocumentReference bookingRequestReference;
   late Future<List<DeliveryModeModel>?> modeFuture;
   CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
+  CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
   UserRepository userRepo = Get.put(UserRepository());
   final controller = Get.put(SignUpController());
   final _addController = TextEditingController();
   ProfileController _pController = Get.put(ProfileController());
   OrderStatusModel? _orderStats;
+  BookingModel? bookingModel;
 
   String? selectedRide;
    String? selectedDelivery;
@@ -182,8 +184,17 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   }
 
   Future <void> cancelBookingRequest(String bookingNumber)async {
-    BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber!);
+    BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
+
+    OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
+
+    if(_refOrderStatus.doc().id.isNotEmpty){
+      _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+    }else {
+      return;
+    }
+
   }
 
   Future<void> saveBookings(BookingModel booking) async {
@@ -191,7 +202,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
         booking);
   }
 
-  void displayRequestDriverContainer( String bookingNumber){
+  void displayRequestDriverContainer( String bookingNumber) {
     setState(() {
       requestDriverContainer = 380.0;
       ridePriceContainer = 0;
@@ -199,31 +210,36 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       bottomPaddingOfMap = 380.0;
       drawerOpen = false;
       if(mounted){
-        timer = Timer.periodic(const Duration(seconds: 2), (timer){
-          counter += 2;
-          checkOrderStatus(bookingNumber);
-
-          if(counter >= 120){
-            timer.cancel();
-            showNoDriverAlert(context);
-          }
+        timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+          await checkOrderStatus(bookingNumber);
+          counter++;
         });
       }
     });
   }
 
-  void checkOrderStatus(String bookingNumber) async {
+  Future<void> checkOrderStatus(String bookingNumber) async {
     if(mounted){
-      userRepo.getOrderStatusData(bookingNumber).listen((event) {
+      // userRepo.getOrderStatusData(bookingNumber).listen((event) {
+      //   setState(() {
+      //     _orderStats = event;
+      //   });
+      // });
+      userRepo.getBookingStatusData(bookingNumber).listen((event) {
         setState(() {
-          _orderStats = event;
+          bookingModel = event;
         });
       });
 
       if(!mounted){return;}
 
-      if(_orderStats?.driverID != null){
+      if(bookingModel?.status == 'active'){
         showDriverModal(context);
+        timer.cancel();
+      } else if(counter >= 130){
+        if(!mounted){return;}
+        timer.cancel();
+        showNoDriverAlert(context);
       }
     } else{
       return;
@@ -234,19 +250,15 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(30))
       ),
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        minChildSize: 0.32,
-        builder: (context, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          child: DriverStatusScreen(driverID: _orderStats?.driverID,),
+      builder: (context) => Container(
+        height: 380,
+          child: SingleChildScrollView(child: DriverStatusScreen(driverID: bookingModel?.driver_id, bookingModel: bookingModel,)),
         ),
-      ),
     );
   }
 
