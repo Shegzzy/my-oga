@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/views/ratingScreen.dart';
 
 import '../../../repositories/user_repository/user_repository.dart';
 import '../../models/booking_model.dart';
@@ -320,6 +321,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                   child: OutlinedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
+                                      Get.to(RatingScreen(driverID: _driverModel!.id!));
                                     },
                                     style: Theme.of(context).elevatedButtonTheme.style,
                                     child: Text("Ok".toUpperCase()),

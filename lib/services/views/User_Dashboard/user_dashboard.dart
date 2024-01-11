@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -90,7 +91,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
     currentPosition = position;
 
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
@@ -111,6 +112,9 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(Platform.isAndroid){
+      _requestLocationPermission();
+    }
     NotificationService().requestNotificationPermission();
     NotificationService().firebaseInit(context);
     NotificationService().setUpInteractMessage(context);
@@ -124,6 +128,36 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     });
     /// Stop Progress Bar
     // ignore: use_build_context_synchronously
+  }
+
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      if (mounted) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Location Permission"),
+              content: Text(
+                  "We need your location to provide courier services. Please grant location access."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    locatePosition();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      locatePosition();
+    }
   }
 
 
@@ -216,7 +250,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
                 bottomPaddingOfMap = 280.0;
               });
 
-              locatePosition();
+              // locatePosition();
 
             },
           ),
