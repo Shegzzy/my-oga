@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/views/My_Ratings/my_ratings.dart';
 import 'package:myoga/services/views/Profile/profile_info_screen.dart';
 import 'package:myoga/services/views/Profile/update_profile_screen.dart';
 import 'package:myoga/services/models/user_model.dart';
@@ -184,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: 'My Ratings',
                         icon: LineAwesomeIcons.star,
                         onPress: () {
-                          Get.to(() => MyOrdersScreen());
+                          Get.to(() => const RatingTabPage());
                         }),
                     ProfileMenuWidget(
                         title: moMenu3,
