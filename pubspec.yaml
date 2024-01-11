@@ -50,6 +50,7 @@ dependencies:
   flutter_paystack: ^1.0.7
   flutter_rating_bar: ^4.0.1
   intl: ^0.17.0
+  permission_handler:
 
 
 dev_dependencies:

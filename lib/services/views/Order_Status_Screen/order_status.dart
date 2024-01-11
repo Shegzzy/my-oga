@@ -53,9 +53,10 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-    _userRepo.dispose();
+    if(mounted){
+      _userRepo.dispose();
+    }
   }
 
   @override
@@ -63,7 +64,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
     final theme = Theme.of(context);
     //var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return SizedBox(
-      height: Get.height,
+      height: 550,
       width: Get.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +322,9 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                   child: OutlinedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      Get.to(RatingScreen(driverID: _driverModel!.id!));
+                                      if(Int6 == 1){
+                                        Get.to(RatingScreen(driverID: _driverModel!.id!));
+                                      }
                                     },
                                     style: Theme.of(context).elevatedButtonTheme.style,
                                     child: Text("Ok".toUpperCase()),

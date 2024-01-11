@@ -216,18 +216,14 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      enableDrag: false,
+      isDismissible: false,
+      showDragHandle: false,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        minChildSize: 0.32,
-        builder: (context, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          child: OrderStatusScreen(
-            bookingData: bookingData,
-          ),
+      builder: (context) => SingleChildScrollView(
+        child: OrderStatusScreen(
+          bookingData: bookingData,
         ),
       ),
     );

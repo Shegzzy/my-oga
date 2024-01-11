@@ -172,11 +172,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: moMenu1,
                         icon: LineAwesomeIcons.user,
                         onPress: () {
-                          Get.to(() => ProfileInformation());
+                          Get.to(() => const ProfileInformation());
                         }),
                     ProfileMenuWidget(
                         title: moMenu2,
                         icon: LineAwesomeIcons.receipt,
+                        onPress: () {
+                          Get.to(() => MyOrdersScreen());
+                        }),
+                    ProfileMenuWidget(
+                        title: 'My Ratings',
+                        icon: LineAwesomeIcons.star,
                         onPress: () {
                           Get.to(() => MyOrdersScreen());
                         }),

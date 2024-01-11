@@ -94,7 +94,7 @@ class _RatingScreenState extends State<RatingScreen> {
                     print(rating);
                   }
                 },
-              initialRating: 2.5,
+              initialRating: 0.0,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,

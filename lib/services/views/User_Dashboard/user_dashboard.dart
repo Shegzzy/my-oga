@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,40 +67,52 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
 
   String? _userID, userPic, userName, userEmail, _token;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  bool isLoading = false;
 
-
-  void locatePosition() async {
+  Future<void> locatePosition() async {
     ///Asking Users Permission
-    bool serviceEnabled;
-    LocationPermission permission;
+    try{
+      setState(() {
+        isLoading = true;
+      });
+      bool serviceEnabled;
+      LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return Future.error('Location services are disabled');
       }
+
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return Future.error('Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      currentPosition = position;
+
+      LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+
+      CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14);
+      newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+      String address = await AssistanceMethods.searchCoordinateAddress(position, context);
+
+    }catch (e){
+      print('Error $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-    currentPosition = position;
-
-    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
-
-    CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14);
-    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
-    String address = await AssistanceMethods.searchCoordinateAddress(position, context);
 
   }
 
@@ -112,9 +125,6 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(Platform.isAndroid){
-      _requestLocationPermission();
-    }
     NotificationService().requestNotificationPermission();
     NotificationService().firebaseInit(context);
     NotificationService().setUpInteractMessage(context);
@@ -130,6 +140,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     // ignore: use_build_context_synchronously
   }
 
+  // Showing a pop up message for location access
   Future<void> _requestLocationPermission() async {
     LocationPermission permission;
     permission = await Geolocator.checkPermission();
@@ -144,9 +155,9 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
                   "We need your location to provide courier services. Please grant location access."),
               actions: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async{
                     Navigator.pop(context);
-                    locatePosition();
+                    await locatePosition();
                   },
                   child: Text("OK"),
                 ),
@@ -156,7 +167,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
         );
       }
     } else {
-      locatePosition();
+     await locatePosition();
     }
   }
 
@@ -230,6 +241,19 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
       appBar: const DashboardAppBar(),
       body: Stack(
         children: [
+          if (isLoading)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
           GoogleMap(
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
             mapType: MapType.normal,
@@ -242,7 +266,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
             markers: markersSet,
             circles: circlesSet,
             onMapCreated: (GoogleMapController controller)
-            {
+            async{
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
 
@@ -250,7 +274,11 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
                 bottomPaddingOfMap = 280.0;
               });
 
-              // locatePosition();
+              if(Platform.isAndroid) {
+                await _requestLocationPermission();
+              }else{
+               await locatePosition();
+              }
 
             },
           ),
