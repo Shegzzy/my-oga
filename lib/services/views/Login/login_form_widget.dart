@@ -22,12 +22,29 @@ class _LoginFormState extends State<LoginForm> {
   final controller = Get.put(LoginController());
   final _formkey = GlobalKey<FormState>();
   bool _isVisible = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     controller.onClose();
+  }
+
+  Future<void> login() async{
+    try{
+      setState(() {
+        _isLoading = true;
+      });
+      await controller.loginUsers(controller.email.text.trim(),controller.password.text.trim());
+
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -93,17 +110,9 @@ class _LoginFormState extends State<LoginForm> {
             ),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(onPressed: (){
+              child: _isLoading ? const Center(child: CircularProgressIndicator()) :  ElevatedButton(onPressed: () async {
                 if(_formkey.currentState!.validate()){
-                  ///Start Circular Progress Bar
-                  showDialog(
-                      context: context,
-                      builder: (context){
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                  );
-                  controller.loginUsers(controller.email.text.trim(),controller.password.text.trim());
-
+                  await login();
                 }
               },
                   child: Text(moLogin.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
