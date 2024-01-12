@@ -22,6 +22,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
   bool _isVisible = false;
   bool _isPasswordEightChar = false;
   bool _isPasswordOneNum = false;
+  bool _isLoading = false;
 
   onPasswordChanged(String password){
     final numericRegx = RegExp(r'[0-9]');
@@ -37,7 +38,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
     });
   }
 
-  void signUP()async{
+  Future<void> signUP() async{
     final user = UserModel(
       email: controller.email.text.trim(),
       fullname: controller.name.text.trim(),
@@ -46,20 +47,21 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
       timeStamp: Timestamp.now(),
     );
 
-    ///Start Circular Progress Bar
-    showDialog(
-      context: context,
-      builder: (context){
-        return const Center(child: CircularProgressIndicator());
-      }
-    );
-    
-    await controller.registerUser(controller.email.text.trim(), controller.password.text.trim());
-    await controller.createUser(user);
-    /// Stop Progress Bar
-    // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
-    Get.offAll(() => const PhoneNumberScreen());
+    try{
+      setState(() {
+        _isLoading = true;
+      });
+      await controller.registerUser(controller.email.text.trim(), controller.password.text.trim());
+      await controller.createUser(user);
+      Get.offAll(() => const PhoneNumberScreen());
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
   }
 
   @override
@@ -197,10 +199,10 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
               const SizedBox(height: 10.0),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: ()  {
+                child: _isLoading ? const Center(child: CircularProgressIndicator(),) : ElevatedButton(
+                  onPressed: ()  async {
                     if(_formkey.currentState!.validate()){
-                      signUP();
+                      await signUP();
                     }
                   },
                   child: Text(moNext.toUpperCase()),
