@@ -33,7 +33,6 @@ class _RatingTabPageState extends State<RatingTabPage> {
   void getCount()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getString("userID")!;
-    print(userID);
     await _db.collection("Users").doc(userID).collection("Ratings").get().then((value) {
       for (var element in value.docs) {
         rate = element.data()["rating"];
