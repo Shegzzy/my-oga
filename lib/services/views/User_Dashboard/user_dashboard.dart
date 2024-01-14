@@ -152,7 +152,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
             return AlertDialog(
               title: Text("Location Permission"),
               content: Text(
-                  "We need your location to provide courier services. Please grant location access."),
+                  "This is a courier app and for better service and easy pickup and deliveries, we need your location to provide courier services. Please grant location access."),
               actions: [
                 TextButton(
                   onPressed: () async{

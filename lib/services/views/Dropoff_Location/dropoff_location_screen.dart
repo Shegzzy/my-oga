@@ -32,6 +32,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   TextEditingController pickUpTextEditingController = TextEditingController();
   List<PlacePredictions> dropOffPlacePredictionList = [];
   final GetXSwitchState getXSwitchState = Get.find();
+  bool isLoading = false;
 
 @override
   void dispose() {
@@ -40,6 +41,73 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     dropOffTextEditingController.dispose();
     pickUpTextEditingController.dispose();
   }
+
+  void getPlaceAddressDetails(String placeId, context) async {
+
+    try{
+      setState(() {
+        isLoading = true;
+      });
+
+      String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKay";
+      var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
+      if(res == "failed"){
+        return;
+      }
+      if(res["status"] == "OK"){
+        Address address = Address();
+        address.placeName = res["result"]["name"];
+        address.placeId = placeId;
+        address.latitude = res["result"]["geometry"]["location"]["lat"];
+        address.longitude = res["result"]["geometry"]["location"]["lng"];
+        Provider.of<AppData>(context, listen: false).updateDropOffLocationAddress(address);
+
+        String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
+        dropOffTextEditingController.text = dropPlaceAddress!;
+        print(dropPlaceAddress);
+
+        BookingAddress bookingAddress = BookingAddress();
+        bookingAddress.pickUpLocation = pickUpTextEditingController.text;
+        bookingAddress.dropOffLocation = dropOffTextEditingController.text;
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+      }
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+
+  }
+
+  void findDropPlace(String placeName) async {
+
+    if(placeName.length > 1){
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKay&components=country:ng";
+
+      var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
+
+      if(res == "failed"){
+        return ;
+      }
+
+      if(res["status"] == "OK"){
+        var predictions = res["predictions"];
+
+        var placesList = (predictions as List).map((e) => PlacePredictions.fromJson(e)).toList();
+
+        setState(() {
+          dropOffPlacePredictionList = placesList;
+        });
+      }
+
+    }
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +230,9 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
               ),
             ),
 
+            if(isLoading)
+              const ProgressDialog(message: "Setting Location, Please wait....",),
+
             //tile for prediction
             const SizedBox(height: 10.0,),
             (dropOffPlacePredictionList.isNotEmpty)
@@ -170,7 +241,35 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
               child: ListView.separated(
                 padding: const EdgeInsets.all(0.0),
                 itemBuilder: (context, index){
-                  return DropOffPredictionTile(placePredictions: dropOffPlacePredictionList[index],);
+                  return TextButton(
+                    onPressed: (){
+                      getPlaceAddressDetails(dropOffPlacePredictionList[index].place_id ??"", context);
+                    },
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 8.0,),
+                        Row(
+                          children: [
+                            const Icon(Icons.add_location),
+                            const SizedBox(height: 14.0,),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8.0,),
+                                  Text(dropOffPlacePredictionList[index].main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
+                                  const SizedBox(height: 2.0,),
+                                  Text(dropOffPlacePredictionList[index].secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
+                                  const SizedBox(height: 8.0,),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0,),
+                      ],
+                    ),
+                  );
                 },
                 separatorBuilder: (BuildContext context, int index) => const Divider(height: 5.0,),
                 itemCount:dropOffPlacePredictionList.length,
@@ -198,101 +297,49 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     );
   }
 
-  void findDropPlace(String placeName) async {
-
-    if(placeName.length > 1){
-      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKay&components=country:ng";
-
-      var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
-
-      if(res == "failed"){
-        return ;
-      }
-
-      if(res["status"] == "OK"){
-        var predictions = res["predictions"];
-
-        var placesList = (predictions as List).map((e) => PlacePredictions.fromJson(e)).toList();
-
-        setState(() {
-          dropOffPlacePredictionList = placesList;
-        });
-      }
-
-    }
-
-  }
 }
 
-class DropOffPredictionTile extends StatelessWidget {
-  final PlacePredictions? placePredictions;
-  DropOffPredictionTile({Key? key, this.placePredictions}) : super(key: key);
-
-  TextEditingController dropOffTextEditingController = TextEditingController();
-  TextEditingController pickUpTextEditingController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
-    pickUpTextEditingController.text = placeAddress!;
-
-    return TextButton(
-      onPressed: (){
-        getPlaceAddressDetails(placePredictions!.place_id ??"", context);
-      },
-      child: Column(
-        children: [
-          const SizedBox(height: 8.0,),
-          Row(
-            children: [
-              const Icon(Icons.add_location),
-              const SizedBox(height: 14.0,),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8.0,),
-                    Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
-                    const SizedBox(height: 2.0,),
-                    Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
-                    const SizedBox(height: 8.0,),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10.0,),
-        ],
-      ),
-    );
-  }
-
-  void getPlaceAddressDetails(String placeId, context) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => const ProgressDialog(message: "Setting Location, Please wait....",)
-    );
-
-    String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKay";
-    var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
-    if(res == "failed"){
-      return;
-    }
-    if(res["status"] == "OK"){
-      Address address = Address();
-      address.placeName = res["result"]["name"];
-      address.placeId = placeId;
-      address.latitude = res["result"]["geometry"]["location"]["lat"];
-      address.longitude = res["result"]["geometry"]["location"]["lng"];
-      Provider.of<AppData>(context, listen: false).updateDropOffLocationAddress(address);
-
-      String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
-      dropOffTextEditingController.text = dropPlaceAddress!;
-
-      BookingAddress bookingAddress = BookingAddress();
-      bookingAddress.pickUpLocation = pickUpTextEditingController.text;
-      bookingAddress.dropOffLocation = dropOffTextEditingController.text;
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
-    }
-  }
-}
+// class DropOffPredictionTile extends StatelessWidget {
+//   final PlacePredictions? placePredictions;
+//   DropOffPredictionTile({Key? key, this.placePredictions}) : super(key: key);
+//
+//   TextEditingController dropOffTextEditingController = TextEditingController();
+//   TextEditingController pickUpTextEditingController = TextEditingController();
+//   @override
+//   Widget build(BuildContext context) {
+//     String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+//     pickUpTextEditingController.text = placeAddress!;
+//
+//     return TextButton(
+//       onPressed: (){
+//         // getPlaceAddressDetails(placePredictions!.place_id ??"", context);
+//       },
+//       child: Column(
+//         children: [
+//           const SizedBox(height: 8.0,),
+//           Row(
+//             children: [
+//               const Icon(Icons.add_location),
+//               const SizedBox(height: 14.0,),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     const SizedBox(height: 8.0,),
+//                     Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
+//                     const SizedBox(height: 2.0,),
+//                     Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
+//                     const SizedBox(height: 8.0,),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 10.0,),
+//         ],
+//       ),
+//     );
+//   }
+//
+// }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/configMaps.dart';
+import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/colors.dart';
@@ -25,6 +27,8 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
 
   final TextEditingController pickUpTextEditingController = TextEditingController();
   List<PlacePredictions> placePredictionList = [];
+  final GetXSwitchState getXSwitchState = Get.find();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -33,19 +37,77 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
     pickUpTextEditingController.dispose();
   }
 
+  void findPlace(String placeName) async {
+
+    if(placeName.length > 1){
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKay&components=country:ng";
+
+      var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
+
+      if(res == "failed"){
+        return ;
+      }
+
+      if(res["status"] == "OK"){
+        var predictions = res["predictions"];
+
+        var placesList = (predictions as List).map((e) => PlacePredictions.fromJson(e)).toList();
+
+        setState(() {
+          placePredictionList = placesList;
+        });
+      }
+
+    }
+
+  }
+
+  void getPlaceAddressDetails(String placeId, context) async {
+    // print(placeId);
+
+    try{
+      setState(() {
+        isLoading = true;
+      });
+
+      String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKay";
+      var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
+      if(res == "failed"){
+        return;
+      }
+      if(res["status"] == "OK") {
+        Address address = Address();
+        address.placeName = res["result"]["name"];
+        address.placeId = placeId;
+        address.latitude = res["result"]["geometry"]["location"]["lat"];
+        address.longitude = res["result"]["geometry"]["location"]["lng"];
+
+        Provider.of<AppData>(context, listen: false)
+            .updatePickUpLocationAddress(address);
+        // String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+
+        pickUpTextEditingController.text = address.placeName!;
+
+        print(address.placeName);
+      }
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-
-    String? placeAddress = Provider.of<AppData>(context).pickUpLocation?.placeName;
-
+    var isDark = getXSwitchState.isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => Get.back(), icon: const Icon(LineAwesomeIcons.angle_left)),
-        title: Text(moPickupSearchTitle, style: Theme.of(context).textTheme.headline5),
+        title: Text(moPickupSearchTitle, style: Theme.of(context).textTheme.headlineSmall),
         backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: false,
@@ -54,8 +116,8 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
           children: [
             Container(
               height: 180.0,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black87.withOpacity(0.001) : Colors.white,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -96,7 +158,9 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(width: 1.0, color: PButtonColor),
                                   ),
-                                  label: const Text("PickUp"),
+                                  label: Text("PickUp", style: TextStyle(
+                                      color: isDark ? Colors.white.withOpacity(0.9) : Colors.black38
+                                  ),),
                                   contentPadding: const EdgeInsets.only(
                                       left: 11.0, top: 8.0, bottom: 8.0),
                                 ),
@@ -111,6 +175,9 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
               ),
             ),
 
+            if(isLoading)
+              const ProgressDialog(message: "Setting Location, Please wait....",),
+
             //tile for prediction
             const SizedBox(height: 10.0,),
             (placePredictionList.isNotEmpty)
@@ -119,7 +186,35 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
                     child: ListView.separated(
                       padding: const EdgeInsets.all(0.0),
                       itemBuilder: (context, index){
-                        return PredictionTile(placePredictions: placePredictionList[index],);
+                        return TextButton(
+                          onPressed: (){
+                            getPlaceAddressDetails(placePredictionList[index].place_id ??"", context);
+                          },
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 8.0,),
+                              Row(
+                                children: [
+                                  const Icon(Icons.add_location),
+                                  const SizedBox(height: 14.0,),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 8.0,),
+                                        Text(placePredictionList[index].main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headline6,),
+                                        const SizedBox(height: 2.0,),
+                                        Text(placePredictionList[index].secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyText2,),
+                                        const SizedBox(height: 8.0,),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10.0,),
+                            ],
+                          ),
+                        );;
                       },
                       separatorBuilder: (BuildContext context, int index) => const Divider(height: 5.0,),
                       itemCount: placePredictionList.length,
@@ -142,90 +237,46 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
       ),
     );
   }
-  void findPlace(String placeName) async {
 
-    if(placeName.length > 1){
-      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM&components=country:ng";
-
-      var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
-
-      if(res == "failed"){
-        return ;
-      }
-
-      if(res["status"] == "OK"){
-        var predictions = res["predictions"];
-
-        var placesList = (predictions as List).map((e) => PlacePredictions.fromJson(e)).toList();
-
-        setState(() {
-          placePredictionList = placesList;
-        });
-      }
-
-    }
-
-  }
 
 }
 
-class PredictionTile extends StatelessWidget {
-  final PlacePredictions? placePredictions;
-  const PredictionTile({Key? key, this.placePredictions}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: (){
-        getPlaceAddressDetails(placePredictions!.place_id ??"", context);
-      },
-      child: Column(
-        children: [
-          const SizedBox(height: 8.0,),
-          Row(
-            children: [
-              const Icon(Icons.add_location),
-              const SizedBox(height: 14.0,),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8.0,),
-                    Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headline6,),
-                    const SizedBox(height: 2.0,),
-                    Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyText2,),
-                    const SizedBox(height: 8.0,),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10.0,),
-        ],
-      ),
-    );
-  }
-
-  void getPlaceAddressDetails(String placeId, context) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => const ProgressDialog(message: "Setting Location, Please wait....",)
-    );
-
-    String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM";
-    var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
-    if(res == "failed"){
-      return;
-    }
-    if(res["status"] == "OK"){
-      Address address = Address();
-      address.placeName = res["result"]["name"];
-      address.placeId = placeId;
-      address.latitude = res["result"]["geometry"]["location"]["lat"];
-      address.longitude = res["result"]["geometry"]["location"]["lng"];
-
-      Provider.of<AppData>(context, listen: false).updatePickUpLocationAddress(address);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const DropOffLocationScreen()),);
-    }
-  }
-}
+// class PredictionTile extends StatelessWidget {
+//   final PlacePredictions? placePredictions;
+//   const PredictionTile({Key? key, this.placePredictions}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextButton(
+//       onPressed: (){
+//         // getPlaceAddressDetails(placePredictions!.place_id ??"", context);
+//       },
+//       child: Column(
+//         children: [
+//           const SizedBox(height: 8.0,),
+//           Row(
+//             children: [
+//               const Icon(Icons.add_location),
+//               const SizedBox(height: 14.0,),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     const SizedBox(height: 8.0,),
+//                     Text(placePredictions!.main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headline6,),
+//                     const SizedBox(height: 2.0,),
+//                     Text(placePredictions!.secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyText2,),
+//                     const SizedBox(height: 8.0,),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 10.0,),
+//         ],
+//       ),
+//     );
+//   }
+//
+//
+// }
 
