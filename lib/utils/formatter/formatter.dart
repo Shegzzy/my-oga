@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 class MyOgaFormatter {
   // Currency formatter
   static String currencyFormatter(double amount){
-    return NumberFormat.currency(locale: 'en_NGN', symbol: '₦ ', decimalDigits: 0).format(amount);
+    return NumberFormat.currency(locale: 'en_NGN', symbol: 'N ', decimalDigits: 0, customPattern: '¤#,##0.00',
+    ).format(amount);
   }
 
   // Date formatter

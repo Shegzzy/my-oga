@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -49,7 +50,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         isLoading = true;
       });
 
-      String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKay";
+      String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${dotenv.env['mapKey']}";
       var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
       if(res == "failed"){
         return;
@@ -85,7 +86,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   void findDropPlace(String placeName) async {
 
     if(placeName.length > 1){
-      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=$mapKay&components=country:ng";
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=${dotenv.env['mapKey']}&components=country:ng";
 
       var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
 

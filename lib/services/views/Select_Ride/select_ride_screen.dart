@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../configMaps.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/image_strings.dart';
 import '../../../constants/texts_string.dart';
@@ -77,12 +79,12 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   late Position currentPosition;
   var geoLocator = Geolocator();
-  double bottomPaddingOfMap = 480.0;
+  double bottomPaddingOfMap = 420.0;
 
   Set<Marker> markersSet = {};
   Set<Circle> circlesSet = {};
 
-  double rideDetailsContainer = 480.0;
+  double rideDetailsContainer = 410.0;
   double requestDriverContainer = 0;
   double ridePriceContainer = 0;
 
@@ -103,7 +105,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   String? selectedRide;
    String? selectedDelivery;
-   String pubKey = 'pk_test_51c4b33f9510df51a4822f59bbbd555cdc0f3748';
+   // String? pubKey = pubKey;
    final plugin = PaystackPlugin();
    String message = "";
 
@@ -470,7 +472,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
 
-    CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14);
+    CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
     newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
   }
@@ -487,7 +489,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     super.initState();
     getPlaceDirection();
     modeFuture = _getAllModes();
-    plugin.initialize(publicKey: pubKey);
+    plugin.initialize(publicKey: '${dotenv.env['pubKey']}');
   }
 
   @override

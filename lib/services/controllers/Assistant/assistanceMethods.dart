@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myoga/configMaps.dart';
@@ -16,7 +17,7 @@ class AssistanceMethods {
 
   static Future<String> searchCoordinateAddress(Position position, context) async {
     String streetAddress = "";
-    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$mapKay";
+    String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=${dotenv.env['mapKey']}";
 
     var response = await RequestAssistanceController.getRequest(url);
 
@@ -36,7 +37,7 @@ class AssistanceMethods {
   }
 
   static Future<DirectionDetails?> obtainPlaceDirectionDetails(LatLng initialPosition, LatLng finalPosition) async {
-    String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=$mapKay";
+    String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=${dotenv.env['mapKey']}";
 
     var res = await RequestAssistanceController.getRequest(directionUrl);
     // print("Direction Response: $res");
