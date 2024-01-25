@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
 import 'package:myoga/services/controllers/getXSwitchStateController.dart';
+import 'package:myoga/services/views/Permission_request/permission_request_info.dart';
 import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:myoga/services/views/onboarding_screen/onboarding_screen.dart';
 import 'package:myoga/services/views/welcome_screen/welcome_screen.dart';
@@ -52,13 +55,24 @@ _init() async {
 
 _checkUserType() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  LocationPermission permission;
+  permission = await Geolocator.checkPermission();
   final iD = prefs.getString("aUserID");
   if (iD == null) {
     final iDd = prefs.getString("userID");
     final userDoc = await FirebaseFirestore.instance.collection("Users").doc(
         iDd).get();
     if (userDoc.exists) {
-      Get.offAll(() => const UserDashboard());
+      if(Platform.isAndroid){
+        if(permission == LocationPermission.denied){
+          Get.to(()=> const PermissionScreen());
+        }else{
+          Get.offAll(() => const UserDashboard());
+        }
+      }else{
+        Get.offAll(() => const UserDashboard());
+      }
+
     } else {
       Get.snackbar("Error", "No Access",
           snackPosition: SnackPosition.TOP,

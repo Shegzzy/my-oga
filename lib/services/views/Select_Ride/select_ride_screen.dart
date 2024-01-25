@@ -215,6 +215,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
         timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
           await checkOrderStatus(bookingNumber);
           counter++;
+          print(counter);
         });
       }
     });
@@ -233,7 +234,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
         });
       });
 
-      if(!mounted){return;}
+      if(!mounted) {
+        return;
+      }
 
       if(bookingModel?.status == 'active'){
         showDriverModal(context);

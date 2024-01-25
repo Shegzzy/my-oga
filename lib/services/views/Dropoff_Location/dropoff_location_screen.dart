@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:myoga/configMaps.dart';
+import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/colors.dart';
@@ -118,7 +119,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Get.back(), icon: const Icon(LineAwesomeIcons.angle_left)),
+            onPressed: () => Get.offAll( ()=> const UserDashboard()), icon: const Icon(LineAwesomeIcons.angle_left)),
         title: Text(moDropOffSearchTitle, style: Theme.of(context).textTheme.headlineSmall),
         backgroundColor: Colors.transparent,
       ),

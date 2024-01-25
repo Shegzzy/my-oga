@@ -140,36 +140,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     // ignore: use_build_context_synchronously
   }
 
-  // Showing a pop up message for location access
-  Future<void> _requestLocationPermission() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Location Permission"),
-              content: Text(
-                  "This is a courier app and for better service and easy pickup and deliveries, we need your location to provide courier services. Please grant location access."),
-              actions: [
-                TextButton(
-                  onPressed: () async{
-                    Navigator.pop(context);
-                    await locatePosition();
-                  },
-                  child: Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-     await locatePosition();
-    }
-  }
+
 
 
   void getToken() async {
@@ -184,7 +155,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
       });
       if(_token != prefs.getString("token")){
         updateToken();
-      }
+        }
       }
     );
   }
@@ -273,13 +244,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
               setState(() {
                 bottomPaddingOfMap = 280.0;
               });
-
-              if(Platform.isAndroid) {
-                await _requestLocationPermission();
-              }else{
-               await locatePosition();
-              }
-
+              locatePosition();
             },
           ),
           

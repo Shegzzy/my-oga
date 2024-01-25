@@ -28,9 +28,9 @@ class NotificationService {
       sound: true,
     );
     if(settings.authorizationStatus == AuthorizationStatus.authorized){
-
+      print('User permission granted');
     } else if(settings.authorizationStatus == AuthorizationStatus.provisional){
-
+      print('User permission provisional');
     } else {
       AppSettings.openNotificationSettings();
     }

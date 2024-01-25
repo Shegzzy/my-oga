@@ -1,7 +1,9 @@
-
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:myoga/services/views/Permission_request/permission_request_info.dart';
 import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -180,8 +182,18 @@ class AuthenticationRepository extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final iD = prefs.getString("userID");
     final userDoc =  await FirebaseFirestore.instance.collection("Users").doc(iD).get();
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
     if(userDoc.exists){
-      Get.offAll(() => const UserDashboard());
+      if(Platform.isAndroid){
+        if(permission == LocationPermission.denied){
+          Get.to(()=> const PermissionScreen());
+        }else{
+          Get.offAll(() => const UserDashboard());
+        }
+      }else{
+        Get.offAll(() => const UserDashboard());
+      }
     } else{
       Get.snackbar("Error", "No Access",
           snackPosition: SnackPosition.TOP,
