@@ -19,6 +19,7 @@ class _RatingScreenState extends State<RatingScreen> {
   double ratingValue = 0.0;
   String? rider;
   final _db = FirebaseFirestore.instance;
+  bool isLoading = false;
 
   void saveRating() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -26,22 +27,30 @@ class _RatingScreenState extends State<RatingScreen> {
     final userEmail = prefs.getString("userEmail");
     final userPic = prefs.getString("userPic");
 
-    final data = {
-      "name": userName,
-      "email": userEmail,
-      "photo": userPic,
-      "rating": ratingValue,
-      "dateCreated": DateTime.now().toString(),
-      "timeStamp": Timestamp.now(),
-    };
+      final data = {
+        "name": userName,
+        "email": userEmail,
+        "photo": userPic,
+        "rating": ratingValue,
+        "dateCreated": DateTime.now().toString(),
+        "timeStamp": Timestamp.now(),
+      };
 
     try{
-      await _db.collection('Drivers').doc(rider).collection('Ratings').add(data).whenComplete(() => Get.snackbar(
+      setState(() {
+        isLoading = true;
+      });
+      await _db.collection('Drivers').doc(rider).collection('Ratings').add(data).whenComplete(() {
+        print("Rating submitted successfully");
+
+        Get.snackbar(
           "Success", "Rating Submitted.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.white,
           colorText: Colors.green,
-        ),
+        );
+        Navigator.pop(context);
+      }
       ).catchError((error, stackTrace) {
           Get.snackbar("Error", "Something went wrong. Try again.",
             snackPosition: SnackPosition.BOTTOM,
@@ -50,12 +59,19 @@ class _RatingScreenState extends State<RatingScreen> {
       });
     } catch (e){
       Get.snackbar(
-        "Error", e.toString(), snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white,
-        colorText: Colors.red,
+        "Error",
+        "Something went wrong. Try again.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
+
 
   @override
   void initState() {
@@ -133,7 +149,7 @@ class _RatingScreenState extends State<RatingScreen> {
                         .of(context)
                         .elevatedButtonTheme
                         .style,
-                    child: Text("Submit Rating".toUpperCase()),
+                    child: isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(),) : Text("Submit Rating".toUpperCase()),
                   ),
                 ),
                 const SizedBox(
