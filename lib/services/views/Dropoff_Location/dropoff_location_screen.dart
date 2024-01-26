@@ -33,18 +33,33 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   TextEditingController dropOffTextEditingController = TextEditingController();
   TextEditingController pickUpTextEditingController = TextEditingController();
   List<PlacePredictions> dropOffPlacePredictionList = [];
+  List<PlacePredictions> pickUpPlacePredictionList = [];
+  String? placeAddress;
+  bool dropOffPrediction = false;
+  bool pickUpPrediction = false;
+
+
   final GetXSwitchState getXSwitchState = Get.find();
   bool isLoading = false;
 
+  TextEditingController userInputTextEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+    pickUpTextEditingController.text = placeAddress ?? "";
+  }
+
 @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     dropOffTextEditingController.dispose();
     pickUpTextEditingController.dispose();
   }
 
-  void getPlaceAddressDetails(String placeId, context) async {
+  // Drop off place address
+  Future<void> getDropOffPlaceAddressDetails(String placeId, context) async {
 
     try{
       setState(() {
@@ -71,7 +86,11 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         BookingAddress bookingAddress = BookingAddress();
         bookingAddress.pickUpLocation = pickUpTextEditingController.text;
         bookingAddress.dropOffLocation = dropOffTextEditingController.text;
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+        if(pickUpTextEditingController.text.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+        }else{
+          return;
+        }
       }
     }catch (e){
       print('Error $e');
@@ -84,6 +103,51 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
   }
 
+  // Pick up place address
+  Future<void> getPickUpPlaceAddressDetails(String placeId, context) async {
+    // print(placeId);
+
+    try{
+      setState(() {
+        isLoading = true;
+      });
+
+      String placeDetailsUrl = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${dotenv.env['mapKey']}";
+      var res = await RequestAssistanceController.getRequest(placeDetailsUrl);
+      if(res == "failed"){
+        return;
+      }
+      if(res["status"] == "OK") {
+        Address address = Address();
+        address.placeName = res["result"]["name"];
+        address.placeId = placeId;
+        address.latitude = res["result"]["geometry"]["location"]["lat"];
+        address.longitude = res["result"]["geometry"]["location"]["lng"];
+
+        Provider.of<AppData>(context, listen: false)
+            .updatePickUpLocationAddress(address);
+        // String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+
+        pickUpTextEditingController.text = address.placeName!;
+        if(dropOffTextEditingController.text.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+        }else{
+          return;
+        }
+
+        print(address.placeName);
+      }
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
+  // Drop off function
   void findDropPlace(String placeName) async {
 
     if(placeName.length > 1){
@@ -109,13 +173,39 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
   }
 
+  // Pick up function
+  void findPickUpPlace(String placeName) async {
+
+    if(placeName.length > 1){
+      String autoCompleteUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placeName&key=${dotenv.env['mapKey']}&components=country:ng";
+
+      var res = await RequestAssistanceController.getRequest(autoCompleteUrl);
+
+      if(res == "failed"){
+        return ;
+      }
+
+      if(res["status"] == "OK"){
+        var predictions = res["predictions"];
+
+        var placesList = (predictions as List).map((e) => PlacePredictions.fromJson(e)).toList();
+
+        setState(() {
+          pickUpPlacePredictionList = placesList;
+        });
+      }
+
+    }
+
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
     var isDark = getXSwitchState.isDarkMode;
-    String? placeAddress = Provider.of<AppData>(context).pickUpLocation?.placeName;
-    pickUpTextEditingController.text = placeAddress ?? "";
+    // placeAddress = Provider.of<AppData>(context).pickUpLocation?.placeName;
+    // pickUpTextEditingController.text = placeAddress ?? "";
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -157,8 +247,17 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextField(
-                                onChanged: (val){
-                                  Get.to(const PickupLocationScreen());
+                                onTap: () {
+                                  // Switch to the user input controller
+                                  setState(() {
+                                    userInputTextEditingController.text = pickUpTextEditingController.text;
+                                  });
+                                },
+                                onChanged: (val) {
+                                  setState(() {
+                                    userInputTextEditingController.text = val;
+                                  });
+                                  findPickUpPlace(val);
                                 },
                                 controller: pickUpTextEditingController,
                                 decoration: InputDecoration(
@@ -235,7 +334,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
             if(isLoading)
               const ProgressDialog(message: "Setting Location, Please wait....",),
 
-            //tile for prediction
+            //tile for drop off prediction
             const SizedBox(height: 10.0,),
             (dropOffPlacePredictionList.isNotEmpty)
                 ? Padding(
@@ -244,8 +343,9 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                 padding: const EdgeInsets.all(0.0),
                 itemBuilder: (context, index){
                   return TextButton(
-                    onPressed: (){
-                      getPlaceAddressDetails(dropOffPlacePredictionList[index].place_id ??"", context);
+                    onPressed: () async{
+                      await getDropOffPlaceAddressDetails(dropOffPlacePredictionList[index].place_id ??"", context);
+                      dropOffPlacePredictionList.clear();
                     },
                     child: Column(
                       children: [
@@ -280,13 +380,60 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
               ),
             )
                 : Container(),
+
+            //tile for pick up prediction
+            const SizedBox(height: 10.0,),
+            (pickUpPlacePredictionList.isNotEmpty)
+                ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(0.0),
+                itemBuilder: (context, index){
+                  return TextButton(
+                    onPressed: () async{
+                      await getPickUpPlaceAddressDetails(pickUpPlacePredictionList[index].place_id ??"", context);
+                      pickUpPlacePredictionList.clear();
+                    },
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 8.0,),
+                        Row(
+                          children: [
+                            const Icon(Icons.add_location),
+                            const SizedBox(height: 14.0,),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8.0,),
+                                  Text(pickUpPlacePredictionList[index].main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
+                                  const SizedBox(height: 2.0,),
+                                  Text(pickUpPlacePredictionList[index].secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
+                                  const SizedBox(height: 8.0,),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0,),
+                      ],
+                    ),
+                  );;
+                },
+                separatorBuilder: (BuildContext context, int index) => const Divider(height: 5.0,),
+                itemCount: pickUpPlacePredictionList.length,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+              ),
+            )
+                : Container(),
             const SizedBox(height: 20.0,),
             SizedBox(
               width: 250.0,
               child: ElevatedButton(onPressed: (){
                 BookingAddress bookingAddress = BookingAddress();
-                bookingAddress.pickUpLocation = pickUpTextEditingController.text;
-                bookingAddress.dropOffLocation = dropOffTextEditingController.text;
+                bookingAddress.pickUpLocation = pickUpTextEditingController!.text;
+                bookingAddress.dropOffLocation = dropOffTextEditingController!.text;
                 Navigator.pop(context);
                 Get.to(() => const SelectRideScreen());
               },

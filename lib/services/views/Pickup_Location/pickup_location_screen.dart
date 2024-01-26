@@ -203,9 +203,9 @@ class _PickupLocationScreenState extends State<PickupLocationScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const SizedBox(height: 8.0,),
-                                        Text(placePredictionList[index].main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headline6,),
+                                        Text(placePredictionList[index].main_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge,),
                                         const SizedBox(height: 2.0,),
-                                        Text(placePredictionList[index].secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyText2,),
+                                        Text(placePredictionList[index].secondary_text ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium,),
                                         const SizedBox(height: 8.0,),
                                       ],
                                     ),

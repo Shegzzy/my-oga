@@ -40,7 +40,8 @@ class _RatingScreenState extends State<RatingScreen> {
           "Success", "Rating Submitted.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.white,
-          colorText: Colors.green),
+          colorText: Colors.green,
+        ),
       ).catchError((error, stackTrace) {
           Get.snackbar("Error", "Something went wrong. Try again.",
             snackPosition: SnackPosition.BOTTOM,
@@ -58,7 +59,6 @@ class _RatingScreenState extends State<RatingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     rider = widget.driverID;
   }
