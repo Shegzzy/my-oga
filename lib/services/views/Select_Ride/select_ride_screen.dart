@@ -90,6 +90,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   bool drawerOpen = true;
   late Timer timer;
+  bool isTimerRunning = false;
+
   int counter = 0;
   String? amount;
   late DocumentReference bookingRequestReference;
@@ -192,6 +194,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
     timer.cancel();
+    setState(() {
+      isTimerRunning = false;
+    });
     Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
 
     // OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
@@ -218,6 +223,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       drawerOpen = false;
       if(mounted){
         timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+          setState(() {
+            isTimerRunning = true;
+          });
           await checkOrderStatus(bookingNumber);
           counter++;
           print(counter);
@@ -246,9 +254,15 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       if(bookingModel?.status == 'active'){
         showDriverModal(context);
         timer.cancel();
+        setState(() {
+          isTimerRunning = false;
+        });
       } else if(counter >= 10){
         if(!mounted){return;}
         timer.cancel();
+        setState(() {
+          isTimerRunning = false;
+        });
         resetApp();
         showNoDriverAlert(context);
       }
@@ -266,7 +280,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(30))
       ),
-      builder: (context) => Container(
+      builder: (context) => SizedBox(
         height: 380,
           child: SingleChildScrollView(child: DriverStatusScreen(driverID: bookingModel?.driver_id, bookingModel: bookingModel,)),
         ),
@@ -1004,16 +1018,20 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
           ),
         ],
       ),
+
       floatingActionButton: DraggableFab(
           child: FloatingActionButton(
             onPressed: () {
-              if(!mounted){
+              if(isTimerRunning){
                 timer.cancel();
+                setState(() {
+                  isTimerRunning = false;
+                });
+                resetApp();
               }else{
-                timer.cancel();
+                resetApp();
               }
-              resetApp();
-              },
+            },
         backgroundColor: PButtonColor,
         elevation: 10.0,
         child: const Icon(LineAwesomeIcons.times,
