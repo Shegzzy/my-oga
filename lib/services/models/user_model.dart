@@ -41,9 +41,9 @@ class UserModel {
       "Profile Photo": profilePic,
       "Gender": gender,
       "Date of Birth": dateOfBirth,
-      "Token": token,
-      "timeStamp": timeStamp,
-      "Date Created": dateCreated,
+      // "Token": token,
+      // "timeStamp": timeStamp,
+      // "Date Created": dateCreated,
     };
   }
 

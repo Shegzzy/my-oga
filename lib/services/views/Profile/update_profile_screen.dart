@@ -50,7 +50,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () => Get.back(),
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(LineAwesomeIcons.angle_left)),
           title: Text(moEditProfile, style: Theme.of(context).textTheme.headlineMedium),
           centerTitle: true,
@@ -185,7 +185,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                   dateOfBirth: dob.text.trim(),
                                                 );
                                                 await controller.updateRecord(userData);
-                                                Get.off(() => const ProfileScreen());
+                                                if(mounted){
+                                                  Navigator.pop(context);
+                                                }
                                               },
                                               style: ElevatedButton.styleFrom(
                                                   backgroundColor: PButtonColor,
