@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -12,6 +16,7 @@ import '../../repositories/user_repository/user_repository.dart';
 import '../controllers/profile_controller.dart';
 import '../models/booking_model.dart';
 import '../models/driverModel.dart';
+import '../models/orderStatusModel.dart';
 import 'Navigation_Screen/navigation_screen.dart';
 import 'Order_Status_Screen/order_status.dart';
 import '../../../constants/texts_string.dart';
@@ -28,17 +33,26 @@ class BookingDetailsScreen extends StatefulWidget {
 
 class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   final BookingModel bookingData;
+  BookingModel? bookingModel;
   _BookingDetailsScreenState({required this.bookingData});
 
   ProfileController controller = Get.put(ProfileController());
   final userController = Get.put(UserRepository());
   final GetXSwitchState getXSwitchState = GetXSwitchState();
   DriverModel? _driverModel;
+  CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
+  CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
+  bool cancelingBooking = false;
+  late StreamSubscription<BookingModel> _bookingStatusSubscription;
+  final bookingsRef = FirebaseFirestore.instance.collection('Bookings');
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _startListeningToBookingStatusChanges();
     if (bookingData.driver_id == null) {
       return;
     } else {
@@ -48,13 +62,58 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     }
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //   controller.dispose();
-  //   userController.dispose();
-  // }
+  @override
+  void dispose() {
+    _bookingStatusSubscription.cancel();
+    super.dispose();
+    // controller.dispose();
+    // userController.dispose();
+  }
+
+  void _startListeningToBookingStatusChanges() {
+    print('started');
+    _bookingStatusSubscription = userController.getBookingStatusData(bookingData.bookingNumber!).listen((event) {
+      setState(() {
+        bookingModel = event;
+      });
+      // print(bookingModel?.status);
+    });
+  }
+
+  // canceling booking
+  Future<void> cancelBookingRequest(String bookingNumber) async {
+    try{
+      setState(() {
+        cancelingBooking = true;
+      });
+
+      BookingModel bookingInfo = await userController.getBookingDetails(bookingNumber);
+      if(bookingInfo.status == 'pending'){
+        await _ref.doc(bookingInfo.id.toString()).delete();
+        if(mounted){
+          Navigator.pop(context);
+        }
+        Get.back(result: true);
+        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
+      }else if(bookingInfo.status == 'active'){
+        OrderStatusModel orderStatusModel = await userController.getBookingOrderStatus(bookingNumber);
+        await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+        await _ref.doc(bookingInfo.id.toString()).delete();
+        if(mounted){
+          Navigator.pop(context);
+        }
+        Get.back(result: true);
+        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
+      }
+
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        cancelingBooking = false;
+      });
+    }
+  }
 
   Future<void> showDriverDialog(BuildContext context) async {
     var isDark = getXSwitchState.isDarkMode;
@@ -229,6 +288,55 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     );
   }
 
+  void showDeleteAlert(BuildContext context, String bookingNumber) async {
+    return await showDialog(context: context, builder: (context){
+      print(bookingNumber);
+      var isDark = getXSwitchState.isDarkMode;
+      return AlertDialog(
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.warning_rounded, size: 22, color: Colors.redAccent,),
+            const SizedBox(height: 5,),
+
+            Text("Notice!", style: Theme.of(context).textTheme.titleLarge,),
+            const SizedBox(height: 10,),
+
+            Text("Are you sure you want to cancel this booking?",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 10,),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: Theme.of(context).outlinedButtonTheme.style,
+                    child: Text("No".toUpperCase()),
+                  ),
+                ),
+                const SizedBox(width: 10.0,),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async{
+                      await cancelBookingRequest(bookingNumber);
+                    },
+                    style: Theme.of(context).elevatedButtonTheme.style,
+                    child: Text("Yes".toUpperCase()),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -255,11 +363,25 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Center(
-                  child: Text(
-                    "BN: ${bookingData.bookingNumber}",
-                    style: theme.textTheme.headlineSmall,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "BN: ${bookingData.bookingNumber}",
+                      style: theme.textTheme.headlineSmall,
+                    ),
+
+                    if(bookingModel?.status == 'active' || bookingModel?.status == 'pending')
+                      Center(
+                        child: TextButton(
+                            onPressed: () async {
+                              // print(snapshot.data![index].bookingNumber);
+                              showDeleteAlert(context, bookingData.bookingNumber!);
+                            },
+                            child: const Text('Cancel Booking')
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(
                   height: 15,
@@ -423,7 +545,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                       width: 10,
                     ),
                     Flexible(
-                      child: bookingData.status == 'completed'
+                      child: bookingModel?.status == 'completed'
                           ? TextButton(
                             child: const Text(
                               "Rate Rider",
@@ -440,7 +562,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                             },
                           )
                           : Text(
-                              "Status: ${bookingData.status}",
+                              "Status: ${bookingModel?.status}",
                               style: theme.textTheme.titleSmall,
                             ),
                     ),

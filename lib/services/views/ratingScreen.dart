@@ -41,7 +41,7 @@ class _RatingScreenState extends State<RatingScreen> {
         isLoading = true;
       });
       await _db.collection('Drivers').doc(rider).collection('Ratings').add(data).whenComplete(() {
-        print("Rating submitted successfully");
+        // print("Rating submitted successfully");
 
         Get.snackbar(
           "Success", "Rating Submitted.",

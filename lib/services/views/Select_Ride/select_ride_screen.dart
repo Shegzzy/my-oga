@@ -95,7 +95,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   late DocumentReference bookingRequestReference;
   late Future<List<DeliveryModeModel>?> modeFuture;
   CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
-  CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
+  // CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
   UserRepository userRepo = Get.put(UserRepository());
   final controller = Get.put(SignUpController());
   final _addController = TextEditingController();
@@ -191,7 +191,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   Future<void> cancelBookingRequest(String bookingNumber)async {
     BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
-
+    timer.cancel();
     Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
 
     // OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
@@ -505,7 +505,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   @override
   void dispose() {
     // TODO: implement dispose
-    _pController.dispose();
+    // _pController.dispose();
     //controller.dispose();
     //_addController.dispose();
     // userRepo.dispose();
@@ -995,23 +995,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                         width: double.infinity,
                         child: Text("Cancel Booking", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
                       ),
-
-                      const SizedBox(height: 5.0,),
-                      GestureDetector(
-                        onTap: (){
-                          Get.offAll(() => const UserDashboard());
-                        },
-                        child: Container(
-                          height: 50.0,
-                          width: 50.0,
-                          decoration: BoxDecoration(
-                              color: Colors.purple.shade100,
-                              borderRadius: BorderRadius.circular(30.0),
-                              border: Border.all(width: 2.0, color: Colors.purple.shade50,)
-                          ),
-                          child: const Text('OK'),
-                        ),
-                      ),
+                      const SizedBox(height: 15.0,),
                     ],
                   ),
                 ),
@@ -1023,7 +1007,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       floatingActionButton: DraggableFab(
           child: FloatingActionButton(
             onPressed: () {
-              timer.cancel();
+              if(!mounted){
+                timer.cancel();
+              }else{
+                timer.cancel();
+              }
               resetApp();
               },
         backgroundColor: PButtonColor,

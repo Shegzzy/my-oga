@@ -99,7 +99,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
       print('Error $e');
     }finally{
       setState(() {
-        cancelingBooking = true;
+        cancelingBooking = false;
       });
     }
   }
@@ -141,7 +141,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       await cancelBookingRequest(bookingNumber);
                     },
                     style: Theme.of(context).elevatedButtonTheme.style,
-                    child: cancelingBooking ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
+                    child: cancelingBooking ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
                   ),
                 )
               ],

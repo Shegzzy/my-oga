@@ -123,7 +123,6 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     NotificationService().requestNotificationPermission();
     NotificationService().firebaseInit(context);
@@ -145,16 +144,16 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
 
   void getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? saveToken = prefs.getString("token");
+    String? savedToken = prefs.getString("token");
     await NotificationService().getDeviceToken().then((token) {
       if (kDebugMode) {
         print(" YOUR TOKEN IS: $token");
-        print(" YOUR Pref TOKEN IS: ${prefs.getString("token")}");
+        print(" YOUR Pref TOKEN IS: $savedToken");
       }
       setState(() {
         _token = token;
       });
-      if(_token != prefs.getString("token") || prefs.getString("token") == null){
+      if(_token != savedToken || savedToken == null){
         updateToken();
         }
       }
