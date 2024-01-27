@@ -109,6 +109,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
    final plugin = PaystackPlugin();
    String message = "";
 
+  //  Delivery mode
   Widget SelectDeveryMode(IconData icon, String? index, String? title, String? subtitle, String price, String distance,){
 
     var isDark = getXSwitchState.isDarkMode;
@@ -158,6 +159,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     );
   }
 
+  // Select ride type
   Widget SelectRide(IconData icon, String index, String text){
     var isDark = getXSwitchState.isDarkMode;
     return GestureDetector(
@@ -185,17 +187,20 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     );
   }
 
-  Future <void> cancelBookingRequest(String bookingNumber)async {
+  // Method for canceling booking
+  Future<void> cancelBookingRequest(String bookingNumber)async {
     BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
 
-    OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
+    Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
 
-    if(_refOrderStatus.doc().id.isNotEmpty){
-      _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
-    }else {
-      return;
-    }
+    // OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
+    //
+    // if(_refOrderStatus.doc().id.isNotEmpty){
+    //   _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+    // }else {
+    //   return;
+    // }
 
   }
 
@@ -206,7 +211,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   void displayRequestDriverContainer( String bookingNumber) {
     setState(() {
-      requestDriverContainer = 380.0;
+      requestDriverContainer = 420.0;
       ridePriceContainer = 0;
       rideDetailsContainer = 0;
       bottomPaddingOfMap = 380.0;
@@ -241,9 +246,10 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       if(bookingModel?.status == 'active'){
         showDriverModal(context);
         timer.cancel();
-      } else if(counter >= 130){
+      } else if(counter >= 10){
         if(!mounted){return;}
         timer.cancel();
+        resetApp();
         showNoDriverAlert(context);
       }
     } else{
@@ -316,7 +322,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Get.offAll(() => const UserDashboard());
+                          Navigator.pop(context);
                         },
                         style: Theme.of(context).elevatedButtonTheme.style,
                         child: Text("OK".toUpperCase()),
@@ -339,6 +345,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       markersSet.clear();
       circlesSet.clear();
       pLineCoordinates.clear();
+      // userRepo.dispose();
       Get.offAll(() => const UserDashboard());
     });
   }
@@ -498,11 +505,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
-    //_pController.dispose();
+    _pController.dispose();
     //controller.dispose();
     //_addController.dispose();
-    //userRepo.dispose();
+    // userRepo.dispose();
+    super.dispose();
   }
   
   @override
@@ -859,135 +866,154 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
             bottom: 0.0,
             left: 0.0,
             right: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0),),
-                color: isDark ? Colors.black87 : Colors.white,
-              ),
-              height: requestDriverContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Text("Order Placed", style: Theme.of(context).textTheme.headlineSmall,),
-                    const SizedBox(height: 12.0,),
-                    SizedBox(
-                      width: double.infinity,
-                      child: AnimatedTextKit(
-                        animatedTexts: [
-                          ColorizeAnimatedText(
-                            'Booking Request Processing....',
-                            textStyle: colorizeTextStyle, textAlign: TextAlign.center,
-                            colors: colorizeColors,
+            child: SingleChildScrollView(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0),),
+                  color: isDark ? Colors.black87 : Colors.white,
+                ),
+                height: requestDriverContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Text("Order Placed", style: Theme.of(context).textTheme.headlineSmall,),
+                      const SizedBox(height: 12.0,),
+                      SizedBox(
+                        width: double.infinity,
+                        child: AnimatedTextKit(
+                          animatedTexts: [
+                            ColorizeAnimatedText(
+                              'Booking Request Processing....',
+                              textStyle: colorizeTextStyle, textAlign: TextAlign.center,
+                              colors: colorizeColors,
+                            ),
+                            ColorizeAnimatedText(
+                              'Please Wait....',
+                              textStyle: colorizeTextStyle, textAlign: TextAlign.center,
+                              colors: colorizeColors,
+                            ),
+                            ColorizeAnimatedText(
+                              'Looking for your rider..',
+                              textStyle: colorizeTextStyle, textAlign: TextAlign.center,
+                              colors: colorizeColors,
+                            ),
+                          ],
+                          isRepeatingAnimation: true,
+                          onTap: () {},
+
+                        ),
+                      ),
+                      const SizedBox(height: 12.0,),
+                      Row(
+                        children: [
+                          const Image(
+                            image: AssetImage(moPickupPic),
+                            height: 16.0,
+                            width: 16.0,
                           ),
-                          ColorizeAnimatedText(
-                            'Please Wait....',
-                            textStyle: colorizeTextStyle, textAlign: TextAlign.center,
-                            colors: colorizeColors,
+                          const SizedBox(
+                            width: 10.0,
                           ),
-                          ColorizeAnimatedText(
-                            'Looking for your rider..',
-                            textStyle: colorizeTextStyle, textAlign: TextAlign.center,
-                            colors: colorizeColors,
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(moPickupHintText,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(pickUpLocation,
+                                style: Theme.of(context).textTheme.titleLarge,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ),
                         ],
-                        isRepeatingAnimation: true,
-                        onTap: () {},
+                      ),
+                      const SizedBox(height: 3.0),
+                      Row(
+                        children: [
+                          const Image(
+                            image: AssetImage(moPickupPic ),
+                            height: 16.0,
+                            width: 16.0,
+                          ),
+                          const SizedBox(
+                            width: 10.0,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(moDropOffHintText,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(dropOffLocation,
+                                style: Theme.of(context).textTheme.titleLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12.0,),
+                      Text("Distance: ${tripDirectionDetails.distanceText}", style: Theme.of(context).textTheme.bodyMedium,),
+                      Text("Duration: ${tripDirectionDetails.durationText}", style: Theme.of(context).textTheme.bodyMedium,),
+                      const SizedBox(height: 12.0,),
+                      GestureDetector(
+                        onTap: () async {
+                          await cancelBookingRequest(bookingNumber);
+                          resetApp();
+                        },
+                        child: Container(
+                          height: 50.0,
+                          width: 50.0,
+                          decoration: BoxDecoration(
+                            color: Colors.purple.shade100,
+                            borderRadius: BorderRadius.circular(30.0),
+                            border: Border.all(width: 2.0, color: Colors.purple.shade50,)
+                          ),
+                          child: const Icon(Icons.close, size: 20.0,),
+                        ),
+                      ),
+                      const SizedBox(height: 5.0,),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text("Cancel Booking", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+                      ),
 
+                      const SizedBox(height: 5.0,),
+                      GestureDetector(
+                        onTap: (){
+                          Get.offAll(() => const UserDashboard());
+                        },
+                        child: Container(
+                          height: 50.0,
+                          width: 50.0,
+                          decoration: BoxDecoration(
+                              color: Colors.purple.shade100,
+                              borderRadius: BorderRadius.circular(30.0),
+                              border: Border.all(width: 2.0, color: Colors.purple.shade50,)
+                          ),
+                          child: const Text('OK'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12.0,),
-                    Row(
-                      children: [
-                        const Image(
-                          image: AssetImage(moPickupPic),
-                          height: 16.0,
-                          width: 16.0,
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(moPickupHintText,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(pickUpLocation,
-                              style: Theme.of(context).textTheme.titleLarge,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 3.0),
-                    Row(
-                      children: [
-                        const Image(
-                          image: AssetImage(moPickupPic ),
-                          height: 16.0,
-                          width: 16.0,
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(moDropOffHintText,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(dropOffLocation,
-                              style: Theme.of(context).textTheme.titleLarge,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12.0,),
-                    Text("Distance: ${tripDirectionDetails.distanceText}", style: Theme.of(context).textTheme.bodyMedium,),
-                    Text("Duration: ${tripDirectionDetails.durationText}", style: Theme.of(context).textTheme.bodyMedium,),
-                    const SizedBox(height: 12.0,),
-                    GestureDetector(
-                      onTap: (){
-                        cancelBookingRequest(bookingNumber);
-                        resetApp();
-                      },
-                      child: Container(
-                        height: 50.0,
-                        width: 50.0,
-                        decoration: BoxDecoration(
-                          color: Colors.purple.shade100,
-                          borderRadius: BorderRadius.circular(30.0),
-                          border: Border.all(width: 2.0, color: Colors.purple.shade50,)
-                        ),
-                        child: const Icon(Icons.close, size: 20.0,),
-                      ),
-                    ),
-                    const SizedBox(height: 5.0,),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text("Cancel Booking", style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -997,6 +1023,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       floatingActionButton: DraggableFab(
           child: FloatingActionButton(
             onPressed: () {
+              timer.cancel();
               resetApp();
               },
         backgroundColor: PButtonColor,
@@ -1017,11 +1044,12 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     var dropOffLatlng = LatLng(finalPos!.latitude!, finalPos.longitude!);
 
     var details = await AssistanceMethods.obtainPlaceDirectionDetails(pickUpLatlng, dropOffLatlng);
-    if(mounted){
-      setState(() {
-        tripDirectionDetails = details!;
-      });
-    }
+    tripDirectionDetails = details!;
+    // if(mounted){
+    //   setState(() {
+    //
+    //   });
+    // }
 
     PolylinePoints polylinePoints = PolylinePoints();
     List<PointLatLng> decodedPolylinePointsResult = polylinePoints.decodePolyline(details?.encodedPoints ?? "");

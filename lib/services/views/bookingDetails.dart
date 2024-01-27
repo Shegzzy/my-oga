@@ -236,7 +236,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context, true),
             icon: const Icon(LineAwesomeIcons.angle_left)),
         title: Text("Booking Details",
             style: Theme.of(context).textTheme.headlineMedium),

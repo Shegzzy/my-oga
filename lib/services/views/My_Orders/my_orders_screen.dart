@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -15,6 +16,7 @@ import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/profile_controller.dart';
 import '../../controllers/signup_controller.dart';
 import '../../models/booking_model.dart';
+import '../../models/orderStatusModel.dart';
 import '../../models/package_details_model.dart';
 import '../bookingDetails.dart';
 import '../ratingScreen.dart';
@@ -29,6 +31,12 @@ class MyOrdersScreen extends StatefulWidget {
 class _MyOrdersScreenState extends State<MyOrdersScreen> {
   late Future<List<BookingModel>?> userFuture;
   ProfileController controller = Get.put(ProfileController());
+  UserRepository userRepo = Get.put(UserRepository());
+  CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
+  CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
+  bool cancelingBooking = false;
+
+
   final GetXSwitchState getXSwitchState = Get.find();
 
   @override
@@ -37,16 +45,113 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
     userFuture = _getBookings();
   }
 
+  void reloadScreen() {
+    userFuture = _getBookings();
+  }
+
   @override
   void dispose() {
-    // TODO: implement dispose
+    // if(mounted){
+    //   controller.dispose();
+    // }
     super.dispose();
-    controller.dispose();
   }
 
   Future<List<BookingModel>?>_getBookings() async {
     return await controller.getAllUserBookings();
   }
+
+  // canceling booking
+  Future<void> cancelBookingRequest(String bookingNumber) async {
+    try{
+      setState(() {
+        cancelingBooking = true;
+      });
+
+      BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
+      if(bookingInfo.status == 'pending'){
+        await _ref.doc(bookingInfo.id.toString()).delete();
+        reloadScreen();
+        if(mounted){
+          Navigator.pop(context);
+        }
+        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
+      }else if(bookingInfo.status == 'active'){
+        OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
+        await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+        await _ref.doc(bookingInfo.id.toString()).delete();
+        reloadScreen();
+        if(mounted){
+          Navigator.pop(context);
+        }
+        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
+      }
+      //
+      //
+      // if(_refOrderStatus.doc().id.isNotEmpty){
+      //   _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+      // }else {
+      //   return;
+      // }
+
+
+    }catch (e){
+      print('Error $e');
+    }finally{
+      setState(() {
+        cancelingBooking = true;
+      });
+    }
+  }
+
+  void showDeleteAlert(BuildContext context, String bookingNumber) async {
+    return await showDialog(context: context, builder: (context){
+      print(bookingNumber);
+      var isDark = getXSwitchState.isDarkMode;
+      return AlertDialog(
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.warning_rounded, size: 22, color: Colors.redAccent,),
+            const SizedBox(height: 5,),
+
+            Text("Notice!", style: Theme.of(context).textTheme.titleLarge,),
+            const SizedBox(height: 10,),
+
+            Text("Are you sure you want to cancel this booking?",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 10,),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: Theme.of(context).outlinedButtonTheme.style,
+                    child: Text("No".toUpperCase()),
+                  ),
+                ),
+                const SizedBox(width: 10.0,),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async{
+                      await cancelBookingRequest(bookingNumber);
+                    },
+                    style: Theme.of(context).elevatedButtonTheme.style,
+                    child: cancelingBooking ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +180,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (c, index){
                       return  GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => BookingDetailsScreen(bookingData: snapshot.data![index],)));
+                        onTap: () async {
+                          final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => BookingDetailsScreen(bookingData: snapshot.data![index],)));
+                          if(result == true){
+                            reloadScreen();
+                            setState(() {});
+                          }
                         },
                         child: Padding(
                           padding: const EdgeInsets.only( top: 10.0),
@@ -136,7 +245,24 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                     )
                                   ],
                                 ),
-                                const SizedBox(height: 20,),
+
+
+                                if(snapshot.data![index].status == 'active' || snapshot.data![index].status == 'pending')
+                                  Center(
+                                    child: TextButton(
+                                        style: ButtonStyle(
+                                          foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          backgroundColor: MaterialStateProperty.all(PButtonColor),
+                                        ),
+                                        onPressed: () async {
+                                          // print(snapshot.data![index].bookingNumber);
+                                          showDeleteAlert(context, snapshot.data![index].bookingNumber!);
+                                        },
+                                        child: const Text('Cancel')
+                                    ),
+                                  ),
+
+                                const SizedBox(height: 5,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
