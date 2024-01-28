@@ -67,33 +67,23 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
       setState(() {
         cancelingBooking = true;
       });
-
       BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
-      if(bookingInfo.status == 'pending'){
-        await _ref.doc(bookingInfo.id.toString()).delete();
-        reloadScreen();
-        if(mounted){
-          Navigator.pop(context);
-        }
-        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
-      }else if(bookingInfo.status == 'active'){
-        OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
-        await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
-        await _ref.doc(bookingInfo.id.toString()).delete();
-        reloadScreen();
-        if(mounted){
-          Navigator.pop(context);
-        }
-        Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
-      }
-      //
-      //
-      // if(_refOrderStatus.doc().id.isNotEmpty){
-      //   _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
-      // }else {
-      //   return;
-      // }
+      OrderStatusModel? orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
 
+      bool shouldCancelBooking = (bookingInfo.status == 'pending' || (bookingInfo.status == 'active' && orderStatusModel?.orderAssign == '1'));
+
+      await _ref.doc(bookingInfo.id.toString()).delete();
+
+      if (shouldCancelBooking && orderStatusModel != null) {
+        await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+      }
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      Get.back(result: true);
+      Get.snackbar('Success', 'Booking $bookingNumber has been canceled');
 
     }catch (e){
       print('Error $e');

@@ -41,12 +41,27 @@ class UserModel {
       "Profile Photo": profilePic,
       "Gender": gender,
       "Date of Birth": dateOfBirth,
+      "Token": token,
+      "timeStamp": timeStamp,
+      "Date Created": dateCreated,
+    };
+  }
+
+  updateToJson() {
+    return {
+      "FullName": fullname,
+      "Email": email,
+      "Password": password,
+      "Phone": phoneNo,
+      "Address": address,
+      "Profile Photo": profilePic,
+      "Gender": gender,
+      "Date of Birth": dateOfBirth,
       // "Token": token,
       // "timeStamp": timeStamp,
       // "Date Created": dateCreated,
     };
   }
-
   ///Getting User Info Mapping
   
   /// Map user fetched from Firebase to UserModel

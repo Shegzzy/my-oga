@@ -69,7 +69,7 @@ class UserRepository extends GetxController {
     final email = userId!.email;
     if(email != null){
       UserModel userInfo = await getUserDetailsWithEmail(email);
-      await _db.collection("Users").doc(userInfo.id).update(user.toJson()).then((value) => Get.snackbar(
+      await _db.collection("Users").doc(userInfo.id).update(user.updateToJson()).then((value) => Get.snackbar(
           "Good", "Details Updated Successfully",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.white,
@@ -83,7 +83,7 @@ class UserRepository extends GetxController {
     }
     else {
       UserModel userInfo = await getUserDetailsWithPhone(phone!);
-      await _db.collection("Users").doc(userInfo.id).update(user.toJson());
+      await _db.collection("Users").doc(userInfo.id).update(user.updateToJson());
     }
   }
 
@@ -208,10 +208,14 @@ class UserRepository extends GetxController {
   }
 
   ///Fetch Order Status of a booking
-  Future<OrderStatusModel> getBookingOrderStatus(String bookingNumber) async {
+  Future<OrderStatusModel?> getBookingOrderStatus(String bookingNumber) async {
     final snapshot = await _db.collection("Order_Status").where("Booking Number", isEqualTo: bookingNumber).get();
-    final orderStatusData = snapshot.docs.map((e) => OrderStatusModel.fromSnapshot(e)).single;
-    return orderStatusData;
+    if(snapshot.docs.isNotEmpty){
+      final orderStatusData = snapshot.docs.map((e) => OrderStatusModel.fromSnapshot(e)).single;
+      return orderStatusData;
+    }else {
+      return null;
+    }
   }
 
   /// Getting Driver Details 2
