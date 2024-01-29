@@ -79,10 +79,10 @@ class NotificationService {
       channel.id.toString(),
       channel.name.toString(),
       importance: Importance.high,
-      channelDescription: "Your channel description",
+      channelDescription: "this channel is used for important notification",
       priority: Priority.high,
       playSound: true,
-      ticker: 'ticker'
+      ticker: 'ticker',
     );
 
     const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
