@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:myoga/constants/colors.dart';
+import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../constants/image_strings.dart';
@@ -11,13 +13,21 @@ import 'package:otp_timer_button/otp_timer_button.dart';
 import '../../../controllers/otp_controller.dart';
 import '../../../controllers/signup_controller.dart';
 
-class OTPScreen extends StatelessWidget {
+class OTPScreen extends StatefulWidget {
   const OTPScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OTPScreen> createState() => _OTPScreenState();
+}
+
+class _OTPScreenState extends State<OTPScreen> {
+  GetXSwitchState getXSwitchState = Get.find();
 
   @override
   Widget build(BuildContext context) {
     final otpController = Get.put(OTPController());
     var otp;
+    var isDark = getXSwitchState.isDarkMode;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -28,10 +38,10 @@ class OTPScreen extends StatelessWidget {
               const Image(
                 image: AssetImage(moLoginImage),
               ),
-              Text(moOtpTitle, style: Theme.of(context).textTheme.headline6),
+              Text(moOtpTitle, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 40.0),
               Text("Enter code sent for verification.",
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center),
               const SizedBox(
                 height: 20.0,
@@ -40,9 +50,9 @@ class OTPScreen extends StatelessWidget {
                   numberOfFields: 6,
                   fillColor: Colors.black.withOpacity(0.1),
                   filled: true,
-                  onSubmit: (code) {
+                  onSubmit: (code) async{
                     otp = code;
-                    otpController.verifyOTP(otp);
+                    await otpController.verifyOTP(otp);
                   }),
               const SizedBox(
                 height: 20.0,
@@ -50,10 +60,14 @@ class OTPScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: () {
-                      otpController.verifyOTP(otp);
+                    onPressed: () async{
+                      await otpController.verifyOTP(otp);
                     },
-                    child: const Text(moNext)),
+                    child: otpController.otpVerifying ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(),
+                    ) : const Text(moNext)),
               ),
               const SizedBox(
                 height: 20.0,
@@ -66,9 +80,11 @@ class OTPScreen extends StatelessWidget {
                     final phoneNumber = prefs.getString("Phone");
                     SignUpController.instance.phoneAuthentication(phoneNumber!);
                   },
-                  text: const Text('Resend OTP'),
+                  text: Text('Resend OTP', style: TextStyle(
+                    color: isDark ? Colors.white : Colors.white
+                  ),),
                   duration: 60,
-                  backgroundColor: Color(0xFF00002e),
+                  backgroundColor: PButtonColor,
                 ),
               ),
             ],
