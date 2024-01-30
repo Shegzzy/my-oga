@@ -165,8 +165,8 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Get.to(BookingDetailsScreen(bookingData: widget.bookingModel!));
                                   // Navigator.pop(context);
+                                  Get.to(BookingDetailsScreen(bookingData: widget.bookingModel!));
                                 },
                                 style: Theme.of(context).elevatedButtonTheme.style,
                                 child: Text("View".toUpperCase()),

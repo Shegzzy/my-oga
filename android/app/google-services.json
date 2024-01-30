@@ -31,7 +31,7 @@
           }
         },
         {
-          "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+          "client_id": "762957034592-trg776vls654e4o8ju4puoe5aas4cf3o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -67,7 +67,31 @@
       },
       "oauth_client": [
         {
-          "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+          "client_id": "762957034592-1v8m1vg0519pcee2dvpl1d0c4trainnq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myoga_user",
+            "certificate_hash": "33cfe90600d1e11aa450674a1e0bb28e5242ff69"
+          }
+        },
+        {
+          "client_id": "762957034592-irrtssmgae2cfmt238h1qqact5r9fjsh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myoga_user",
+            "certificate_hash": "f40034047403a14b3e2b8fa7b662ec10956c8cd8"
+          }
+        },
+        {
+          "client_id": "762957034592-v8j3e18ug7fi2e2l4v5crp6ltgnba58c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myoga.myoga_user",
+            "certificate_hash": "f0f6d706fee8a487faf1b57996cd691da3f8c27b"
+          }
+        },
+        {
+          "client_id": "762957034592-trg776vls654e4o8ju4puoe5aas4cf3o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -103,23 +127,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "762957034592-562st3drt7gj6lv4lc6dtatpqlqc2isn.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.myoga.myogarider",
-            "certificate_hash": "dcd4d64fe071158f1db7931db829a15d7a7c75f3"
-          }
-        },
-        {
-          "client_id": "762957034592-8semvid7nk8jvk99p0ru200qprc4s2hh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.myoga.myogarider",
-            "certificate_hash": "05c02c3062a524d985b0e120db9cd2f337d1a043"
-          }
-        },
-        {
-          "client_id": "762957034592-7reb0njh0oekgokpgq8vqkle0vhnultv.apps.googleusercontent.com",
+          "client_id": "762957034592-trg776vls654e4o8ju4puoe5aas4cf3o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

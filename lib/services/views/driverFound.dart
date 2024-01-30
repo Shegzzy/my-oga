@@ -19,26 +19,39 @@ class DriverFoundScreen extends StatefulWidget {
 }
 
 class _DriverFoundScreenState extends State<DriverFoundScreen> {
-  _DriverFoundScreenState(){
-    driverID = widget.dId;
-    bookNum = widget.bNum;
-  }
+  _DriverFoundScreenState();
   DriverModel? _driverModel;
   BookingModel? bookingData;
-  String driverID = "";
-  String bookNum = "";
   final userController = Get.put(UserRepository());
+  bool loadingData = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-      userController.getDriverById(driverID).then((value) =>
-        _driverModel = value
+    fetchRiderDate();
+    print('Rider: ${widget.dId}');
+    print('Booking Number: ${widget.bNum}');
+  }
+
+  Future<void> fetchRiderDate() async{
+    try{
+      setState(() {
+        loadingData = true;
+      });
+
+      await userController.getDriverById(widget.dId).then((value) =>
+      _driverModel = value
       );
-      userController.getBookingDetails(bookNum).then((booking) =>
-          bookingData = booking
+      await userController.getBookingDetails(widget.bNum).then((booking) =>
+      bookingData = booking
       );
+    }catch(e){
+      print('Fetching Error: $e');
+    }finally{
+      setState(() {
+        loadingData = false;
+      });
+    }
   }
 
   void showStatusModalBottomSheet(BuildContext context){
@@ -81,15 +94,17 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
         child: Container(
           padding: const EdgeInsets.all(30.0),
           width: double.infinity,
-          height: 520,
+          height: 620,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Column(
+          child: loadingData ? const Center(
+            child: CircularProgressIndicator(),
+          ) : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Driver", style: Theme.of(context).textTheme.bodyText1,),
+              Text("Driver", style: Theme.of(context).textTheme.bodyLarge,),
               const SizedBox(height: 20,),
               SizedBox(
                 width: 120.0,
@@ -97,7 +112,7 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
                 child: ClipRRect(
                     borderRadius:
                     BorderRadius.circular(100),
-                    child: _driverModel!.profilePic == null
+                    child: _driverModel?.profilePic == null
                         ? const Icon(LineAwesomeIcons.user_circle, size: 35,)
                         : Image(
                       image: NetworkImage(_driverModel!.profilePic!),
@@ -122,19 +137,19 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
               ),
               const SizedBox(width: 2,),
               Text(_driverModel?.fullname ?? " ",
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 5,),
               Text(_driverModel?.phoneNo ?? " ",
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 5,),
               Text("VN: ${_driverModel?.vehicleNumber ?? ""} ",
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
