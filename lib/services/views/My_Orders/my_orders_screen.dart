@@ -82,7 +82,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         Navigator.pop(context);
       }
 
-      Get.back(result: true);
+      reloadScreen();
       Get.snackbar('Success', 'Booking $bookingNumber has been canceled');
 
     }catch (e){
