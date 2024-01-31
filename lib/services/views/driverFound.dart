@@ -29,8 +29,6 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
   void initState() {
     super.initState();
     fetchRiderDate();
-    print('Rider: ${widget.dId}');
-    print('Booking Number: ${widget.bNum}');
   }
 
   Future<void> fetchRiderDate() async{
