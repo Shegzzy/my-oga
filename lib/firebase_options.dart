@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -51,6 +48,15 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAwph5iP61uHokKAovxY2PT3TuvMjJkFzE',
+    appId: '1:762957034592:android:2193d8ec486610e7b23f05',
+    messagingSenderId: '762957034592',
+    projectId: 'myoga-80daa',
+    databaseURL: 'https://myoga-80daa-default-rtdb.firebaseio.com',
+    storageBucket: 'myoga-80daa.appspot.com',
+  );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBzJOb2aev5lTCh2UZt_EgmDD70zuOY0Xw',
