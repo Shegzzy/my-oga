@@ -315,24 +315,25 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                 Column(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: Theme.of(context).outlinedButtonTheme.style,
-                        child: Text("Cancel".toUpperCase()),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0,),
-                    Expanded(
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
                         style: Theme.of(context).elevatedButtonTheme.style,
-                        child: Text("OK".toUpperCase()),
+                        child: Text("Yes, Notify Me".toUpperCase()),
                       ),
-                    )
+                    ),
+                    const SizedBox(width: 10.0,),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: Theme.of(context).outlinedButtonTheme.style,
+                        child: Text("Cancel Booking".toUpperCase()),
+                      ),
+                    ),
+
                   ],
                 ),
               ],
@@ -437,7 +438,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
    CheckoutResponse response = await plugin.checkout(
      context,
      charge: charge,
-     method: CheckoutMethod.card,);
+     method: CheckoutMethod.selectable);
 
    if(response.status == true){
      saveBookings(booking);

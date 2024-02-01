@@ -40,35 +40,44 @@ class AssistanceMethods {
     String directionUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&key=${dotenv.env['mapKey']}";
 
     var res = await RequestAssistanceController.getRequest(directionUrl);
+    DirectionDetails directionDetails = DirectionDetails();
+
     // print("Direction Response: $res");
 
     if(res == "failed"){
       return null;
+    }else{
+      directionDetails.encodedPoints = res["routes"][0]["overview_polyline"]["points"];
+      directionDetails.distanceText = res["routes"][0]["legs"][0]["distance"]["text"];
+      directionDetails.distanceValue = res["routes"][0]["legs"][0]["distance"]["value"];
+      directionDetails.durationText = res["routes"][0]["legs"][0]["duration"]["text"];
+      directionDetails.durationValue = res["routes"][0]["legs"][0]["duration"]["value"];
     }
-
-    DirectionDetails directionDetails = DirectionDetails();
-
-    directionDetails.encodedPoints = res["routes"][0]["overview_polyline"]["points"];
-    directionDetails.distanceText = res["routes"][0]["legs"][0]["distance"]["text"];
-    directionDetails.distanceValue = res["routes"][0]["legs"][0]["distance"]["value"];
-    directionDetails.durationText = res["routes"][0]["legs"][0]["duration"]["text"];
-    directionDetails.durationValue = res["routes"][0]["legs"][0]["duration"]["value"];
 
     return directionDetails;
   }
 
   static String calculateFares(DirectionDetails directionDetails, String? rate, String? minimumPrice, String? startPrice){
+    // print(directionDetails.distanceValue);
+    // print(rate);
+    // print(minimumPrice);
     double? intRate = double.tryParse(rate!);
     double? intMinimumPrice = double.tryParse(minimumPrice!);
     double? intStartPrice = double.tryParse(startPrice!);
-    // double timeTravelledFares = (directionDetails.durationValue! / 60) * intRate!;
-    double distanceTravelledFares = (directionDetails.distanceValue!/1000) * intRate!;
-    double totalFare = intMinimumPrice! + distanceTravelledFares + intStartPrice!;
-    double percentageToAdd = 0.35 * totalFare;
+    double distanceTravelledFares = (directionDetails.distanceValue!/1000);
+    double distanceToTravelFares = double.parse(distanceTravelledFares.toStringAsFixed(1));
+    double distanceOfRate = distanceToTravelFares * intRate!;
+    double totalFare = distanceOfRate + intStartPrice!;
+    // double percentageToAdd = 0.35 * totalFare;
 
-    double totalTripFare = totalFare + percentageToAdd;
+    double totalTripFare = 0;
 
-    //convert to naira
+    if(totalFare < intMinimumPrice!){
+      totalTripFare = 1100;
+    }else{
+      totalTripFare = totalFare;
+    }
+
     //double totalNaira = totalFare * 740;
     int roundedTotal = totalTripFare.round();
 

@@ -10,6 +10,7 @@ import '../../../constants/image_strings.dart';
 import '../../../constants/texts_string.dart';
 import '../../../main.dart';
 import '../../../size_config.dart';
+import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/onboarding_controller.dart';
 import '../../models/onboarding_data.dart';
 import '../welcome_screen/welcome_screen.dart';
@@ -26,6 +27,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 int currentPage = 0;
 
 final PageController _pageController = PageController(initialPage: 0);
+final GetXSwitchState getXSwitchState = Get.find();
+
 
   AnimatedContainer dotIndicator(index){
     return AnimatedContainer(
@@ -61,7 +64,7 @@ final PageController _pageController = PageController(initialPage: 0);
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
     var height = mediaQuery.size.height/100;
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
 
     return Scaffold(
       backgroundColor: isDark ? PDarkColor.withOpacity(0.99) :  moPrimaryColor,
