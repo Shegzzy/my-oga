@@ -198,15 +198,6 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       isTimerRunning = false;
     });
     Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
-
-    // OrderStatusModel orderStatusModel = await userRepo.getBookingOrderStatus(bookingNumber);
-    //
-    // if(_refOrderStatus.doc().id.isNotEmpty){
-    //   _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
-    // }else {
-    //   return;
-    // }
-
   }
 
   Future<void> saveBookings(BookingModel booking) async {
@@ -257,7 +248,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
         setState(() {
           isTimerRunning = false;
         });
-      } else if(counter >= 10){
+      } else if(counter >= 20){
         if(!mounted){return;}
         timer.cancel();
         setState(() {
@@ -321,7 +312,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 35,),
-                Row(
+                Column(
                   children: [
                     Expanded(
                       child: OutlinedButton(
