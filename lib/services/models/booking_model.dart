@@ -24,9 +24,11 @@ class BookingModel {
   final String? deliveryMode;
   final String? rideType;
   final String? packageType;
+  final String? rated;
   final Timestamp? timeStamp;
 
   const BookingModel({
+    this.rated,
     this.id,
     this.driver_id,
     this.payment_method,
@@ -72,6 +74,7 @@ class BookingModel {
       "Booking Number": bookingNumber,
       "Delivery Mode": deliveryMode,
       "Ride Type": rideType,
+      "Rated": rated,
       "Package Type": packageType,
       "timeStamp": timeStamp,
     };
@@ -106,6 +109,7 @@ class BookingModel {
       bookingNumber: data["Booking Number"],
       deliveryMode: data["Delivery Mode"],
       rideType: data["Ride Type"],
+      rated: data["Rated"],
       packageType: data["Package Type"],
       timeStamp: data["timeStamp"],
     );

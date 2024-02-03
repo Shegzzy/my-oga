@@ -1,10 +1,10 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:myoga/services/models/user_model.dart';
-import 'package:myoga/services/views/Profile/profile_screen.dart';
 import 'package:myoga/utils/formatter/formatter.dart';
 
 import '../../../constants/colors.dart';
@@ -195,20 +195,29 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                         style: Theme.of(context).textTheme.headlineMedium,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis)),
-                                    Flexible(child: snapshot.data![index].status == 'completed' ? GestureDetector(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) =>RatingScreen(
-                                          driverID: snapshot.data![index].driver_id!,
-                                        )));
-                                      },
-                                      child: Text("Rate Rider",
-                                        style: Theme.of(context).textTheme.headlineSmall,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,),
-                                    ) : Text(snapshot.data![index].status ?? "",
-                                        style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis)),
+                                    if(snapshot.data![index].status == 'active')...[
+                                      Text(snapshot.data![index].status ?? "",
+                                          style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis)
+                                    ]else...[
+                                      Flexible(child: snapshot.data![index].status == 'completed' && snapshot.data![index].rated == '0' ||  snapshot.data![index].rated == null ? GestureDetector(
+                                        onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) =>RatingScreen(
+                                            driverID: snapshot.data![index].driver_id!,
+                                            bookingID: snapshot.data![index].bookingNumber!,
+                                          )));
+                                        },
+                                        child: Text("Rate Rider",
+                                          style: Theme.of(context).textTheme.headlineSmall,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,),
+                                      ) : Text(snapshot.data![index].status ?? "",
+                                          style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis)),
+                                    ],
+
                                   ],
                                 ),
                                 // const SizedBox(height: 20,),

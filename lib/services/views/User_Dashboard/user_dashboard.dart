@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
@@ -99,7 +100,10 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       currentPosition = position;
 
+      List<Placemark>? placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
+
       LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+      print(placeMark);
 
       CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14);
       newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));

@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class RatingScreen extends StatefulWidget {
   final String driverID;
-  const RatingScreen({Key? key, required this.driverID}) : super(key: key);
+  final String bookingID;
+  const RatingScreen({Key? key, required this.driverID, required this.bookingID}) : super(key: key);
 
   @override
   State<RatingScreen> createState() => _RatingScreenState();
@@ -32,14 +33,27 @@ class _RatingScreenState extends State<RatingScreen> {
         "email": userEmail,
         "photo": userPic,
         "rating": ratingValue,
+        "rated": 'true',
+        "booking ID": widget.bookingID,
         "dateCreated": DateTime.now().toString(),
         "timeStamp": Timestamp.now(),
+      };
+
+      final ratedData = {
+        "Rated": '1'
       };
 
     try{
       setState(() {
         isLoading = true;
       });
+
+      QuerySnapshot querySnapshot = await _db.collection('Bookings').where('Booking Number', isEqualTo: widget.bookingID).get();
+      if(querySnapshot.docs.isNotEmpty){
+        DocumentReference documentReference = querySnapshot.docs.first.reference;
+
+        await documentReference.update(ratedData);
+      }
       await _db.collection('Drivers').doc(rider).collection('Ratings').add(data).whenComplete(() {
         // print("Rating submitted successfully");
 
@@ -139,7 +153,7 @@ class _RatingScreenState extends State<RatingScreen> {
                         .of(context)
                         .elevatedButtonTheme
                         .style,
-                    child: Text("Tap on Amount of Star".toUpperCase()),
+                    child: Text("Rate Your Rider".toUpperCase()),
                   )
                       : OutlinedButton(
                     onPressed: (){

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:get/get.dart';
@@ -33,6 +35,8 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:image/image.dart' as IMG;
+
 
 import '../Driver_Status/driver_status.dart';
 import '../Payment_Methods/payment_page.dart';
@@ -194,9 +198,6 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
     timer.cancel();
-    setState(() {
-      isTimerRunning = false;
-    });
     Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
   }
 
@@ -284,60 +285,53 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
         var isDark = getXSwitchState.isDarkMode;
         return AlertDialog(
           title: Center(child: Text("Notice!", style: Theme.of(context).textTheme.titleLarge,)),
-          content: Container(
-            // width: double.infinity,
-            height: 280,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.black12.withOpacity(0.01) : Colors.white,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("No Driver Found ",
-                  style: Theme.of(context).textTheme.labelLarge,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 5,),
-                Text("if assigned",
-                  style: Theme.of(context).textTheme.labelLarge,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 5,),
-                Text("you will be notified",
-                  style: Theme.of(context).textTheme.labelLarge,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 35,),
-                Column(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: Theme.of(context).elevatedButtonTheme.style,
-                        child: Text("Yes, Notify Me".toUpperCase()),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0,),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: Theme.of(context).outlinedButtonTheme.style,
-                        child: Text("Cancel Booking".toUpperCase()),
-                      ),
-                    ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("No Driver Found ",
+                style: Theme.of(context).textTheme.labelLarge,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 5,),
+              Text("if assigned",
+                style: Theme.of(context).textTheme.labelLarge,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 5,),
+              Text("you will be notified",
+                style: Theme.of(context).textTheme.labelLarge,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 35,),
+              Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: Theme.of(context).elevatedButtonTheme.style,
+                    child: Center(child: Text("Yes Notify Me".toUpperCase())),
+                  ),
+                  const SizedBox(height: 10.0,),
+                  OutlinedButton(
+                    onPressed: () async{
+                      await cancelBookingRequest(bookingNumber);
+                      if(mounted){
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: Theme.of(context).outlinedButtonTheme.style,
+                    child: Center(child: Text("Cancel Booking".toUpperCase())),
+                  ),
 
-                  ],
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         );
       });
@@ -400,6 +394,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
        bookingNumber: bookingNum,
        deliveryMode: selectedDelivery.toString(),
        rideType: selectedRide.toString(),
+       rated: "0",
        packageType: _selectedPackageVal,
        timeStamp: Timestamp.now(),
      );
@@ -425,6 +420,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
        bookingNumber: bookingNum,
        deliveryMode: selectedDelivery.toString(),
        rideType: selectedRide.toString(),
+       rated: "0",
        packageType: _selectedPackageVal,
        timeStamp: Timestamp.now(),
      );
@@ -438,7 +434,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
    CheckoutResponse response = await plugin.checkout(
      context,
      charge: charge,
-     method: CheckoutMethod.selectable);
+     method: CheckoutMethod.card
+   );
 
    if(response.status == true){
      saveBookings(booking);
@@ -501,7 +498,6 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getPlaceDirection();
     modeFuture = _getAllModes();
@@ -983,6 +979,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                       GestureDetector(
                         onTap: () async {
                           await cancelBookingRequest(bookingNumber);
+                          setState(() {
+                            isTimerRunning = false;
+                          });
                           resetApp();
                         },
                         child: Container(
@@ -1094,15 +1093,42 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
     newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
 
+    Uint8List? resizeImage(Uint8List data, width, height) {
+      Uint8List? resizedData = data;
+      IMG.Image? img = IMG.decodeImage(data);
+      IMG.Image resized = IMG.copyResize(img!, width: width, height: height);
+      resizedData = Uint8List.fromList(IMG.encodePng(resized));
+      return resizedData;
+    }
+
+    String imgUrl = "https://cdn-icons-png.freepik.com/256/7193/7193391.png?ga=GA1.1.1645371941.1706954763&semt=ais";
+    Uint8List bytes = (await NetworkAssetBundle(Uri.parse(imgUrl))
+        .load(imgUrl))
+        .buffer
+        .asUint8List();
+
+    Uint8List? myPosition = resizeImage(bytes, 70, 70);
+
+    String parcelUrl = "https://cdn-icons-png.freepik.com/256/5161/5161266.png?ga=GA1.1.1645371941.1706954763&semt=ais";
+
+    Uint8List dropOffBytes = (await NetworkAssetBundle(Uri.parse(parcelUrl))
+        .load(parcelUrl))
+        .buffer
+        .asUint8List();
+
+    Uint8List? dropOffPosition = resizeImage(dropOffBytes, 70, 70);
+
+
+
     Marker pickUpLocMarker = Marker(
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+      icon: BitmapDescriptor.fromBytes(myPosition!),
       infoWindow: InfoWindow(title: initialPos.placeName, snippet: "My Location"),
       position: pickUpLatlng,
       markerId: const MarkerId("pickUpId"),
     );
 
     Marker dropOffLocMarker = Marker(
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      icon: BitmapDescriptor.fromBytes(dropOffPosition!),
       infoWindow: InfoWindow(title: finalPos.placeName, snippet: "DropOff Location"),
       position: dropOffLatlng,
       markerId: const MarkerId("dropOffId"),

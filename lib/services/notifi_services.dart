@@ -139,7 +139,7 @@ class NotificationService {
       Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersScreen()));
     } else if(message.data['type'] == 'ORDER_COMPLETED'){
       Navigator.push(context, MaterialPageRoute(builder: (context) =>RatingScreen(
-        driverID: message.data['dId'],
+        driverID: message.data['dId'], bookingID: message.data['bookingID'],
       )));
     }
   }

@@ -323,7 +323,9 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                       if(Int6 == 1){
-                                        Get.to(RatingScreen(driverID: _driverModel!.id!));
+                                        if(widget.bookingData?.rated == '0' || widget.bookingData?.rated == null){
+                                          Get.to(RatingScreen(driverID: _driverModel!.id!, bookingID: widget.bookingData!.bookingNumber!));
+                                        }
                                       }
                                     },
                                     style: Theme.of(context).elevatedButtonTheme.style,

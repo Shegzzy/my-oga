@@ -50,7 +50,6 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _startListeningToBookingStatusChanges();
   }
@@ -543,28 +542,36 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Flexible(
-                      child: bookingModel?.status == 'completed'
-                          ? TextButton(
-                            child: const Text(
-                              "Rate Rider",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RatingScreen(
-                                        driverID: bookingData.driver_id!,
-                                      )));
-                            },
-                          )
-                          : Text(
-                              "Status: ${bookingModel?.status}",
-                              style: theme.textTheme.titleSmall,
-                            ),
-                    ),
+                    if(bookingModel?.status == 'active')...[
+                      Text(
+                        "Status: ${bookingModel?.status}",
+                        style: theme.textTheme.titleSmall,
+                      ),
+                    ]else ...[
+                      Flexible(
+                        child: bookingModel?.status == 'completed' && bookingModel?.rated == '0' || bookingModel?.rated == null
+                            ? TextButton(
+                          child: const Text(
+                            "Rate Rider",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RatingScreen(
+                                      driverID: bookingData.driver_id!,
+                                      bookingID: bookingData.bookingNumber!,
+                                    )));
+                          },
+                        )
+                            : Text(
+                          "Status: ${bookingModel?.status}",
+                          style: theme.textTheme.titleSmall,
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const SizedBox(height: 20),

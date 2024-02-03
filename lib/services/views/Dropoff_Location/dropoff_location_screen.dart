@@ -81,7 +81,6 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
         String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
         dropOffTextEditingController.text = dropPlaceAddress!;
-        print(dropPlaceAddress);
 
         BookingAddress bookingAddress = BookingAddress();
         bookingAddress.pickUpLocation = pickUpTextEditingController.text;
@@ -124,6 +123,8 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         address.latitude = res["result"]["geometry"]["location"]["lat"];
         address.longitude = res["result"]["geometry"]["location"]["lng"];
 
+        print(address.latitude);
+
         Provider.of<AppData>(context, listen: false)
             .updatePickUpLocationAddress(address);
         // String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
@@ -135,7 +136,6 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
           return;
         }
 
-        print(address.placeName);
       }
     }catch (e){
       print('Error $e');
@@ -392,6 +392,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                   return TextButton(
                     onPressed: () async{
                       await getPickUpPlaceAddressDetails(pickUpPlacePredictionList[index].place_id ??"", context);
+                      print(pickUpPlacePredictionList[index].place_id);
                       pickUpPlacePredictionList.clear();
                     },
                     child: Column(
