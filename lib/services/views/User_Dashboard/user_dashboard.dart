@@ -100,10 +100,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       currentPosition = position;
 
-      List<Placemark>? placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
-
       LatLng latLngPosition = LatLng(position.latitude, position.longitude);
-      print(placeMark);
 
       CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 14);
       newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
@@ -424,111 +421,4 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     );
   }
 
-  Future<void> getPlaceDirection() async {
-    var initialPos = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var finalPos = Provider.of<AppData>(context, listen: false).dropOffLocation;
-
-    var pickUpLatlng = LatLng(initialPos!.latitude!, initialPos.longitude!);
-    var dropOffLatlng = LatLng(finalPos!.latitude!, finalPos.longitude!);
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => const ProgressDialog(message: "Please wait...",)
-    );
-
-    var details = await AssistanceMethods.obtainPlaceDirectionDetails(pickUpLatlng, dropOffLatlng);
-
-    Navigator.pop(context);
-
-    if (kDebugMode) {
-      print("THIS IS THE ENCODED POINTS");
-      print(details!.encodedPoints);
-    }
-
-
-    PolylinePoints polylinePoints = PolylinePoints();
-    List<PointLatLng> decodedPolylinePointsResult = polylinePoints.decodePolyline(details?.encodedPoints ?? "");
-
-    pLineCoordinates.clear();
-
-    if(decodedPolylinePointsResult.isNotEmpty){
-      decodedPolylinePointsResult.forEach((PointLatLng pointLatLng) {
-        pLineCoordinates.add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
-      });
-    }
-
-    polylineSet.cast();
-
-    setState(() {
-      Polyline polyline = Polyline(
-        color: Colors.pink,
-        polylineId: const PolylineId("PolylineID"),
-        jointType: JointType.round,
-        points: pLineCoordinates,
-        width: 5,
-        startCap: Cap.roundCap,
-        endCap: Cap.roundCap,
-        geodesic: true,
-      );
-      polylineSet.add(polyline);
-    });
-
-    LatLngBounds latLngBounds;
-    if(pickUpLatlng.latitude > dropOffLatlng.latitude && pickUpLatlng.longitude > dropOffLatlng.longitude){
-      latLngBounds = LatLngBounds(southwest: dropOffLatlng, northeast: pickUpLatlng);
-    }
-    else if(pickUpLatlng.longitude > dropOffLatlng.longitude){
-      latLngBounds = LatLngBounds(southwest: LatLng(pickUpLatlng.latitude, dropOffLatlng.longitude), northeast: LatLng(dropOffLatlng.latitude, pickUpLatlng.longitude));
-    }
-    else if(pickUpLatlng.latitude > dropOffLatlng.latitude){
-      latLngBounds = LatLngBounds(southwest: LatLng(dropOffLatlng.latitude, pickUpLatlng.longitude), northeast: LatLng(pickUpLatlng.latitude, dropOffLatlng.longitude));
-    }
-    else {
-      latLngBounds = LatLngBounds(southwest: pickUpLatlng, northeast: dropOffLatlng);
-    }
-
-    newGoogleMapController.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
-
-    Marker pickUpLocMarker = Marker(
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-      infoWindow: InfoWindow(title: initialPos.placeName, snippet: "My Location"),
-      position: pickUpLatlng,
-      markerId: const MarkerId("pickUpId"),
-    );
-
-    Marker dropOffLocMarker = Marker(
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-      infoWindow: InfoWindow(title: finalPos.placeName, snippet: "DropOff Location"),
-      position: dropOffLatlng,
-      markerId: const MarkerId("dropOffId"),
-    );
-
-    setState(() {
-      markersSet.add(pickUpLocMarker);
-      markersSet.add(dropOffLocMarker);
-    });
-
-    Circle pickUpLocCircle = Circle(
-      fillColor: Colors.blueAccent,
-      center: pickUpLatlng,
-      radius: 12,
-      strokeWidth: 4,
-      strokeColor: Colors.blueAccent,
-      circleId: const CircleId("pickUpId"),
-
-    );
-    Circle dropOffLocCircle = Circle(
-      fillColor: Colors.deepPurple,
-      center: dropOffLatlng,
-      radius: 12,
-      strokeWidth: 4,
-      strokeColor: Colors.deepPurple,
-      circleId: const CircleId("dropOffId"),
-    );
-
-    setState(() {
-      circlesSet.add(pickUpLocCircle);
-      circlesSet.add(dropOffLocCircle);
-    });
-  }
 }

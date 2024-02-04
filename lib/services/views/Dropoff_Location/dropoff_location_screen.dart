@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -37,6 +38,12 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   String? placeAddress;
   bool dropOffPrediction = false;
   bool pickUpPrediction = false;
+  bool notWithinRegion = false;
+
+  double? pickUpLat;
+  double? pickUpLng;
+  double? dropOffLat;
+  double? dropOffLng;
 
 
   final GetXSwitchState getXSwitchState = Get.find();
@@ -58,6 +65,35 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     pickUpTextEditingController.dispose();
   }
 
+  Future<void> regionCheck() async {
+    List<Placemark>? pickUpPlaceMark = await placemarkFromCoordinates(pickUpLat!, pickUpLng!);
+    List<Placemark>? dropOffPlaceMark = await placemarkFromCoordinates(dropOffLat!, dropOffLng!);
+    print(pickUpPlaceMark.first.administrativeArea);
+    print(dropOffPlaceMark.first.administrativeArea);
+
+    if(pickUpPlaceMark.first.administrativeArea == 'Federal Capital Territory'
+        && dropOffPlaceMark.first.administrativeArea  == 'Federal Capital Territory'){
+      setState(() {
+        notWithinRegion = false;
+      });
+      if(mounted){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+      }
+    }else if(pickUpPlaceMark.first.administrativeArea == 'Abuja'
+        && dropOffPlaceMark.first.administrativeArea  == 'Abuja'){
+      setState(() {
+        notWithinRegion = false;
+      });
+      if(mounted){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+      }
+    }else{
+      setState(() {
+        notWithinRegion = true;
+      });
+    }
+  }
+
   // Drop off place address
   Future<void> getDropOffPlaceAddressDetails(String placeId, context) async {
 
@@ -77,6 +113,12 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         address.placeId = placeId;
         address.latitude = res["result"]["geometry"]["location"]["lat"];
         address.longitude = res["result"]["geometry"]["location"]["lng"];
+
+        setState(() {
+          dropOffLat = address.latitude;
+          dropOffLng = address.longitude;
+        });
+
         Provider.of<AppData>(context, listen: false).updateDropOffLocationAddress(address);
 
         String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
@@ -85,8 +127,9 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         BookingAddress bookingAddress = BookingAddress();
         bookingAddress.pickUpLocation = pickUpTextEditingController.text;
         bookingAddress.dropOffLocation = dropOffTextEditingController.text;
+
         if(pickUpTextEditingController.text.isNotEmpty){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+          regionCheck();
         }else{
           return;
         }
@@ -123,7 +166,10 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         address.latitude = res["result"]["geometry"]["location"]["lat"];
         address.longitude = res["result"]["geometry"]["location"]["lng"];
 
-        print(address.latitude);
+        setState(() {
+          pickUpLat = address.latitude;
+          pickUpLng = address.longitude;
+        });
 
         Provider.of<AppData>(context, listen: false)
             .updatePickUpLocationAddress(address);
@@ -131,7 +177,8 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
         pickUpTextEditingController.text = address.placeName!;
         if(dropOffTextEditingController.text.isNotEmpty){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+          regionCheck();
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
         }else{
           return;
         }
@@ -431,14 +478,15 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
             const SizedBox(height: 20.0,),
             SizedBox(
               width: 250.0,
-              child: ElevatedButton(onPressed: (){
+              child: ElevatedButton(
+                onPressed: notWithinRegion ? null : (){
                 BookingAddress bookingAddress = BookingAddress();
                 bookingAddress.pickUpLocation = pickUpTextEditingController!.text;
                 bookingAddress.dropOffLocation = dropOffTextEditingController!.text;
                 Navigator.pop(context);
                 Get.to(() => const SelectRideScreen());
               },
-                  child: Text(moNext.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
+                  child: notWithinRegion ?  const Text("Service Unavailable Here Yet", style: TextStyle(fontSize: 10.0,),) :  Text(moNext.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
               ),
             ),
           ],
