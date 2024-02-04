@@ -32,6 +32,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
   late Future<List<BookingModel>?> userFuture;
   ProfileController controller = Get.put(ProfileController());
   UserRepository userRepo = Get.put(UserRepository());
+  SignUpController signUpController = Get.put(SignUpController());
   CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
   CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
   bool cancelingBooking = false;
@@ -76,6 +77,34 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
 
       if (shouldCancelBooking && orderStatusModel != null) {
         await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
+      }
+
+      if(bookingInfo.payment_method == "Card"){
+        BookingModel booking = BookingModel(
+          payment_method: bookingInfo.payment_method,
+          additional_details: bookingInfo.additional_details,
+          dropOff_latitude: bookingInfo.dropOff_latitude,
+          dropOff_longitude: bookingInfo.dropOff_longitude,
+          pickUp_latitude: bookingInfo.pickUp_latitude,
+          pickUp_longitude: bookingInfo.pickUp_longitude,
+          created_at: DateTime.now().toString(),
+          customer_name: bookingInfo.customer_name,
+          customer_phone: bookingInfo.customer_phone,
+          customer_id: bookingInfo.customer_id,
+          pickup_address: bookingInfo.pickup_address,
+          dropOff_address: bookingInfo.dropOff_address,
+          status: "cancelled",
+          amount: bookingInfo.amount,
+          distance: bookingInfo.distance,
+          driver_id: bookingInfo.driver_id,
+          bookingNumber: bookingNumber,
+          deliveryMode: bookingInfo.deliveryMode,
+          rideType: bookingInfo.rideType,
+          rated: "0",
+          packageType: bookingInfo.packageType,
+          timeStamp: Timestamp.now(),
+        );
+        await signUpController.saveCancelledBookings(booking);
       }
 
       if (mounted) {
@@ -127,7 +156,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                 const SizedBox(width: 10.0,),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async{
+                    onPressed: cancelingBooking ? null : () async{
                       await cancelBookingRequest(bookingNumber);
                     },
                     style: Theme.of(context).elevatedButtonTheme.style,

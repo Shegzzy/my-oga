@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../constants/colors.dart';
 import '../../repositories/user_repository/user_repository.dart';
 import '../controllers/profile_controller.dart';
+import '../controllers/signup_controller.dart';
 import '../models/booking_model.dart';
 import '../models/driverModel.dart';
 import '../models/orderStatusModel.dart';
@@ -39,6 +40,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   ProfileController controller = Get.put(ProfileController());
   final userController = Get.put(UserRepository());
   final GetXSwitchState getXSwitchState = GetXSwitchState();
+  SignUpController signUpController = Get.put(SignUpController());
   DriverModel? _driverModel;
   CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
   CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
@@ -95,6 +97,35 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
       if (shouldCancelBooking && orderStatusModel != null) {
         await _refOrderStatus.doc(orderStatusModel.id.toString()).delete();
       }
+
+      if(bookingInfo.payment_method == "Card"){
+        BookingModel booking = BookingModel(
+          payment_method: bookingInfo.payment_method,
+          additional_details: bookingInfo.additional_details,
+          dropOff_latitude: bookingInfo.dropOff_latitude,
+          dropOff_longitude: bookingInfo.dropOff_longitude,
+          pickUp_latitude: bookingInfo.pickUp_latitude,
+          pickUp_longitude: bookingInfo.pickUp_longitude,
+          created_at: DateTime.now().toString(),
+          customer_name: bookingInfo.customer_name,
+          customer_phone: bookingInfo.customer_phone,
+          customer_id: bookingInfo.customer_id,
+          pickup_address: bookingInfo.pickup_address,
+          dropOff_address: bookingInfo.dropOff_address,
+          status: "cancelled",
+          amount: bookingInfo.amount,
+          distance: bookingInfo.distance,
+          driver_id: bookingInfo.driver_id,
+          bookingNumber: bookingNumber,
+          deliveryMode: bookingInfo.deliveryMode,
+          rideType: bookingInfo.rideType,
+          rated: "0",
+          packageType: bookingInfo.packageType,
+          timeStamp: Timestamp.now(),
+        );
+        await signUpController.saveCancelledBookings(booking);
+      }
+
 
       if (mounted) {
         Navigator.pop(context);
@@ -319,11 +350,11 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                 const SizedBox(width: 10.0,),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async{
+                    onPressed: cancelingBooking ? null : () async{
                       await cancelBookingRequest(bookingNumber);
                     },
                     style: Theme.of(context).elevatedButtonTheme.style,
-                    child: Text("Yes".toUpperCase()),
+                    child: cancelingBooking ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
                   ),
                 )
               ],
