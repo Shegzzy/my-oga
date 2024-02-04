@@ -138,6 +138,11 @@ class UserRepository extends GetxController {
     });
   }
 
+  ///Saving Cancelled Booking Information
+  saveCancelledBookingRequest(BookingModel bookings) async {
+    await _db.collection("Cancelled Bookings").add(bookings.toJson());
+  }
+
   ///Saving Package Details
   savePackageDetail(PackageDetails package) async {
     await _db.collection("Packages").add(package.toJson()).whenComplete(() => Get.snackbar(

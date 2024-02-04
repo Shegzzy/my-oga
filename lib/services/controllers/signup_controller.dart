@@ -50,6 +50,10 @@ class SignUpController extends GetxController {
     await userRepo.saveBookingRequest(booking);
   }
 
+  Future<void> saveCancelledBookings(BookingModel booking) async {
+    await userRepo.saveCancelledBookingRequest(booking);
+  }
+
   Future<void> savePackage(PackageDetails package) async {
     await userRepo.savePackageDetail(package);
   }

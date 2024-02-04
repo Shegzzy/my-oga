@@ -200,8 +200,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                           style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis)
-                                    ]else...[
-                                      Flexible(child: snapshot.data![index].status == 'completed' && snapshot.data![index].rated == '0' ||  snapshot.data![index].rated == null ? GestureDetector(
+                                    ]else if(snapshot.data![index].status == 'completed' && snapshot.data![index].rated == '0')...[
+                                      Flexible(child: GestureDetector(
                                         onTap: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) =>RatingScreen(
                                             driverID: snapshot.data![index].driver_id!,
@@ -212,10 +212,25 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                           style: Theme.of(context).textTheme.headlineSmall,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,),
-                                      ) : Text(snapshot.data![index].status ?? "",
-                                          style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                      ))
+                                    ]else if(snapshot.data![index].status == 'completed' && snapshot.data![index].rated == null)...[
+                                      Flexible(child: GestureDetector(
+                                        onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) =>RatingScreen(
+                                            driverID: snapshot.data![index].driver_id!,
+                                            bookingID: snapshot.data![index].bookingNumber!,
+                                          )));
+                                        },
+                                        child: Text("Rate Rider",
+                                          style: Theme.of(context).textTheme.headlineSmall,
                                           maxLines: 2,
-                                          overflow: TextOverflow.ellipsis)),
+                                          overflow: TextOverflow.ellipsis,),
+                                      ))
+                                    ]else...[
+                                        Text(snapshot.data![index].status ?? "",
+                                        style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis)
                                     ],
 
                                   ],

@@ -547,10 +547,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                         "Status: ${bookingModel?.status}",
                         style: theme.textTheme.titleSmall,
                       ),
-                    ]else ...[
+                    ]else if(bookingModel?.status == 'completed' && bookingModel?.rated == '0')...[
                       Flexible(
-                        child: bookingModel?.status == 'completed' && bookingModel?.rated == '0' || bookingModel?.rated == null
-                            ? TextButton(
+                        child: TextButton(
                           child: const Text(
                             "Rate Rider",
                             maxLines: 2,
@@ -566,10 +565,30 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                     )));
                           },
                         )
-                            : Text(
-                          "Status: ${bookingModel?.status}",
-                          style: theme.textTheme.titleSmall,
-                        ),
+                      ),
+                    ]else if(bookingModel?.status == 'completed' && bookingModel?.rated == null)...[
+                      Flexible(
+                          child: TextButton(
+                            child: const Text(
+                              "Rate Rider",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RatingScreen(
+                                        driverID: bookingData.driver_id!,
+                                        bookingID: bookingData.bookingNumber!,
+                                      )));
+                            },
+                          )
+                      ),
+                    ]else...[
+                      Text(
+                        "Status: ${bookingModel?.status}",
+                        style: theme.textTheme.titleSmall,
                       ),
                     ]
                   ],

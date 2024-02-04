@@ -55,6 +55,8 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   void initState() {
     super.initState();
     placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+    pickUpLat = Provider.of<AppData>(context, listen: false).pickUpLocation?.latitude;
+    pickUpLng = Provider.of<AppData>(context, listen: false).pickUpLocation?.longitude;
     pickUpTextEditingController.text = placeAddress ?? "";
   }
 
@@ -486,7 +488,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                 Navigator.pop(context);
                 Get.to(() => const SelectRideScreen());
               },
-                  child: notWithinRegion ?  const Text("Service Unavailable Here Yet", style: TextStyle(fontSize: 10.0,),) :  Text(moNext.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
+                  child: notWithinRegion ?  const Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),) :  Text(moNext.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
               ),
             ),
           ],

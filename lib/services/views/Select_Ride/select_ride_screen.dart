@@ -24,6 +24,7 @@ import '../../controllers/Assistant/assistanceMethods.dart';
 import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/signup_controller.dart';
 import '../../controllers/profile_controller.dart';
+import '../../models/address.dart';
 import '../../models/booking_model.dart';
 import '../../models/delivryModeModel.dart';
 import '../../models/directDetails.dart';
@@ -108,6 +109,14 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   ProfileController _pController = Get.put(ProfileController());
   OrderStatusModel? _orderStats;
   BookingModel? bookingModel;
+  late StreamSubscription<BookingModel> _bookingStatusSubscription;
+  double? pickUpLat;
+  double? pickUpLng;
+  double? dropOffLat;
+  double? dropOffLng;
+  String? pickUpAddress;
+  String? dropOffAddress;
+
 
   String? selectedRide;
    String? selectedDelivery;
@@ -195,8 +204,72 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   // Method for canceling booking
   Future<void> cancelBookingRequest(String bookingNumber)async {
+
     BookingModel bookingInfo = await userRepo.getBookingDetails(bookingNumber);
     _ref.doc(bookingInfo.id.toString()).delete();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final user = FirebaseAuth.instance.currentUser!;
+    final email = user.email;
+    final BookingModel booking;
+
+    if(bookingModel?.payment_method == "Card"){
+      if (email == null) {
+        final phone = user.phoneNumber;
+        UserModel? userInfo = await userRepo.getUserDetailsWithPhone(phone!);
+        booking = BookingModel(
+          payment_method: _selectedPaymentVal,
+          additional_details: _addController.text.trim(),
+          dropOff_latitude: dropOffLat.toString(),
+          dropOff_longitude: dropOffLng.toString(),
+          pickUp_latitude: pickUpLat.toString(),
+          pickUp_longitude: pickUpLng.toString(),
+          created_at: DateTime.now().toString(),
+          customer_name: userInfo?.fullname.toString(),
+          customer_phone: userInfo?.phoneNo.toString(),
+          customer_id: userInfo?.id,
+          pickup_address: pickUpAddress,
+          dropOff_address: dropOffAddress,
+          status: "cancelled",
+          amount: amount,
+          distance: tripDirectionDetails.distanceText!,
+          bookingNumber: bookingNumber,
+          deliveryMode: selectedDelivery.toString(),
+          rideType: selectedRide.toString(),
+          rated: "0",
+          packageType: _selectedPackageVal,
+          timeStamp: Timestamp.now(),
+        );
+        await controller.saveCancelledBookings(booking);
+      }
+      else {
+        UserModel? userInfo = await userRepo.getUserDetailsWithEmail(email);
+        booking = BookingModel(
+          payment_method: _selectedPaymentVal,
+          additional_details: _addController.text.trim(),
+          dropOff_latitude: dropOffLat.toString(),
+          dropOff_longitude: dropOffLng.toString(),
+          pickUp_latitude: pickUpLat.toString(),
+          pickUp_longitude: pickUpLng.toString(),
+          created_at: DateTime.now().toString(),
+          customer_name: userInfo?.fullname.toString(),
+          customer_phone: userInfo?.phoneNo.toString(),
+          customer_id: userInfo?.id,
+          pickup_address: pickUpAddress,
+          dropOff_address: dropOffAddress,
+          status: "cancelled",
+          amount: amount,
+          distance: tripDirectionDetails.distanceText!,
+          bookingNumber: bookingNumber,
+          deliveryMode: selectedDelivery.toString(),
+          rideType: selectedRide.toString(),
+          rated: "0",
+          packageType: _selectedPackageVal,
+          timeStamp: Timestamp.now(),
+        );
+        await controller.saveCancelledBookings(booking);
+      }
+    }
     timer.cancel();
     Get.snackbar('Success', 'Booking $bookingNumber have been canceled');
   }
@@ -233,7 +306,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       //     _orderStats = event;
       //   });
       // });
-      userRepo.getBookingStatusData(bookingNumber).listen((event) {
+      _bookingStatusSubscription = userRepo.getBookingStatusData(bookingNumber).listen((event) {
         setState(() {
           bookingModel = event;
         });
@@ -501,7 +574,14 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     super.initState();
     getPlaceDirection();
     modeFuture = _getAllModes();
-    plugin.initialize(publicKey: '${dotenv.env['pubKey']}');
+    pickUpLat = Provider.of<AppData>(context, listen: false).pickUpLocation?.latitude;
+    pickUpLng = Provider.of<AppData>(context, listen: false).pickUpLocation?.longitude;
+    dropOffLat = Provider.of<AppData>(context, listen: false).dropOffLocation?.latitude;
+    dropOffLng = Provider.of<AppData>(context, listen: false).dropOffLocation?.longitude;
+    pickUpAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
+    dropOffAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
+    plugin.initialize(publicKey: 'pk_test_51c4b33f9510df51a4822f59bbbd555cdc0f3748');
+    // plugin.initialize(publicKey: '${dotenv.env['pubKey']}');
   }
 
   @override
