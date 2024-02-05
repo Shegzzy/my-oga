@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:location/location.dart';
 import 'package:myoga/configMaps.dart';
@@ -51,6 +52,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(LineAwesomeIcons.angle_left)),
+        title: Text("Map",
+            style: Theme.of(context).textTheme.headlineMedium),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+      ),
       body: sourcePosition == null
           ? Center(child: CircularProgressIndicator(),)
           : Stack(
@@ -70,16 +80,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               _controller.complete(controller);
             },
           ),
-          Positioned(
-            top: 40,
-            left: 15,
-            child: GestureDetector(
-              onTap: (){
-                Get.back();
-              },
-              child: Icon(Icons.arrow_back_ios_new_outlined),
-            ),
-          ),
+
           Positioned(
             bottom: 10,
             right: 10,

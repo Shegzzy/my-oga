@@ -175,7 +175,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
 
                         Center(
                           child: TextButton(
-                            child: Text("View Driver on Map", style: theme.textTheme.titleLarge,
+                            child: Text("View Rider on Map", style: theme.textTheme.titleLarge,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,),
                             onPressed: () {

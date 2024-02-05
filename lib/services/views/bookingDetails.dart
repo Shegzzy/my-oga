@@ -47,6 +47,12 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   bool cancelingBooking = false;
   late StreamSubscription<BookingModel> _bookingStatusSubscription;
   final bookingsRef = FirebaseFirestore.instance.collection('Bookings');
+  final _db = FirebaseFirestore.instance;
+  int counter = 0;
+  double rate = 0;
+  double _total = 0;
+  double _average = 0;
+  List<double> ratings = [0.1, 0.3, 0.5, 0.7, 0.9];
 
 
 
@@ -54,6 +60,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   void initState() {
     super.initState();
     _startListeningToBookingStatusChanges();
+    getRatingCount();
   }
 
   @override
@@ -78,6 +85,22 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
             .then((value) => _driverModel = value);
       }
     });
+  }
+
+  Future<void> getRatingCount() async{
+    await _db.collection("Drivers").doc(widget.bookingData.driver_id).collection("Ratings").get().then((value) {
+      for (var element in value.docs) {
+        rate = element.data()["rating"];
+        setState(() {
+          _total = _total + rate;
+          print(_total);
+
+          counter = counter+1;
+        });
+      }
+    });
+    _average = _total/counter;
+    print(_average);
   }
 
   // canceling booking
@@ -151,149 +174,152 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
         builder: (context) {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
-              content: Container(
-                width: double.infinity,
-                height: 520,
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.black12.withOpacity(0.01) : Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Driver",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: 120.0,
-                      height: 120.0,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: _driverModel!.profilePic != null
-                              ? Image(
-                                  image:
-                                      NetworkImage(_driverModel!.profilePic!),
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  },
-                                  errorBuilder: (context, object, stack) {
-                                    return const Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                    );
-                                  },
-                                )
-                              : const Icon(
-                                  LineAwesomeIcons.user_circle,
-                                  size: 35,
-                                )),
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      _driverModel?.fullname ?? " ",
-                      style: Theme.of(context).textTheme.headlineMedium,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Rider",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+
+                  SizedBox(
+                    width: 120.0,
+                    height: 120.0,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: _driverModel!.profilePic != null
+                            ? Image(
+                                image:
+                                    NetworkImage(_driverModel!.profilePic!),
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                },
+                                errorBuilder: (context, object, stack) {
+                                  return const Icon(
+                                    Icons.person,
+                                    color: Colors.grey,
+                                    size: 28,
+                                  );
+                                },
+                              )
+                            : const Icon(
+                                LineAwesomeIcons.user_circle,
+                                size: 35,
+                              )),
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    "Name: ${_driverModel?.fullname ?? " "}",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    _driverModel?.phoneNo ?? " ",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "VN: ${_driverModel?.vehicleNumber ?? ""} ",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Ratings: ${_average.toStringAsFixed(1)}", style: Theme.of(context).textTheme.titleLarge,),
+                      Icon(
+                        Icons.star,
+                        size: 16,
+                        color: _average < 3.5 ? Colors.redAccent : Colors.green,
+                      )
+                    ],
+                  ),
+                  Flexible(
+                    child: Text(
+                      "Current Location: ${_driverModel?.currentAddress ?? ""}",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      _driverModel?.phoneNo ?? " ",
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "VN: ${_driverModel?.vehicleNumber ?? ""} ",
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Flexible(
-                      child: Text(
-                        "Current Location: ${_driverModel?.currentAddress ?? ""}",
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Flexible(
+                    child: TextButton(
+                      child: const Text(
+                        "View Rider on Map",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: PButtonColor
+                        ),
                       ),
+                      onPressed: () {
+                        Get.to(() => NavigationScreen(
+                            double.parse(_driverModel!.currentLat!),
+                            double.parse(_driverModel!.currentLong!)));
+                      },
                     ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Flexible(
-                      child: TextButton(
-                        child: const Text(
-                          "View Driver on Map",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: Theme.of(context).outlinedButtonTheme.style,
+                          child: Text("Cancel".toUpperCase()),
                         ),
-                        onPressed: () {
-                          Get.to(() => NavigationScreen(
-                              double.parse(_driverModel!.currentLat!),
-                              double.parse(_driverModel!.currentLong!)));
-                        },
                       ),
-                    ),
-                    const SizedBox(
-                      height: 35,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: Theme.of(context).outlinedButtonTheme.style,
-                            child: Text("Cancel".toUpperCase()),
-                          ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final Uri url = Uri(
+                              scheme: 'tel',
+                              path: _driverModel?.phoneNo,
+                            );
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              Get.snackbar("Notice!", "Not Supported yet",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor:
+                                      Colors.redAccent.withOpacity(0.1),
+                                  colorText: Colors.red);
+                            }
+                          },
+                          style: Theme.of(context).elevatedButtonTheme.style,
+                          child: Text("Call".toUpperCase()),
                         ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              final Uri url = Uri(
-                                scheme: 'tel',
-                                path: _driverModel?.phoneNo,
-                              );
-                              if (await canLaunchUrl(url)) {
-                                await launchUrl(url);
-                              } else {
-                                Get.snackbar("Notice!", "Not Supported yet",
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor:
-                                        Colors.redAccent.withOpacity(0.1),
-                                    colorText: Colors.red);
-                              }
-                            },
-                            style: Theme.of(context).elevatedButtonTheme.style,
-                            child: Text("Call".toUpperCase()),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                      )
+                    ],
+                  ),
+                ],
               ),
             );
           });
