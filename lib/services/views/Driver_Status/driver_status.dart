@@ -29,16 +29,36 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
   OrderStatusModel? _orderStats;
   late Future<DriverModel>? _driverModel;
   final _userRepo = Get.put(UserRepository());
+  final _db = FirebaseFirestore.instance;
+  int counter = 0;
+  double rate = 0;
+  double _total = 0;
+  double _average = 0;
+  List<double> ratings = [0.1, 0.3, 0.5, 0.7, 0.9];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _driverModel = getDriver();
+    getRatingCount();
   }
 
   Future<DriverModel> getDriver() async{
     return await _userRepo.getDriverById(widget.driverID!);
+  }
+
+  Future<void> getRatingCount() async{
+    await _db.collection("Drivers").doc(widget.driverID!).collection("Ratings").get().then((value) {
+      for (var element in value.docs) {
+        rate = element.data()["rating"];
+        setState(() {
+          _total = _total + rate;
+          counter = counter+1;
+        });
+      }
+    });
+    _average = _total/counter;
   }
 
   @override
@@ -77,7 +97,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Center(child: Text("Driver Detail", style: Theme.of(context).textTheme.headlineSmall,)),
+                        Center(child: Text("Rider Details", style: Theme.of(context).textTheme.headlineSmall,)),
                         Center(
                           child: SizedBox(
                             width: 80.0,
@@ -101,8 +121,9 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                                   errorBuilder:
                                       (context, object, stack) {
                                     return const Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
+                                      Icons.person,
+                                      size: 28,
+                                      color: Colors.grey,
                                     );
                                   },
                                 )),
@@ -114,6 +135,18 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                             children: [
                               Text('Name: ${snapshot.data?.fullname ?? " "}', style: theme.textTheme.titleLarge),
                               Text('Phone: ${snapshot.data?.phoneNo ?? " "}', style: theme.textTheme.titleLarge),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Ratings: ${_average.toStringAsFixed(1)}", style: theme.textTheme.titleLarge,),
+                                  Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: _average < 3.5 ? Colors.redAccent : Colors.green,
+                                  )
+                                ],
+                              ),
+
                             ],
                           ),
                         ),
@@ -139,6 +172,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                             Text(snapshot.data?.vehicleColor ?? " ", style: theme.textTheme.bodyLarge),
                           ],
                         ),
+
                         Center(
                           child: TextButton(
                             child: Text("View Driver on Map", style: theme.textTheme.titleLarge,
@@ -148,7 +182,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                               Get.to(() => NavigationScreen(double.parse(snapshot.data!.currentLat!), double.parse(snapshot.data!.currentLong!)));
                             },),
                         ),
-                        const SizedBox(height: 35,),
+                        const SizedBox(height: 15,),
                         Row(
                           children: [
                             Expanded(
