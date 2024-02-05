@@ -227,7 +227,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                         overflow: TextOverflow.ellipsis)),
                                     if(snapshot.data![index].status == 'active')...[
                                       Text(snapshot.data![index].status ?? "",
-                                          style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                          style: TextStyle(fontSize: 13.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis)
                                     ]else if(snapshot.data![index].status == 'completed' && snapshot.data![index].rated == '0')...[
@@ -239,7 +239,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                           )));
                                         },
                                         child: Text("Rate Rider",
-                                          style: Theme.of(context).textTheme.headlineSmall,
+                                          style: Theme.of(context).textTheme.labelLarge,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,),
                                       ))
@@ -252,13 +252,13 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                           )));
                                         },
                                         child: Text("Rate Rider",
-                                          style: Theme.of(context).textTheme.headlineSmall,
+                                          style: Theme.of(context).textTheme.labelLarge,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,),
                                       ))
                                     ]else...[
                                         Text(snapshot.data![index].status ?? "",
-                                        style: TextStyle(fontSize: 18.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
+                                        style: TextStyle(fontSize: 13.0, color: snapshot.data![index].status == "active" ? Colors.green : Colors.amber ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis)
                                     ],
