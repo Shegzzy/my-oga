@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myoga/services/models/cancelled_bookings_model.dart';
+import 'package:myoga/services/views/Cancelled_Bookings/cancelled_bookings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/models/booking_model.dart';
@@ -183,6 +185,27 @@ class UserRepository extends GetxController {
       UserModel userInfo = await getUserDetailsWithEmail(email);
       final snapshot = await _db.collection("Bookings").where("Customer ID", isEqualTo: userInfo.id).get();
       List<BookingModel> bookingData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).toList();
+      bookingData.sort((a,b) => DateTime.parse(b.created_at!).compareTo(DateTime.parse(a.created_at!)));
+      return bookingData;
+    }
+
+  }
+
+  ///Retrieving Cancelled Bookings Details From Database
+  Future<List<CancelledBookingModel>?>getUserCancelledBookingDetails() async {
+    final email = userId!.email;
+    if(email == null){
+      final phone = userId!.phoneNumber;
+      UserModel userInfo = await getUserDetailsWithPhone(phone!);
+      final snapshot = await _db.collection("Cancelled Bookings").where("Customer ID", isEqualTo: userInfo.id).get();
+      List<CancelledBookingModel> bookingData = snapshot.docs.map((e) => CancelledBookingModel.fromSnapshot(e)).toList();
+      bookingData.sort((a,b) => DateTime.parse(b.created_at!).compareTo(DateTime.parse(a.created_at!)));
+      return bookingData;
+    }
+    else {
+      UserModel userInfo = await getUserDetailsWithEmail(email);
+      final snapshot = await _db.collection("Cancelled Bookings").where("Customer ID", isEqualTo: userInfo.id).get();
+      List<CancelledBookingModel> bookingData = snapshot.docs.map((e) => CancelledBookingModel.fromSnapshot(e)).toList();
       bookingData.sort((a,b) => DateTime.parse(b.created_at!).compareTo(DateTime.parse(a.created_at!)));
       return bookingData;
     }

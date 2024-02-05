@@ -13,6 +13,7 @@ import '../models/user_model.dart';
 import 'package:async/async.dart';
 
 import '../notifi_services.dart';
+import '../views/Cancelled_Bookings/cancelled_bookings.dart';
 
 class ProfileController extends GetxController {
   static ProfileController get instance => Get.find();
@@ -56,6 +57,10 @@ class ProfileController extends GetxController {
 
   Future<List<BookingModel>?> getAllUserBookings() async {
     return await _userRepo.getUserBookingDetails();
+  }
+
+  Future<List<CancelledBookings>?> getAllUserCancelledBookings() async {
+    return await _userRepo.getUserCancelledBookingDetails();
   }
 
   Future<List<SupportModel>?> getAllUserSupport() async {
