@@ -407,7 +407,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                               // print(snapshot.data![index].bookingNumber);
                               showDeleteAlert(context, bookingData.bookingNumber!);
                             },
-                            child: const Text('Cancel Booking')
+                            child: const Text('Cancel Booking', style: TextStyle(
+                                color: PButtonColor
+                            ),
+                          )
                         ),
                       ),
                   ],
@@ -583,8 +586,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                         child: TextButton(
                           child: const Text(
                             "Rate Rider",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: PButtonColor
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -602,8 +606,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                           child: TextButton(
                             child: const Text(
                               "Rate Rider",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: PButtonColor
+                              ),
                             ),
                             onPressed: () {
                               Navigator.push(
@@ -650,8 +655,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                           : TextButton(
                               child: const Text(
                                 "View Rider Details",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: PButtonColor
+                                ),
                               ),
                               onPressed: () {
                                 setState(() {

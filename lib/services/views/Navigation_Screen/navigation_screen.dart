@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -10,6 +12,8 @@ import 'package:location/location.dart' as loc;
 import 'package:location/location.dart';
 import 'package:myoga/configMaps.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image/image.dart' as IMG;
+
 import 'dart:math' show cos, sqrt, asin;
 
 class NavigationScreen extends StatefulWidget {
@@ -105,6 +109,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
     );
   }
 
+  Uint8List? resizeImage(Uint8List data, width, height) {
+    Uint8List? resizedData = data;
+    IMG.Image? img = IMG.decodeImage(data);
+    IMG.Image resized = IMG.copyResize(img!, width: width, height: height);
+    resizedData = Uint8List.fromList(IMG.encodePng(resized));
+    return resizedData;
+  }
+
   getNavigation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -118,6 +130,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
         return;
       }
     }
+
+    String imgurl = "https://cdn-icons-png.freepik.com/256/7193/7193391.png?ga=GA1.1.691408758.1706907328&semt=ais";
+
+    Uint8List bytes = (await NetworkAssetBundle(Uri.parse(imgurl))
+        .load(imgurl))
+        .buffer
+        .asUint8List();
+
+    Uint8List? myPosition = resizeImage(bytes, 80, 80);
 
     _permissionGranted = await location.hasPermission();
     if(_permissionGranted == PermissionStatus.denied){
@@ -142,7 +163,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             curLocation = LatLng(currentLocation.latitude!, currentLocation.longitude!);
             sourcePosition = Marker(
               markerId: MarkerId(currentLocation.toString()),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+              icon: BitmapDescriptor.fromBytes(myPosition!),
               position: LatLng(currentLocation.latitude!, currentLocation.longitude!),
               infoWindow: InfoWindow(
                   title: double.parse((getDistance(LatLng(widget.lat, widget.lng)).toStringAsFixed(2)))
@@ -159,7 +180,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   getDirections(LatLng dst) async {
     List<LatLng> polylineCoordinates = [];
     List<dynamic> points = [];
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates('AIzaSyBnh_SIURwYz-4HuEtvm-0B3AlWt0FKPbM',
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates('${dotenv.env['mapKey']}',
         PointLatLng(curLocation.latitude, curLocation.longitude),
         PointLatLng(dst.latitude, dst.longitude),
         travelMode: TravelMode.driving
@@ -200,7 +221,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return calculateDistance(curLocation.latitude, curLocation.longitude, dstPosition.latitude, dstPosition.longitude);
   }
 
-  addMarker(){
+  addMarker() async {
+    String imgurl = "https://cdn-icons-png.freepik.com/256/5458/5458280.png?ga=GA1.1.691408758.1706907328&semt=ais";
+
+    Uint8List bytes = (await NetworkAssetBundle(Uri.parse(imgurl))
+        .load(imgurl))
+        .buffer
+        .asUint8List();
+
+    Uint8List? smallImg = resizeImage(bytes, 80, 80);
+    
     setState(() {
       sourcePosition = Marker(
         markerId: MarkerId('source'),
@@ -210,7 +240,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       destinationPosition = Marker(
         markerId: MarkerId('destination'),
         position: LatLng(widget.lat, widget.lng),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+        icon: BitmapDescriptor.fromBytes(smallImg!),
       );
     });
   }
