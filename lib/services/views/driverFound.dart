@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -24,11 +25,18 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
   BookingModel? bookingData;
   final userController = Get.put(UserRepository());
   bool loadingData = false;
+  final _db = FirebaseFirestore.instance;
+  int counter = 0;
+  double rate = 0;
+  double _total = 0;
+  double _average = 0;
+  List<double> ratings = [0.1, 0.3, 0.5, 0.7, 0.9];
 
   @override
   void initState() {
     super.initState();
     fetchRiderDate();
+    getRatingCount();
   }
 
   Future<void> fetchRiderDate() async{
@@ -50,6 +58,21 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
         loadingData = false;
       });
     }
+  }
+
+  Future<void> getRatingCount() async{
+    await _db.collection("Drivers").doc(widget.dId).collection("Ratings").get().then((value) {
+      for (var element in value.docs) {
+        rate = element.data()["rating"];
+        setState(() {
+          _total = _total + rate;
+          print(_total);
+
+          counter = counter+1;
+        });
+      }
+    });
+    _average = _total/counter;
   }
 
   void showStatusModalBottomSheet(BuildContext context){
@@ -102,7 +125,7 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
           ) : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Driver", style: Theme.of(context).textTheme.bodyLarge,),
+              Text("Rider", style: Theme.of(context).textTheme.bodyLarge,),
               const SizedBox(height: 20,),
               SizedBox(
                 width: 120.0,
@@ -127,8 +150,9 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
                       errorBuilder:
                           (context, object, stack) {
                         return const Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
+                          Icons.person,
+                          color: Colors.grey,
+                          size: 28,
                         );
                       },
                     )),
@@ -151,6 +175,18 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(height: 5,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Ratings: ${_average.toStringAsFixed(1)}", style: Theme.of(context).textTheme.titleLarge,),
+                  Icon(
+                    Icons.star,
+                    size: 16,
+                    color: _average < 3.5 ? Colors.redAccent : Colors.green,
+                  )
+                ],
+              ),
               const SizedBox(width: 2,),
               Flexible(
                 child: Text("Current Location: ${_driverModel?.currentAddress ?? ""}",
@@ -160,7 +196,7 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
               const SizedBox(width: 2,),
               Flexible(
                 child: TextButton(
-                  child: const Text("View Driver on Map",
+                  child: const Text("View Rider on Map",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,),
                   onPressed: () {

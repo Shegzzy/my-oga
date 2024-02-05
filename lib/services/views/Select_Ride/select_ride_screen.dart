@@ -580,8 +580,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     dropOffLng = Provider.of<AppData>(context, listen: false).dropOffLocation?.longitude;
     pickUpAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
     dropOffAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
-    plugin.initialize(publicKey: 'pk_test_51c4b33f9510df51a4822f59bbbd555cdc0f3748');
-    // plugin.initialize(publicKey: '${dotenv.env['pubKey']}');
+    // plugin.initialize(publicKey: 'pk_test_51c4b33f9510df51a4822f59bbbd555cdc0f3748');
+    plugin.initialize(publicKey: '${dotenv.env['pubKey']}');
   }
 
   @override

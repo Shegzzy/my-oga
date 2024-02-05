@@ -93,14 +93,11 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
         rate = element.data()["rating"];
         setState(() {
           _total = _total + rate;
-          print(_total);
-
           counter = counter+1;
         });
       }
     });
     _average = _total/counter;
-    print(_average);
   }
 
   // canceling booking
@@ -181,7 +178,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                     "Rider",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-
+                  const SizedBox(height: 10,),
                   SizedBox(
                     width: 120.0,
                     height: 120.0,
