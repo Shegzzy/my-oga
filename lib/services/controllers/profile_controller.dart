@@ -6,6 +6,7 @@ import 'package:myoga/repositories/authentication_repository/authentication_repo
 
 import '../../repositories/user_repository/user_repository.dart';
 import '../models/booking_model.dart';
+import '../models/cancelled_bookings_model.dart';
 import '../models/delivryModeModel.dart';
 import '../models/package_details_model.dart';
 import '../models/supportModel.dart';
@@ -13,7 +14,6 @@ import '../models/user_model.dart';
 import 'package:async/async.dart';
 
 import '../notifi_services.dart';
-import '../views/Cancelled_Bookings/cancelled_bookings.dart';
 
 class ProfileController extends GetxController {
   static ProfileController get instance => Get.find();
@@ -59,7 +59,7 @@ class ProfileController extends GetxController {
     return await _userRepo.getUserBookingDetails();
   }
 
-  Future<List<CancelledBookings>?> getAllUserCancelledBookings() async {
+  Future<List<CancelledBookingModel>?> getAllUserCancelledBookings() async {
     return await _userRepo.getUserCancelledBookingDetails();
   }
 

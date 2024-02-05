@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/views/Cancelled_Bookings/cancelled_bookings.dart';
 import 'package:myoga/services/views/My_Ratings/my_ratings.dart';
 import 'package:myoga/services/views/Profile/profile_info_screen.dart';
 import 'package:myoga/services/views/Profile/update_profile_screen.dart';
@@ -185,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: moMenu6,
                         icon: LineAwesomeIcons.window_close,
                         onPress: () {
-                          Get.to(() => MyOrdersScreen());
+                          Get.to(() => const CancelledBookings());
                         }),
                     ProfileMenuWidget(
                         title: 'My Ratings',
