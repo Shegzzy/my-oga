@@ -12,6 +12,7 @@ import '../../../constants/image_strings.dart';
 import '../../../constants/texts_string.dart';
 import '../../../repositories/authentication_repository/authentication_repository.dart';
 import '../../../repositories/user_repository/user_repository.dart';
+import '../../../widgets/progressDialog.dart';
 import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/profile_controller.dart';
 import '../../controllers/signup_controller.dart';
@@ -325,6 +326,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                         overflow: TextOverflow.ellipsis)),
                                   ],
                                 ),
+
                                 // const SizedBox(height: 5,),
                               ],
                             ),

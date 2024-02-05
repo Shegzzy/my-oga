@@ -182,6 +182,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Get.to(() => MyOrdersScreen());
                         }),
                     ProfileMenuWidget(
+                        title: moMenu6,
+                        icon: LineAwesomeIcons.window_close,
+                        onPress: () {
+                          Get.to(() => MyOrdersScreen());
+                        }),
+                    ProfileMenuWidget(
                         title: 'My Ratings',
                         icon: LineAwesomeIcons.star,
                         onPress: () {

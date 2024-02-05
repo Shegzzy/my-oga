@@ -82,6 +82,8 @@ const String moMenu2 = "My Orders";
 const String moMenu3 = "Settings";
 const String moMenu4 = "Logout";
 const String moMenu5 = "My Wallet";
+const String moMenu6 = "Cancelled Bookings";
+
 
 //Update Profile Text
 const String moDelete = "Delete";
