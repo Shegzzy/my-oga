@@ -281,4 +281,13 @@ class UserRepository extends GetxController {
     );
   }
 
+  Stream<CancelledBookingModel> getCancelledBookingStatusData(String num){
+    return _db.collection("Cancelled Bookings")
+        .where("Booking Number", isEqualTo: num)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((document) => CancelledBookingModel.fromSnapshot(document)).first
+    );
+  }
+
 }

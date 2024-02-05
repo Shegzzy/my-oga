@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:myoga/services/models/cancelled_bookings_model.dart';
 import 'package:get/get.dart';
+import 'package:myoga/services/views/Cancelled_Booking_Details/cancelled_booking_details.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/formatter/formatter.dart';
@@ -73,11 +74,11 @@ class _CancelledBookingsState extends State<CancelledBookings> {
                       itemBuilder: (c, index){
                         return  GestureDetector(
                           onTap: () async {
-                            // final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => BookingDetailsScreen(bookingData: snapshot.data![index],)));
-                            // if(result == true){
-                            //   reloadScreen();
-                            //   setState(() {});
-                            // }
+                            final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CancelledBookingDetails(bookingData: snapshot.data![index],)));
+                            if(result == true){
+                              reloadScreen();
+                              setState(() {});
+                            }
                           },
                           child: Padding(
                             padding: const EdgeInsets.only( top: 10.0),
