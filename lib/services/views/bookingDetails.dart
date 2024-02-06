@@ -263,12 +263,12 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                   ),
                   Flexible(
                     child: TextButton(
-                      child: const Text(
+                      child: Text(
                         "View Rider on Map",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: PButtonColor
+                          color: isDark ? Colors.amberAccent : PButtonColor
                         ),
                       ),
                       onPressed: () {
@@ -607,10 +607,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                     ]else if(bookingModel?.status == 'completed' && bookingModel?.rated == '0')...[
                       Flexible(
                         child: TextButton(
-                          child: const Text(
+                          child: Text(
                             "Rate Rider",
                             style: TextStyle(
-                                color: PButtonColor
+                                color: isDark ? Colors.amberAccent : PButtonColor
                             ),
                           ),
                           onPressed: () {
@@ -627,10 +627,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                     ]else if(bookingModel?.status == 'completed' && bookingModel?.rated == null)...[
                       Flexible(
                           child: TextButton(
-                            child: const Text(
+                            child: Text(
                               "Rate Rider",
                               style: TextStyle(
-                                  color: PButtonColor
+                                  color: isDark ? Colors.amberAccent : PButtonColor
                               ),
                             ),
                             onPressed: () {
@@ -676,10 +676,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                       child: bookingModel?.driver_id == null
                           ? const Text("No Driver Assigned")
                           : TextButton(
-                              child: const Text(
+                              child: Text(
                                 "View Rider Details",
                                 style: TextStyle(
-                                  color: PButtonColor
+                                  color: isDark ? Colors.amberAccent : PButtonColor
                                 ),
                               ),
                               onPressed: () {
