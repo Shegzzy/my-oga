@@ -424,7 +424,6 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   }
 
   void displayRideDetailsContainer() async {
-   await getPlaceDirection();
    modeFuture = _getAllModes();
    setState(() {
     rideDetailsContainer = 0;
@@ -597,7 +596,6 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     var isDark = getXSwitchState.isDarkMode;
-    getPlaceDirection();
     String? placeAddress = Provider.of<AppData>(context, listen: false).pickUpLocation?.placeName;
     pickUpLocation = placeAddress ?? "";
     String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;

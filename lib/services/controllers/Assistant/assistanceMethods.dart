@@ -16,6 +16,7 @@ import '../Data_handler/appData.dart';
 class AssistanceMethods {
 
   static Future<String> searchCoordinateAddress(Position position, context) async {
+    print("calling");
     String streetAddress = "";
     String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=${dotenv.env['mapKey']}";
 
