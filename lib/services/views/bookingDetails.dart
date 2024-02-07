@@ -392,7 +392,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -430,8 +430,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                               // print(snapshot.data![index].bookingNumber);
                               showDeleteAlert(context, bookingData.bookingNumber!);
                             },
-                            child: const Text('Cancel Booking', style: TextStyle(
-                                color: PButtonColor
+                            child: Text('Cancel Booking', style: TextStyle(
+                                color: isDark ? Colors.amberAccent : PButtonColor
                             ),
                           )
                         ),

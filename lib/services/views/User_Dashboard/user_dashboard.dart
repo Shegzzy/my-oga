@@ -210,7 +210,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     getPref();
     var isDark = getXSwitchState.isDarkMode;
     return Scaffold(
-      appBar: const DashboardAppBar(),
+      appBar: DashboardAppBar(),
       body: Stack(
         children: [
           if (isLoading)

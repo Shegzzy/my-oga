@@ -601,7 +601,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
     String? dropPlaceAddress = Provider.of<AppData>(context, listen: false).dropOffLocation?.placeName;
     dropOffLocation = dropPlaceAddress ?? "";
     return Scaffold(
-      appBar: const DashboardAppBar(),
+      appBar: DashboardAppBar(),
       body: Stack(
         children: [
           // Map

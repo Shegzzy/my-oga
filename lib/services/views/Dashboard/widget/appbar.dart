@@ -5,16 +5,20 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../../../constants/colors.dart';
 import '../../../../constants/image_strings.dart';
 import '../../../../repositories/authentication_repository/authentication_repository.dart';
+import '../../../controllers/getXSwitchStateController.dart';
 import '../../Profile/profile_screen.dart';
 
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const DashboardAppBar({
+  DashboardAppBar({
     Key? key,
   }) : super(key: key);
 
+  final GetXSwitchState getXSwitchState = Get.find();
+
+
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     return AppBar(
       title: isDark ? const Image(image: AssetImage(moLoginImageDark), height: 40.2,) : const Image(image: AssetImage(moLoginImage), height: 40.0,),
       centerTitle: true,

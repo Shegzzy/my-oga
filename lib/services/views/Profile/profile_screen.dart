@@ -20,6 +20,7 @@ import '../../../constants/colors.dart';
 import '../../../constants/image_strings.dart';
 import '../../../constants/texts_string.dart';
 import '../../../repositories/authentication_repository/authentication_repository.dart';
+import '../../controllers/getXSwitchStateController.dart';
 import '../../controllers/profile_controller.dart';
 import '../../controllers/profile_photo_controller.dart';
 import '../../notifi_services.dart';
@@ -43,6 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //final _user = FirebaseAuth.instance.currentUser;
   var myUserDetail = const UserModel().obs;
   final AuthenticationRepository _authController = Get.put(AuthenticationRepository());
+  final GetXSwitchState getXSwitchState = Get.find();
+
 
   @override
   void initState() {
@@ -70,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var isDark = getXSwitchState.isDarkMode;
     getPrefs();
     return Scaffold(
       appBar: AppBar(

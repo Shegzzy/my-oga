@@ -18,7 +18,7 @@ class Dashboard extends StatelessWidget {
         .of(context)
         .textTheme;
     return Scaffold(
-      appBar: const DashboardAppBar(),
+      appBar: DashboardAppBar(),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20.0),

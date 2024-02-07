@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,7 +34,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Marker? sourcePosition, destinationPosition;
   loc.LocationData? _currentPosition;
   LatLng curLocation = LatLng(9.2612746, 7.3903539);
-  StreamSubscription<loc.LocationData>? locationSubscription;
 
   @override
   void initState() {
@@ -46,7 +45,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   void dispose() {
     super.dispose();
-    locationSubscription?.cancel();
   }
 
   @override
@@ -66,23 +64,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
           : Stack(
         children: [
           GoogleMap(
-            zoomControlsEnabled: false,
+            zoomControlsEnabled: true,
             polylines: Set<Polyline>.of(polylines.values),
+            myLocationButtonEnabled: true,
+            myLocationEnabled: true,
             initialCameraPosition: CameraPosition(
               target: curLocation,
               zoom: 12,
             ),
             markers: {sourcePosition!, destinationPosition!},
-            onTap: (latlng){
-              print(latlng);
-            },
             onMapCreated: (GoogleMapController controller){
               _controller.complete(controller);
             },
           ),
 
           Positioned(
-            bottom: 10,
+            bottom: 70,
             right: 10,
             child: Container(
               width: 50,
@@ -97,9 +94,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
-                    await launchUrl(Uri.parse(
-                        'google.navigation:q=${widget.lat},${widget.lng}&key=${dotenv.env['mapKey']}'
-                    ));
+                    String googleMapsAndroidURL = 'google.navigation:q=${widget.lat},${widget.lng}&mode=d'; // mode=d for driving
+
+                    String googleMapsIosURL = 'comgooglemaps://?daddr=${widget.lat},${widget.lng}&directionsmode=driving'; // directionsmode=driving for driving
+
+                    String googleMapsWebURL = 'https://www.google.com/maps/dir/?api=1&destination=${widget.lat},${widget.lng}&travelmode=driving'; // travelmode=driving for driving
+
+                    if (Platform.isAndroid && await canLaunchUrl(Uri.parse(googleMapsAndroidURL))) {
+                      await launchUrl(Uri.parse(googleMapsAndroidURL));
+                    } else if (Platform.isIOS && await canLaunchUrl(Uri.parse(googleMapsIosURL))) {
+                      await launchUrl(Uri.parse(googleMapsIosURL));
+                    } else {
+                      await launchUrl(Uri.parse(googleMapsWebURL), mode: LaunchMode.externalApplication);
+                    }
                   },
                 ),
               ),
@@ -119,6 +126,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   getNavigation() async {
+    print(3);
+
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
     final GoogleMapController? controller =  await _controller.future;
@@ -152,33 +161,34 @@ class _NavigationScreenState extends State<NavigationScreen> {
       _currentPosition = await location.getLocation();
       curLocation = LatLng(_currentPosition!.latitude!, _currentPosition!.longitude!);
 
-      locationSubscription = location.onLocationChanged.listen((LocationData currentLocation) {
+
         controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(currentLocation.latitude!, currentLocation.longitude!),
+          target: LatLng(_currentPosition!.latitude!, _currentPosition!.longitude!),
           zoom: 16,
         )));
 
         if(mounted){
           controller?.showMarkerInfoWindow(MarkerId(sourcePosition!.markerId.value));
           setState(() {
-            curLocation = LatLng(currentLocation.latitude!, currentLocation.longitude!);
+            curLocation = LatLng(_currentPosition!.latitude!, _currentPosition!.longitude!);
             sourcePosition = Marker(
-              markerId: MarkerId(currentLocation.toString()),
+              markerId: MarkerId(_currentPosition.toString()),
               icon: BitmapDescriptor.fromBytes(myPosition!),
-              position: LatLng(currentLocation.latitude!, currentLocation.longitude!),
+              position: LatLng(_currentPosition!.latitude!, _currentPosition!.longitude!),
               infoWindow: InfoWindow(
                   title: double.parse((getDistance(LatLng(widget.lat, widget.lng)).toStringAsFixed(2)))
                       .toString()
               ),
             );
           });
-          getDirections(LatLng(widget.lat, widget.lng));
-        }
-      });
+        };
+      getDirections(LatLng(widget.lat, widget.lng));
     }
   }
 
   getDirections(LatLng dst) async {
+    print(2);
+
     List<LatLng> polylineCoordinates = [];
     List<dynamic> points = [];
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates('${dotenv.env['mapKey']}',
@@ -187,10 +197,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         travelMode: TravelMode.driving
     );
     if(result.points.isNotEmpty){
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        points.add({'lat': point.latitude, 'lng': point.longitude});
-      });
+      result.points.first;
     }else {
       print(result.errorMessage);
     }
@@ -223,6 +230,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   addMarker() async {
+    print(1);
     String imgurl = "https://cdn-icons-png.freepik.com/256/5458/5458280.png?ga=GA1.1.691408758.1706907328&semt=ais";
 
     Uint8List bytes = (await NetworkAssetBundle(Uri.parse(imgurl))
