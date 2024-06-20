@@ -30,7 +30,7 @@ class _SupportScreenState extends State<SupportScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    controller.dispose();
+    // controller.dispose();
   }
 
   Future<List<SupportModel>?>_getSupports() async {

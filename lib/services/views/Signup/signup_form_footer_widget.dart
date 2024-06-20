@@ -23,7 +23,7 @@ class SignupFormFooter extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: moAlreadyHaveAccount,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
                   TextSpan(text: moLogin.toUpperCase()),
               ]
             ),

@@ -32,9 +32,9 @@ class DeliveryServiceFeeBtnWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.headline5,),
-                Text(subtitle, style: Theme.of(context).textTheme.bodyText2,),
-                Text(price, style: Theme.of(context).textTheme.headline6,),
+                Text(title, style: Theme.of(context).textTheme.headlineSmall,),
+                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium,),
+                Text(price, style: Theme.of(context).textTheme.titleLarge,),
               ],
             ),
           ],

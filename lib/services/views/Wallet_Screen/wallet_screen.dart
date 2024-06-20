@@ -23,7 +23,7 @@ class MyWalletScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => Get.back(), icon: const Icon(LineAwesomeIcons.angle_left)),
-        title: Center(child: Text("My Wallet", style: Theme.of(context).textTheme.headline4)),
+        title: Center(child: Text("My Wallet", style: Theme.of(context).textTheme.headlineMedium)),
         actions: [
           IconButton(
               onPressed: () {},
@@ -52,9 +52,9 @@ class MyWalletScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
                         children: [
-                          Text("Balance", style: txtTheme.headline2),
+                          Text("Balance", style: txtTheme.displayMedium),
                           const SizedBox(height: 10,),
-                          Text("NGN 0.00", style: txtTheme.headline5?.apply(fontSizeFactor: 2.2)),
+                          Text("NGN 0.00", style: txtTheme.headlineSmall?.apply(fontSizeFactor: 2.2)),
                         ],
                       ),
                     ),
@@ -68,7 +68,7 @@ class MyWalletScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("Top Up Wallet", style: Theme.of(context).textTheme.headline6,),
+                  Text("Top Up Wallet", style: Theme.of(context).textTheme.titleLarge,),
                   SizedBox(width: 10,),
                   FloatingActionButton(
                     onPressed: () {

@@ -40,7 +40,7 @@ class DashboardDrivers extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(child: Text(list[index].title,
-                            style: txtTheme.headline4,
+                            style: txtTheme.headlineMedium,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis)),
                         Flexible(child: Image(
@@ -58,8 +58,8 @@ class DashboardDrivers extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(list[index].heading, style: txtTheme.headline4, overflow: TextOverflow.ellipsis,),
-                            Text(list[index].subheading, style: txtTheme.bodyText2, overflow: TextOverflow.ellipsis,),
+                            Text(list[index].heading, style: txtTheme.headlineMedium, overflow: TextOverflow.ellipsis,),
+                            Text(list[index].subheading, style: txtTheme.bodyMedium, overflow: TextOverflow.ellipsis,),
                           ],
                         )
                       ],

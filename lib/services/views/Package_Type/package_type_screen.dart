@@ -55,11 +55,11 @@ class _PackageTypeScreenState extends State<PackageTypeScreen> {
           children: [
             Text(
               moPackageTitle,
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
               moPackageDetailsForm,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(
               height: 30.0,
@@ -130,7 +130,7 @@ class _PackageTypeScreenState extends State<PackageTypeScreen> {
                   ),
                   Text(
                     moAddPackageDetails,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(
                     height: 3.0,
@@ -156,7 +156,7 @@ class _PackageTypeScreenState extends State<PackageTypeScreen> {
                   ),
                   Text(
                     moSelectPackageType,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(
                     height: 10.0,

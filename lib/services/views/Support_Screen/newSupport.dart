@@ -91,7 +91,7 @@ class _NewSupportState extends State<NewSupport> {
         leading: IconButton(
             onPressed: () => Get.back(),
             icon: const Icon(LineAwesomeIcons.angle_left)),
-        title: Text("Support Tickets", style: Theme.of(context).textTheme.headline4),
+        title: Text("Support Tickets", style: Theme.of(context).textTheme.headlineMedium),
         centerTitle: true,
         backgroundColor: Colors.transparent,
       ),

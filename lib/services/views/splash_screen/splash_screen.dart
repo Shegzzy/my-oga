@@ -42,8 +42,8 @@ class SplashScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(moSplashText, style: Theme.of(context).textTheme.headline4,),
-                    Text(moAppTagLine, style: Theme.of(context).textTheme.subtitle2,),
+                    Text(moSplashText, style: Theme.of(context).textTheme.headlineMedium,),
+                    Text(moAppTagLine, style: Theme.of(context).textTheme.titleSmall,),
                   ],
                 ),
               ),

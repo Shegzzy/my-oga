@@ -468,7 +468,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                         const SizedBox(height: 10.0,),
                       ],
                     ),
-                  );;
+                  );
                 },
                 separatorBuilder: (BuildContext context, int index) => const Divider(height: 5.0,),
                 itemCount: pickUpPlacePredictionList.length,
@@ -477,14 +477,16 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
               ),
             )
                 : Container(),
+
+
             const SizedBox(height: 20.0,),
             SizedBox(
               width: 250.0,
               child: ElevatedButton(
                 onPressed: notWithinRegion ? null : (){
                 BookingAddress bookingAddress = BookingAddress();
-                bookingAddress.pickUpLocation = pickUpTextEditingController!.text;
-                bookingAddress.dropOffLocation = dropOffTextEditingController!.text;
+                bookingAddress.pickUpLocation = pickUpTextEditingController.text;
+                bookingAddress.dropOffLocation = dropOffTextEditingController.text;
                 Navigator.pop(context);
                 Get.to(() => const SelectRideScreen());
               },

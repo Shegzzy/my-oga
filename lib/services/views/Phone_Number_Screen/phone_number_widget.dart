@@ -70,7 +70,7 @@ class _PhoneNumberFormWidgetState extends State<PhoneNumberFormWidget> {
                               child: countryCode.flagImage,
                             ),
                           ),
-                          Text(countryCode.dialCode, style: Theme.of(context).textTheme.bodyText2,),
+                          Text(countryCode.dialCode, style: Theme.of(context).textTheme.bodyMedium,),
                           const Icon(Icons.keyboard_arrow_down_rounded),
                         ],
                       ),

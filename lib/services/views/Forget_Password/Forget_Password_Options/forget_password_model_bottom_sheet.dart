@@ -20,11 +20,11 @@ class ForgetPasswordScreen {
             children: [
               Text(
                 moForgetPasswordTitle,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               Text(
                 moForgetPasswordSubtitle,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(
                 height: 10.0,

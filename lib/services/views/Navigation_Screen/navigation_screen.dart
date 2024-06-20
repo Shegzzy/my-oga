@@ -181,7 +181,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ),
             );
           });
-        };
+        }
       getDirections(LatLng(widget.lat, widget.lng));
     }
   }

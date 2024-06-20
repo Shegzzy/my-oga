@@ -59,11 +59,11 @@ class DashboardBanners extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment
                           .spaceBetween,
-                      children: const [
+                      children: [
                         Flexible(child: Image(
                           image: AssetImage(moBookmark),
                           height: 20.0,)),
@@ -72,9 +72,9 @@ class DashboardBanners extends StatelessWidget {
                       ],
                     ),
                     Text("Get your parcel delivered",
-                      style: txtTheme.headline4,
+                      style: txtTheme.headlineMedium,
                       overflow: TextOverflow.ellipsis,),
-                    Text("Fast, Secured", style: txtTheme.bodyText2,
+                    Text("Fast, Secured", style: txtTheme.bodyMedium,
                       overflow: TextOverflow.ellipsis,),
                   ],
                 ),

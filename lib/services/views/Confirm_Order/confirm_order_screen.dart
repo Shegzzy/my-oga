@@ -115,7 +115,7 @@ class ConfirmOrderScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(moDropOffHintText,
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ),
                             ),
@@ -129,7 +129,7 @@ class ConfirmOrderScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(1.0),
                                 child: Text(dropOffLocation,
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
                             ),

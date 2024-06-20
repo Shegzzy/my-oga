@@ -36,7 +36,7 @@ class DashboardCategories extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(list[index].title,
-                      style: txtTheme.headline6?.apply(
+                      style: txtTheme.titleLarge?.apply(
                           color: Colors.white),),
                   ),
                 ),
@@ -46,9 +46,9 @@ class DashboardCategories extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(list[index].heading, style: txtTheme.headline6,
+                      Text(list[index].heading, style: txtTheme.titleLarge,
                         overflow: TextOverflow.ellipsis,),
-                      Text(list[index].subheading, style: txtTheme.bodyText2,
+                      Text(list[index].subheading, style: txtTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis,),
                     ],
                   ),

@@ -18,7 +18,7 @@ class DashboardSearchBox extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Search", style: txtTheme.headline2?.apply(
+          Text("Search", style: txtTheme.displayMedium?.apply(
               color: Colors.grey.withOpacity(0.5))),
           const Icon(Icons.mic, size: 25.0,)
         ],
