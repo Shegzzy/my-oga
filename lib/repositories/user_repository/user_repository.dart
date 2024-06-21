@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myoga/services/models/cancelled_bookings_model.dart';
 import 'package:myoga/services/models/states_model.dart';
+import 'package:myoga/services/models/vehicles_model.dart';
 import 'package:myoga/services/views/Cancelled_Bookings/cancelled_bookings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -242,13 +243,15 @@ class UserRepository extends GetxController {
     return _stateModel;
   }
 
+  List<VehiclesModel> _vehiclesModel = [];
+  List<VehiclesModel> get vehiclesModel => _vehiclesModel;
   //Retrieving Delivery States From Database
-  Future<List<StatesModel>?> getVehicles() async {
-    _stateModel.clear();
-    final snapshot = await _db.collection("Settings").doc("locations").collection("states").get();
-    _stateModel.addAll(snapshot.docs.map((e) => StatesModel.fromSnapshot(e)).toList());
-    // print(_stateModel.first.id);
-    return _stateModel;
+  Future<List<VehiclesModel>?> getVehicles() async {
+    _vehiclesModel.clear();
+    final snapshot = await _db.collection("Settings").doc("deliveryVehicles").collection("vehicles").get();
+    _vehiclesModel.addAll(snapshot.docs.map((e) => VehiclesModel.fromSnapshot(e)).toList());
+    print(_vehiclesModel.first.id);
+    return _vehiclesModel;
   }
 
   ///Fetch  User Details

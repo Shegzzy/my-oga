@@ -181,6 +181,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       onTap: (){
         setState(() {
           selectedRide = index;
+          print(selectedRide);
         });
       },
       child: Container(
@@ -651,17 +652,32 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                         children: [
                           Text("Select Ride", style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center,),
                           const SizedBox(height: 10.0,),
-                          SelectRide(
-                            Icons.electric_rickshaw,
-                            "Truck",
-                            moRideTruck,
-                          ),
-                          const SizedBox(height: 20.0,),
-                          SelectRide(
-                              LineAwesomeIcons.motorcycle,
-                              "Motorcycle",
-                              moRideMotorcycle,
-                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: userRepo.vehiclesModel.length,
+                            itemBuilder: (context, index){
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SelectRide(
+                                  index == 0 ?
+                                    Icons.electric_rickshaw : LineAwesomeIcons.motorcycle,
+                                    '${userRepo.vehiclesModel[index].name}',
+                                    '${userRepo.vehiclesModel[index].name}'),
+                              );
+                            }),
+                          // const SizedBox(height: 20.0,),
+                          // SelectRide(
+                          //   Icons.electric_rickshaw,
+                          //   "Truck",
+                          //   moRideTruck,
+                          // ),
+                          // const SizedBox(height: 20.0,),
+                          // SelectRide(
+                          //     LineAwesomeIcons.motorcycle,
+                          //     "Motorcycle",
+                          //     moRideMotorcycle,
+                          // ),
                           const SizedBox(height: 20.0,),
                           TextFormField(
                             controller: _addController,

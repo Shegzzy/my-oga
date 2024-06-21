@@ -40,6 +40,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await GetStorage.init();
   await _userRepo.getStates();
+  await _userRepo.getVehicles();
   runApp(MyApp());
   _init();
 }

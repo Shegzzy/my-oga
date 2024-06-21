@@ -62,7 +62,7 @@ class AssistanceMethods {
   }
 
   static String calculateFares(DirectionDetails directionDetails, String? rate, String? minimumPrice, String? startPrice){
-    print(directionDetails.distanceValue);
+    // print(directionDetails.distanceValue);
     // print(rate);
     // print(minimumPrice);
     double? intRate = double.tryParse(rate!);
