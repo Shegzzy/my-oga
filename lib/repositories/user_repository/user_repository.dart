@@ -229,13 +229,17 @@ class UserRepository extends GetxController {
 
   }
 
+  List<StatesModel> _stateModel = [];
+  List<StatesModel> get stateModel => _stateModel;
+
 
   ///Retrieving Delivery States From Database
-  Future<List<StatesModel>?>getStates() async {
+  Future<List<StatesModel>?> getStates() async {
+    _stateModel.clear();
     final snapshot = await _db.collection("Settings").doc("locations").collection("states").get();
-    print(snapshot.docs.map((e) => e['name']));
-    // final statesData = snapshot.docs.map((e) => DeliveryModeModel.fromSnapshot(e)).toList();
-    return null;
+    _stateModel.addAll(snapshot.docs.map((e) => StatesModel.fromSnapshot(e)).toList());
+    // print(_stateModel.first.id);
+    return _stateModel;
   }
 
   ///Fetch  User Details

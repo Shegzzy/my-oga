@@ -557,8 +557,8 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
 
-    CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
-    newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    // CameraPosition cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
+    // newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
   }
 

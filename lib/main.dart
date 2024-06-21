@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
 import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 import 'package:myoga/services/views/Permission_request/permission_request_info.dart';
@@ -28,6 +29,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print(message.data.toString());
   }
 }
+final UserRepository _userRepo = Get.put(UserRepository());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +39,7 @@ void main() async {
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await GetStorage.init();
+  await _userRepo.getStates();
   runApp(MyApp());
   _init();
 }

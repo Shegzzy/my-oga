@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:myoga/configMaps.dart';
+import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,7 @@ class DropOffLocationScreen extends StatefulWidget {
 }
 
 class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
+  final UserRepository userRepository = Get.find();
 
   TextEditingController dropOffTextEditingController = TextEditingController();
   TextEditingController pickUpTextEditingController = TextEditingController();
@@ -58,6 +60,10 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     pickUpLat = Provider.of<AppData>(context, listen: false).pickUpLocation?.latitude;
     pickUpLng = Provider.of<AppData>(context, listen: false).pickUpLocation?.longitude;
     pickUpTextEditingController.text = placeAddress ?? "";
+    for(var states in userRepository.stateModel){
+      print(states.name);
+    }
+
   }
 
 @override
@@ -67,22 +73,24 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     pickUpTextEditingController.dispose();
   }
 
+  bool isStatePresent(String? stateName) {
+    if (stateName == null) return false;
+    return userRepository.stateModel.any((state) => state.name == stateName);
+  }
+
+  // checking the service available states
   Future<void> regionCheck() async {
     List<Placemark>? pickUpPlaceMark = await placemarkFromCoordinates(pickUpLat!, pickUpLng!);
     List<Placemark>? dropOffPlaceMark = await placemarkFromCoordinates(dropOffLat!, dropOffLng!);
     print(pickUpPlaceMark.first.administrativeArea);
     print(dropOffPlaceMark.first.administrativeArea);
+    if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
+      print('true');
+    } else {
+      print('false');
+    }
 
-    if(pickUpPlaceMark.first.administrativeArea == 'Federal Capital Territory'
-        && dropOffPlaceMark.first.administrativeArea  == 'Federal Capital Territory'){
-      setState(() {
-        notWithinRegion = false;
-      });
-      if(mounted){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
-      }
-    }else if(pickUpPlaceMark.first.administrativeArea == 'Abuja'
-        && dropOffPlaceMark.first.administrativeArea  == 'Abuja'){
+    if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
       setState(() {
         notWithinRegion = false;
       });
@@ -257,6 +265,7 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     // pickUpTextEditingController.text = placeAddress ?? "";
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         leading: IconButton(
             onPressed: () => Get.offAll( ()=> const UserDashboard()), icon: const Icon(LineAwesomeIcons.angle_left)),
         title: Text(moDropOffSearchTitle, style: Theme.of(context).textTheme.headlineSmall),
@@ -323,6 +332,15 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                                   )),
                                   contentPadding: const EdgeInsets.only(
                                       left: 11.0, top: 8.0, bottom: 8.0),
+                                  suffixIcon: pickUpTextEditingController.text.isNotEmpty ?
+                                  InkWell(
+                                    onTap: (){
+                                      setState(() {
+                                        pickUpTextEditingController.clear();
+                                        pickUpPlacePredictionList.clear();
+                                      });
+                                    },
+                                      child: const Icon(Icons.highlight_remove)) : null
                                 ),
                               ),
                             ),
@@ -368,6 +386,15 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                                   )),
                                   contentPadding: const EdgeInsets.only(
                                       left: 11.0, top: 8.0, bottom: 8.0),
+                                    suffixIcon: dropOffTextEditingController.text.isNotEmpty ?
+                                    InkWell(
+                                        onTap: (){
+                                          setState(() {
+                                            dropOffTextEditingController.clear();
+                                            dropOffPlacePredictionList.clear();
+                                          });
+                                        },
+                                        child: const Icon(Icons.highlight_remove)) : null
                                 ),
                               ),
                             ),
@@ -482,15 +509,12 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
             const SizedBox(height: 20.0,),
             SizedBox(
               width: 250.0,
-              child: ElevatedButton(
-                onPressed: notWithinRegion ? null : (){
-                BookingAddress bookingAddress = BookingAddress();
-                bookingAddress.pickUpLocation = pickUpTextEditingController.text;
-                bookingAddress.dropOffLocation = dropOffTextEditingController.text;
-                Navigator.pop(context);
-                Get.to(() => const SelectRideScreen());
-              },
-                  child: notWithinRegion ?  const Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),) :  Text(moNext.toUpperCase(), style: const TextStyle(fontSize: 20.0,),)
+              child: Visibility(
+                visible: notWithinRegion ? true : false,
+                child: ElevatedButton(
+                  onPressed: (){},
+                    child: const Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),)
+                ),
               ),
             ),
           ],

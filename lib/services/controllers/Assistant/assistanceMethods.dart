@@ -23,7 +23,7 @@ class AssistanceMethods {
 
     var response = await RequestAssistanceController.getRequest(url);
 
-    await UserRepository().getStates();
+    // print(UserRepository().stateModel.first.name);
 
     if(response != "failed"){
       streetAddress = response["results"][0]["formatted_address"];

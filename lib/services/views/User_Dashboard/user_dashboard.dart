@@ -47,9 +47,9 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
 {
   final Completer<GoogleMapController> _controllerGoogleMap = Completer<GoogleMapController>();
   late GoogleMapController newGoogleMapController;
-  UserRepository _userRepo = Get.put(UserRepository());
-  var myUserDetail = UserModel().obs;
-  ProfileController _controller = Get.put(ProfileController());
+  final UserRepository _userRepo = Get.find();
+  var myUserDetail = const UserModel().obs;
+  final ProfileController _controller = Get.put(ProfileController());
   final _db = FirebaseFirestore.instance;
   late StreamSubscription<UserModel> _subscription;
   final GetXSwitchState getXSwitchState = Get.find();
