@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:myoga/services/controllers/getXSwitchStateController.dart';
 
 import '../../../constants/colors.dart';
@@ -18,12 +19,15 @@ class SupportScreen extends StatefulWidget {
 class _SupportScreenState extends State<SupportScreen> {
   final GetXSwitchState getXSwitchState = GetXSwitchState();
   late Future<List<SupportModel>?> userFuture;
+  late Future<List<SupportTypeModel>?> supportTypes;
   ProfileController controller = Get.put(ProfileController());
+  UserRepository userRepository = Get.find();
 
   @override
   void initState() {
     super.initState();
     userFuture = _getSupports();
+    supportTypes = _getSupportTypes();
   }
 
   @override
@@ -33,8 +37,12 @@ class _SupportScreenState extends State<SupportScreen> {
     // controller.dispose();
   }
 
-  Future<List<SupportModel>?>_getSupports() async {
+  Future<List<SupportModel>?> _getSupports() async {
     return await controller.getAllUserSupport();
+  }
+
+  Future<List<SupportTypeModel>?> _getSupportTypes() async {
+    return await controller.getSupportTypes();
   }
 
   @override

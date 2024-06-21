@@ -41,6 +41,7 @@ void main() async {
   await GetStorage.init();
   await _userRepo.getStates();
   await _userRepo.getVehicles();
+  await _userRepo.getSupportTypes();
   runApp(MyApp());
   _init();
 }

@@ -246,13 +246,25 @@ class UserRepository extends GetxController {
 
   List<VehiclesModel> _vehiclesModel = [];
   List<VehiclesModel> get vehiclesModel => _vehiclesModel;
-  //Retrieving Delivery States From Database
+  //Retrieving types of vehicles From Database
   Future<List<VehiclesModel>?> getVehicles() async {
     _vehiclesModel.clear();
     final snapshot = await _db.collection("Settings").doc("deliveryVehicles").collection("vehicles").get();
     _vehiclesModel.addAll(snapshot.docs.map((e) => VehiclesModel.fromSnapshot(e)).toList());
-    print(_vehiclesModel.first.id);
+    // print(_vehiclesModel.first.id);
     return _vehiclesModel;
+  }
+
+  List<SupportTypeModel> _supportTypeModel = [];
+  List<SupportTypeModel> get supportTypeModel => _supportTypeModel;
+
+  //Retrieving types of supports States From Database
+  Future<List<SupportTypeModel>?> getSupportTypes() async {
+    _supportTypeModel.clear();
+    final snapshot = await _db.collection("Settings").doc("supports").collection("types").get();
+    _supportTypeModel.addAll(snapshot.docs.map((e) => SupportTypeModel.fromSnapshot(e)).toList());
+    print(_supportTypeModel.first.id);
+    return _supportTypeModel;
   }
 
   ///Fetch  User Details
