@@ -242,6 +242,15 @@ class UserRepository extends GetxController {
     return _stateModel;
   }
 
+  //Retrieving Delivery States From Database
+  Future<List<StatesModel>?> getVehicles() async {
+    _stateModel.clear();
+    final snapshot = await _db.collection("Settings").doc("locations").collection("states").get();
+    _stateModel.addAll(snapshot.docs.map((e) => StatesModel.fromSnapshot(e)).toList());
+    // print(_stateModel.first.id);
+    return _stateModel;
+  }
+
   ///Fetch  User Details
   Future<BookingModel> getBookingDetails(String bookingNumber) async {
     final snapshot = await _db.collection("Bookings").where("Booking Number", isEqualTo: bookingNumber).get();
