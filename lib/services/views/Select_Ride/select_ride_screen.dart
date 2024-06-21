@@ -652,7 +652,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                           Text("Select Ride", style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center,),
                           const SizedBox(height: 10.0,),
                           SelectRide(
-                            LineAwesomeIcons.truck_side,
+                            Icons.electric_rickshaw,
                             "Truck",
                             moRideTruck,
                           ),

@@ -60,10 +60,6 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     pickUpLat = Provider.of<AppData>(context, listen: false).pickUpLocation?.latitude;
     pickUpLng = Provider.of<AppData>(context, listen: false).pickUpLocation?.longitude;
     pickUpTextEditingController.text = placeAddress ?? "";
-    for(var states in userRepository.stateModel){
-      print(states.name);
-    }
-
   }
 
 @override
@@ -82,13 +78,13 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
   Future<void> regionCheck() async {
     List<Placemark>? pickUpPlaceMark = await placemarkFromCoordinates(pickUpLat!, pickUpLng!);
     List<Placemark>? dropOffPlaceMark = await placemarkFromCoordinates(dropOffLat!, dropOffLng!);
-    print(pickUpPlaceMark.first.administrativeArea);
-    print(dropOffPlaceMark.first.administrativeArea);
-    if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
-      print('true');
-    } else {
-      print('false');
-    }
+    // print(pickUpPlaceMark.first.administrativeArea);
+    // print(dropOffPlaceMark.first.administrativeArea);
+    // if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
+    //   print('true');
+    // } else {
+    //   print('false');
+    // }
 
     if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
       setState(() {
