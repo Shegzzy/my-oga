@@ -66,5 +66,28 @@ class SupportModel {
 }
 
 class SupportTypeModel {
+  final String? id;
+  final String? name;
+
+  const SupportTypeModel({
+    this.id,
+    this.name,
+  });
+
+  toJson() {
+    return {
+      "name": name,
+    };
+  }
+
+  factory SupportTypeModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document)
+  {
+    final data = document.data()!;
+    return SupportTypeModel(
+      id: document.id,
+      name: data["name"],
+    );
+  }
 
 }
