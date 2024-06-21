@@ -68,6 +68,7 @@ class ProfileController extends GetxController {
   }
 
   Future<List<DeliveryModeModel>?> getAllMode() async {
+    print('hitting');
     return await _userRepo.getModes();
   }
 
