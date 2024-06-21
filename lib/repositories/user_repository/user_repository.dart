@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myoga/services/models/cancelled_bookings_model.dart';
+import 'package:myoga/services/models/states_model.dart';
 import 'package:myoga/services/views/Cancelled_Bookings/cancelled_bookings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -230,11 +231,11 @@ class UserRepository extends GetxController {
 
 
   ///Retrieving Delivery States From Database
-  Future<List<DeliveryModeModel>?>getState() async {
-    final snapshot = await _db.collection("Settings").doc("deliverymodes").collection("modes").get();
-    final modeData = snapshot.docs.map((e) => DeliveryModeModel.fromSnapshot(e)).toList();
-    return modeData;
-
+  Future<List<StatesModel>?>getStates() async {
+    final snapshot = await _db.collection("Settings").doc("locations").collection("states").get();
+    print(snapshot.docs.map((e) => e['name']));
+    // final statesData = snapshot.docs.map((e) => DeliveryModeModel.fromSnapshot(e)).toList();
+    return null;
   }
 
   ///Fetch  User Details

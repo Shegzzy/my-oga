@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myoga/configMaps.dart';
+import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:myoga/services/controllers/Assistant/requestController.dart';
 import 'package:myoga/services/models/allUsers.dart';
 import 'package:myoga/utils/formatter/formatter.dart';
@@ -21,6 +22,8 @@ class AssistanceMethods {
     String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=${dotenv.env['mapKey']}";
 
     var response = await RequestAssistanceController.getRequest(url);
+
+    await UserRepository().getStates();
 
     if(response != "failed"){
       streetAddress = response["results"][0]["formatted_address"];
