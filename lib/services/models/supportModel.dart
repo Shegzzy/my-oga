@@ -64,3 +64,7 @@ class SupportModel {
   }
 
 }
+
+class SupportTypeModel {
+
+}

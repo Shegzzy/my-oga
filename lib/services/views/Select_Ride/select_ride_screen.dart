@@ -96,6 +96,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   bool drawerOpen = true;
   late Timer timer;
   bool isTimerRunning = false;
+  bool selectingMode = false;
 
   int counter = 0;
   String? amount;
@@ -658,7 +659,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             itemCount: userRepo.vehiclesModel.length,
                             itemBuilder: (context, index){
                               return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.only(bottom: 8.0),
                                 child: SelectRide(
                                   index == 0 ?
                                     Icons.electric_rickshaw : LineAwesomeIcons.motorcycle,
@@ -726,7 +727,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                 onPressed: (){
                                   if(selectedRide == null){
                                     Get.snackbar(
-                                        "Notice", "Your need to select a ride type.",
+                                        "Notice!", "Your need to select a ride type.",
                                         snackPosition: SnackPosition.TOP,
                                         backgroundColor: Colors.white,
                                         colorText: Colors.red);
@@ -780,17 +781,20 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                   shrinkWrap: true,
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (c, index){
-                                    return SelectDeveryMode(
-                                        LineAwesomeIcons.car_side,
-                                        snapshot.data![index].name,
-                                        snapshot.data![index].name,
-                                        snapshot.data![index].duration,
-                                        AssistanceMethods.calculateFares(tripDirectionDetails,
-                                          snapshot.data![index].rate!,
-                                          snapshot.data![index].minimumPrice!,
-                                          snapshot.data![index].startPrice
-                                        ),
-                                        tripDirectionDetails.distanceText!
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8.0),
+                                      child: SelectDeveryMode(
+                                          LineAwesomeIcons.car_side,
+                                          snapshot.data![index].name,
+                                          snapshot.data![index].name,
+                                          snapshot.data![index].duration,
+                                          AssistanceMethods.calculateFares(tripDirectionDetails,
+                                            snapshot.data![index].rate!,
+                                            snapshot.data![index].minimumPrice!,
+                                            snapshot.data![index].startPrice
+                                          ),
+                                          tripDirectionDetails.distanceText!
+                                      ),
                                     );
                                   },
                                 );
@@ -813,14 +817,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                           },
                         ),
                       ),
-                      //SelectDeveryMode(
-                      //    LineAwesomeIcons.car_side,
-                      //    1,
-                      //    moExpress,
-                      //    moExpressDays,
-                      //    ((tripDirectionDetails != null) ? "\N${AssistanceMethods.calculateFares(tripDirectionDetails)}" : "" ),
-                      //    tripDirectionDetails.distanceText!
-                      //),
+
                       const SizedBox(height: 20.0,),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -858,7 +855,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () async {
+                            onPressed: selectingMode ? null : () async {
                               if(selectedDelivery == null){
                                 Get.snackbar(
                                     "Notice", "Your need to select a delivery mode.",
@@ -866,87 +863,99 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                     backgroundColor: Colors.white,
                                     colorText: Colors.red);
                               } else {
-                                final bookingNum = MyOgaFormatter.generateBookingNumber();
-                                final user = FirebaseAuth.instance.currentUser!;
-                                bookingNumber = bookingNum;
-                                var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
-                                var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
-                                final email = user.email;
-                                    if(_selectedPaymentVal == "Card"){
-                                      cardPayment();
+                                try{
+                                  setState(() {
+                                    selectingMode = true;
+                                  });
+
+                                  final bookingNum = MyOgaFormatter.generateBookingNumber();
+                                  final user = FirebaseAuth.instance.currentUser!;
+                                  bookingNumber = bookingNum;
+                                  var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+                                  var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
+                                  final email = user.email;
+                                  if(_selectedPaymentVal == "Card"){
+                                    cardPayment();
+                                  }
+                                  else {
+                                    if (email == null) {
+                                      final phone = user.phoneNumber;
+                                      UserModel? userInfo = await userRepo.getUserDetailsWithPhone(phone!);
+                                      final booking = BookingModel(
+                                        payment_method: _selectedPaymentVal,
+                                        additional_details: _addController.text
+                                            .trim(),
+                                        dropOff_latitude: dropOff?.latitude
+                                            .toString(),
+                                        dropOff_longitude: dropOff?.longitude
+                                            .toString(),
+                                        pickUp_latitude: pickUp?.latitude
+                                            .toString(),
+                                        pickUp_longitude: pickUp?.longitude
+                                            .toString(),
+                                        created_at: DateTime.now().toString(),
+                                        customer_name: userInfo?.fullname
+                                            .toString(),
+                                        customer_phone: userInfo?.phoneNo
+                                            .toString(),
+                                        customer_id: userInfo?.id,
+                                        pickup_address: pickUp?.placeName
+                                            .toString(),
+                                        dropOff_address: dropOff?.placeName
+                                            .toString(),
+                                        status: "pending",
+                                        amount: amount,
+                                        distance: tripDirectionDetails
+                                            .distanceText!,
+                                        bookingNumber: bookingNum,
+                                        deliveryMode: selectedDelivery.toString(),
+                                        rideType: selectedRide.toString(),
+                                        packageType: _selectedPackageVal,
+                                        timeStamp: Timestamp.now(),
+                                      );
+                                      await SignUpController.instance.saveBooking(booking);
+                                      displayRequestDriverContainer(bookingNum);
                                     }
                                     else {
-                                      if (email == null) {
-                                        final phone = user.phoneNumber;
-                                        UserModel? userInfo = await userRepo.getUserDetailsWithPhone(phone!);
-                                        final booking = BookingModel(
-                                          payment_method: _selectedPaymentVal,
-                                          additional_details: _addController.text
-                                              .trim(),
-                                          dropOff_latitude: dropOff?.latitude
-                                              .toString(),
-                                          dropOff_longitude: dropOff?.longitude
-                                              .toString(),
-                                          pickUp_latitude: pickUp?.latitude
-                                              .toString(),
-                                          pickUp_longitude: pickUp?.longitude
-                                              .toString(),
-                                          created_at: DateTime.now().toString(),
-                                          customer_name: userInfo?.fullname
-                                              .toString(),
-                                          customer_phone: userInfo?.phoneNo
-                                              .toString(),
-                                          customer_id: userInfo?.id,
-                                          pickup_address: pickUp?.placeName
-                                              .toString(),
-                                          dropOff_address: dropOff?.placeName
-                                              .toString(),
-                                          status: "pending",
-                                          amount: amount,
-                                          distance: tripDirectionDetails
-                                              .distanceText!,
-                                          bookingNumber: bookingNum,
-                                          deliveryMode: selectedDelivery.toString(),
-                                          rideType: selectedRide.toString(),
-                                          packageType: _selectedPackageVal,
-                                          timeStamp: Timestamp.now(),
-                                        );
-                                        await SignUpController.instance.saveBooking(booking);
-                                        displayRequestDriverContainer(bookingNum);
-                                      }
-                                      else {
-                                        UserModel? userInfo = await userRepo.getUserDetailsWithEmail(email!);
-                                        final booking = BookingModel(
-                                          payment_method: _selectedPaymentVal,
-                                          additional_details: _addController.text.trim(),
-                                          dropOff_latitude: dropOff?.latitude.toString(),
-                                          dropOff_longitude: dropOff?.longitude.toString(),
-                                          pickUp_latitude: pickUp?.latitude.toString(),
-                                          pickUp_longitude: pickUp?.longitude.toString(),
-                                          created_at: DateTime.now().toString(),
-                                          customer_name: userInfo?.fullname.toString(),
-                                          customer_phone: userInfo?.phoneNo.toString(),
-                                          customer_id: userInfo?.id,
-                                          pickup_address: pickUp?.placeName.toString(),
-                                          dropOff_address: dropOff?.placeName.toString(),
-                                          status: "pending",
-                                          amount: amount,
-                                          distance: tripDirectionDetails.distanceText!,
-                                          bookingNumber: bookingNum,
-                                          deliveryMode: selectedDelivery.toString(),
-                                          rideType: selectedRide.toString(),
-                                          packageType: _selectedPackageVal,
-                                          timeStamp: Timestamp.now(),
-                                        );
-                                        await SignUpController.instance.saveBooking(booking);
-                                        displayRequestDriverContainer(bookingNum);
-                                      }
+                                      UserModel? userInfo = await userRepo.getUserDetailsWithEmail(email!);
+                                      final booking = BookingModel(
+                                        payment_method: _selectedPaymentVal,
+                                        additional_details: _addController.text.trim(),
+                                        dropOff_latitude: dropOff?.latitude.toString(),
+                                        dropOff_longitude: dropOff?.longitude.toString(),
+                                        pickUp_latitude: pickUp?.latitude.toString(),
+                                        pickUp_longitude: pickUp?.longitude.toString(),
+                                        created_at: DateTime.now().toString(),
+                                        customer_name: userInfo?.fullname.toString(),
+                                        customer_phone: userInfo?.phoneNo.toString(),
+                                        customer_id: userInfo?.id,
+                                        pickup_address: pickUp?.placeName.toString(),
+                                        dropOff_address: dropOff?.placeName.toString(),
+                                        status: "pending",
+                                        amount: amount,
+                                        distance: tripDirectionDetails.distanceText!,
+                                        bookingNumber: bookingNum,
+                                        deliveryMode: selectedDelivery.toString(),
+                                        rideType: selectedRide.toString(),
+                                        packageType: _selectedPackageVal,
+                                        timeStamp: Timestamp.now(),
+                                      );
+                                      await SignUpController.instance.saveBooking(booking);
+                                      displayRequestDriverContainer(bookingNum);
+                                    }
                                   }
+                                } catch (e){
+                                  throw e.toString();
+                                } finally{
+                                  setState(() {
+                                    selectingMode = false;
+                                  });
+                                }
                               }
                               //PackageDetails packageData = await userRepo.getPackageDetails(userInfo.id!)
                             },
 
-                            child: Text(moProceed.toUpperCase()),
+                            child: selectingMode ? const SizedBox(height: 30.0, width:  30.0, child: CircularProgressIndicator(),) : Text(moProceed.toUpperCase()),
                           ),
                         ),
                       ),

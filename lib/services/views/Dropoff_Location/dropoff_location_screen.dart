@@ -69,6 +69,8 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     pickUpTextEditingController.dispose();
   }
 
+  bool checkingRegion = false;
+
   bool isStatePresent(String? stateName) {
     if (stateName == null) return false;
     return userRepository.stateModel.any((state) => state.name == stateName);
@@ -76,6 +78,10 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
   // checking the service available states
   Future<void> regionCheck() async {
+    setState(() {
+      checkingRegion = true;
+    });
+
     List<Placemark>? pickUpPlaceMark = await placemarkFromCoordinates(pickUpLat!, pickUpLng!);
     List<Placemark>? dropOffPlaceMark = await placemarkFromCoordinates(dropOffLat!, dropOffLng!);
     // print(pickUpPlaceMark.first.administrativeArea);
@@ -86,16 +92,24 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
     //   print('false');
     // }
 
-    if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
-      setState(() {
-        notWithinRegion = false;
-      });
-      if(mounted){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+    try{
+      if(pickUpPlaceMark.first.administrativeArea == dropOffPlaceMark.first.administrativeArea && isStatePresent(dropOffPlaceMark.first.administrativeArea)){
+        setState(() {
+          notWithinRegion = false;
+        });
+        if(mounted){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
+        }
+      }else{
+        setState(() {
+          notWithinRegion = true;
+        });
       }
-    }else{
+    } catch (e){
+      throw e.toString();
+    } finally{
       setState(() {
-        notWithinRegion = true;
+        checkingRegion = false;
       });
     }
   }
@@ -503,13 +517,20 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
 
 
             const SizedBox(height: 20.0,),
+
             SizedBox(
-              width: 250.0,
-              child: Visibility(
+              // width: 250.0,
+              child: checkingRegion ? const SizedBox(
+                  height: 30.0,
+                  width: 30.0,
+                  child: CircularProgressIndicator()) : Visibility(
                 visible: notWithinRegion ? true : false,
                 child: ElevatedButton(
                   onPressed: (){},
-                    child: const Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),)
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),),
+                    )
                 ),
               ),
             ),

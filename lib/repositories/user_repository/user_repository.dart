@@ -219,6 +219,7 @@ class UserRepository extends GetxController {
       final email = userId!.email;
       final snapshot = await _db.collection("supportTickets").where("email", isEqualTo: email).get();
       final bookingData = snapshot.docs.map((e) => SupportModel.fromSnapshot(e)).toList();
+      print(bookingData.first.name);
       return bookingData;
     }
 

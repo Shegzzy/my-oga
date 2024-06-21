@@ -153,7 +153,7 @@ class _SupportScreenState extends State<SupportScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text("Create New Ticket", style: Theme.of(context).textTheme.titleLarge,),
-          const SizedBox(width: 10,),
+          const SizedBox(width: 10.0,),
           FloatingActionButton(
             onPressed: () {
               Get.to(const NewSupport());

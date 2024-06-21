@@ -200,7 +200,7 @@ class _UserDashboardState extends State<UserDashboard> with TickerProviderStateM
     super.dispose();
     //timer.cancel();
     _controller.dispose();
-    _userRepo.dispose();
+    // _userRepo.dispose();
     _subscription.cancel();
     newGoogleMapController.dispose();
   }
