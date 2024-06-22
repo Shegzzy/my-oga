@@ -107,10 +107,10 @@ class _SupportScreenState extends State<SupportScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(snapshot.data![index].subject ?? "", style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
-                                        Text(snapshot.data![index].message ?? "", style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                        Text('SUBJECT: ${snapshot.data![index].subject}', style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                        Text('MESSAGE: ${snapshot.data![index].message}', style: Theme.of(context).textTheme.bodyLarge, maxLines: 2, overflow: TextOverflow.ellipsis,),
                                       ],
                                     ),
                                   ),
@@ -119,7 +119,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Flexible(child: Text(snapshot.data![index].type ?? "",
+                                    Flexible(child: Text('TYPE: ${snapshot.data![index].type}',
                                         style: Theme.of(context).textTheme.bodyLarge,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis)),

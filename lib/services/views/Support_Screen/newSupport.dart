@@ -28,6 +28,7 @@ class _NewSupportState extends State<NewSupport> {
   final _supportType = TextEditingController();
   final _subject = TextEditingController();
   String? _selectedSupportVal = "";
+  bool submittingSupport = false;
 
   ///Retrieving Delivery Mode Details From Database
   // getTypes() async {
@@ -49,32 +50,42 @@ class _NewSupportState extends State<NewSupport> {
     });
   }
 
-  submitMessage() async {
-    final ticketNum = randomAlphaNumeric(7);
-    final support = SupportModel(
-      name: _name.text.trim(),
-      subject: _subject.text.trim(),
-      email: _email.text.trim(),
-      type: _supportType.text.isEmpty ?  userRepository.supportTypeModel.first.name : _supportType.text.trim(),
-      message: _message.text.trim(),
-      status: "new",
-      ticketNumber: ticketNum,
-      dateCreated: DateTime.now().toString(),
-      timeStamp: Timestamp.now(),
-    );
-    print(support.toJson());
+  Future<void> submitMessage() async {
+    setState(() {
+      submittingSupport = true;
+    });
+    try{
+      final ticketNum = randomAlphaNumeric(7);
+      final support = SupportModel(
+        name: _name.text.trim(),
+        subject: _subject.text.trim(),
+        email: _email.text.trim(),
+        type: _supportType.text.isEmpty ?  userRepository.supportTypeModel.first.name : _supportType.text.trim(),
+        message: _message.text.trim(),
+        status: "new",
+        ticketNumber: ticketNum,
+        dateCreated: DateTime.now().toString(),
+        timeStamp: Timestamp.now(),
+      );
       ///FirebaseDatabase.instance.ref().child('Booking Request').push();
-    // await _db.collection("supportTickets").add(support.toJson()).whenComplete(() => Get.snackbar(
-    //       "Success", "Your message have been received",
-    //       snackPosition: SnackPosition.TOP,
-    //       backgroundColor: Colors.white,
-    //       colorText: Colors.green),
-    //   ).catchError((error, stackTrace) {
-    //     Get.snackbar("Error", "Something went wrong. Try again.",
-    //         snackPosition: SnackPosition.BOTTOM,
-    //         backgroundColor: Colors.grey,
-    //         colorText: Colors.red);
-    //   });
+      await _db.collection("supportTickets").add(support.toJson()).whenComplete(() => Get.snackbar(
+          "Success", "Your message have been received",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.green),
+      ).catchError((error, stackTrace) {
+        Get.snackbar("Error", "Something went wrong. Try again.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.grey,
+            colorText: Colors.red);
+      });
+    } catch (e) {
+      throw e.toString();
+    } finally{
+      setState(() {
+        submittingSupport = false;
+      });
+    }
   }
 
   @override
@@ -195,12 +206,13 @@ class _NewSupportState extends State<NewSupport> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: ()  {
+                            onPressed: submittingSupport ? null : ()  async{
                               if(_formkey.currentState!.validate()){
-                                submitMessage();
+                                await submitMessage();
+                                _message.clear();
                               }
                             },
-                            child: Text("Submit".toUpperCase()),
+                            child: submittingSupport ? const Center(child: CircularProgressIndicator(),) : Text("Submit".toUpperCase()),
                           ),
                         ),
                       ],
