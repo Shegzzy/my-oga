@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,26 +20,25 @@ class _NewSupportState extends State<NewSupport> {
 
   final _formkey = GlobalKey<FormState>();
 
-  final List _supportTypeList = ["Feedback", "Complaints", "Help/Recommendation", "Select type"];
-  String _selectedTypeVal = "Select type";
+  UserRepository userRepository = Get.find();
   final _db = FirebaseFirestore.instance;
-  late  TextEditingController _email, _name;
+  late  TextEditingController _email = TextEditingController();
+  late  TextEditingController _name = TextEditingController();
   final _message = TextEditingController();
   final _supportType = TextEditingController();
   final _subject = TextEditingController();
-  final _paymentMethodList = ["Cash on Delivery", "Wallet", "Card"];
-  String? _selectedPaymentVal = "";
+  String? _selectedSupportVal = "";
 
   ///Retrieving Delivery Mode Details From Database
-  getTypes() async {
-     await _db.collection("Settings").doc("supports").collection("types").get().then((value) {
-       for (var element in value.docs) {
-         setState(() {
-           _supportTypeList.add(element.data()["name"]);
-         });
-        }
-     });
-  }
+  // getTypes() async {
+  //    await _db.collection("Settings").doc("supports").collection("types").get().then((value) {
+  //      for (var element in value.docs) {
+  //        setState(() {
+  //          _supportTypeList.add(element.data()["name"]);
+  //        });
+  //       }
+  //    });
+  // }
 
   getController() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,25 +55,26 @@ class _NewSupportState extends State<NewSupport> {
       name: _name.text.trim(),
       subject: _subject.text.trim(),
       email: _email.text.trim(),
-      type: _supportType.text.trim(),
+      type: _supportType.text.isEmpty ?  userRepository.supportTypeModel.first.name : _supportType.text.trim(),
       message: _message.text.trim(),
       status: "new",
       ticketNumber: ticketNum,
       dateCreated: DateTime.now().toString(),
       timeStamp: Timestamp.now(),
     );
+    print(support.toJson());
       ///FirebaseDatabase.instance.ref().child('Booking Request').push();
-    await _db.collection("supportTickets").add(support.toJson()).whenComplete(() => Get.snackbar(
-          "Success", "Your message have been received",
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.white,
-          colorText: Colors.green),
-      ).catchError((error, stackTrace) {
-        Get.snackbar("Error", "Something went wrong. Try again.",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.grey,
-            colorText: Colors.red);
-      });
+    // await _db.collection("supportTickets").add(support.toJson()).whenComplete(() => Get.snackbar(
+    //       "Success", "Your message have been received",
+    //       snackPosition: SnackPosition.TOP,
+    //       backgroundColor: Colors.white,
+    //       colorText: Colors.green),
+    //   ).catchError((error, stackTrace) {
+    //     Get.snackbar("Error", "Something went wrong. Try again.",
+    //         snackPosition: SnackPosition.BOTTOM,
+    //         backgroundColor: Colors.grey,
+    //         colorText: Colors.red);
+    //   });
   }
 
   @override
@@ -82,6 +82,9 @@ class _NewSupportState extends State<NewSupport> {
     getController();
     //getTypes();
     super.initState();
+    for(var support in userRepository.supportTypeModel){
+      print(support.name);
+    }
   }
 
   @override
@@ -108,19 +111,33 @@ class _NewSupportState extends State<NewSupport> {
                     child: Column(
                       children: [
                         const SizedBox(height: 10.0),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                              label: Text("Support Type"),
-                              prefixIcon: Icon(Icons.announcement)),
-                          validator: (value){
-                            if(value == null || value.isEmpty)
-                            {
-                              return "A support type, example Feedback, Complaint";
-                            }
-                            return null;
+                        DropdownButtonFormField<String>(
+                          disabledHint: const Text('Select type of support'),
+                          value: userRepository.supportTypeModel.isNotEmpty ? userRepository.supportTypeModel.first.name : null,
+                          items: userRepository.supportTypeModel
+                              .map((e) => DropdownMenuItem<String>(
+                            value: e.name,
+                            child: Text(e.name ?? ''),
+                          ))
+                              .toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedSupportVal = val!;
+                              _supportType.text = _selectedSupportVal!;
+                            });
                           },
-                          controller: _supportType,
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: "Support Type",
+                            prefixIcon: Icon(
+                              Icons.announcement,
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
                         ),
+
                         const SizedBox(height: 10.0),
                         TextFormField(
                           decoration: const InputDecoration(

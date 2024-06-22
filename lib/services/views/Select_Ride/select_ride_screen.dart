@@ -838,7 +838,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                             Icons.arrow_drop_down_circle,
                             color: Colors.deepPurple,
                           ),
-                          dropdownColor: Colors.deepPurple.shade50,
+                          // dropdownColor: Colors.deepPurple.shade50,
                           decoration: const InputDecoration(
                             labelText: "Select Payment Method",
                             prefixIcon: Icon(

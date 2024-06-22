@@ -263,7 +263,7 @@ class UserRepository extends GetxController {
     _supportTypeModel.clear();
     final snapshot = await _db.collection("Settings").doc("supports").collection("types").get();
     _supportTypeModel.addAll(snapshot.docs.map((e) => SupportTypeModel.fromSnapshot(e)).toList());
-    print(_supportTypeModel.first.id);
+    // print(_supportTypeModel.first.id);
     return _supportTypeModel;
   }
 

@@ -164,7 +164,7 @@ class _SupportScreenState extends State<SupportScreen> {
           const SizedBox(width: 10.0,),
           FloatingActionButton(
             onPressed: () {
-              Get.to(const NewSupport());
+              Get.to(() => const NewSupport());
             },
             backgroundColor: PButtonColor,
             elevation: 10.0,
