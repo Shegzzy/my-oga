@@ -145,6 +145,81 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
+  // Function to show the warning dialog
+  void showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 40.0,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(3),
+                width: 45.0,
+                height: 45.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: const Color(0xFFFBD0D0),
+                ),
+                child: const Icon(Icons.info, color: Colors.redAccent,),
+              ),
+              const SizedBox(height: 15.0),
+              const Text(
+                "Are you sure you want to delete your account?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.0,
+                  letterSpacing: 0.32,
+                ),
+              ),
+              const SizedBox(height: 40.0),
+              SizedBox(
+                width: double.maxFinite,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.currentUser?.delete();
+                    Get.offAll(const WelcomeScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent.withOpacity(0.1),
+                      elevation: 0,
+                      foregroundColor: Colors.red,
+                      shape: const StadiumBorder(),
+                      side: BorderSide.none),
+                  child: const Text(moDelete),
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              SizedBox(
+                width: double.maxFinite,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: PButtonColor,
+                      elevation: 0,
+                      shape: const StadiumBorder(),
+                      side: BorderSide.none),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
@@ -318,8 +393,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             ])),
         ElevatedButton(
           onPressed: () async {
-            await FirebaseAuth.instance.currentUser?.delete();
-            Get.offAll(const WelcomeScreen());
+            showDeleteDialog(context);
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent.withOpacity(0.1),
