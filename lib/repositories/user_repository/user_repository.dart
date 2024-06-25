@@ -28,7 +28,7 @@ class UserRepository extends GetxController {
 
 
   ///Stores users info in FireStore
-  createUser(UserModel user) async {
+  Future<void> createUser(UserModel user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getString("aUserID")!;
     await _db.collection("Users").doc(userID).set(user.toJson()).whenComplete(() => Get.snackbar(
@@ -59,36 +59,54 @@ class UserRepository extends GetxController {
     return userData;
   }
 
+  UserModel _userModel = const UserModel();
+  UserModel get userModel => _userModel;
+  bool _loadingEditProfile = false;
+  bool get loadingEditProfile => _loadingEditProfile;
 
-  ///Fetch All Users
-  Future<List<UserModel>> getAllUserDetails() async {
-    final snapshot = await _db.collection("Users").get();
-    final userData = snapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList();
-    return userData;
+  ///Fetch  User Details by ID
+  Future<UserModel> getUserById(String id) async{
+    _loadingEditProfile = true;
+    update();
+
+    try{
+
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await _db.collection('Users').doc(id).get();
+      if(snapshot.exists){
+        _userModel = UserModel.fromSnapshot(snapshot);
+      }
+
+      return _userModel;
+
+    } catch (e){
+      throw e.toString();
+    } finally{
+      _loadingEditProfile = false;
+      update();
+    }
   }
 
+
+  ///Fetch All Users
+  // Future<List<UserModel>> getAllUserDetails() async {
+  //   final snapshot = await _db.collection("Users").get();
+  //   final userData = snapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList();
+  //   return userData;
+  // }
+
   ///Updating User Details
-  Future<void> updateUserRecord(UserModel user) async {
-    final phone = userId!.phoneNumber;
-    final email = userId!.email;
-    if(email != null){
-      UserModel userInfo = await getUserDetailsWithEmail(email);
-      await _db.collection("Users").doc(userInfo.id).update(user.updateToJson()).then((value) => Get.snackbar(
-          "Good", "Details Updated Successfully",
+  Future<void> updateUserRecord(UserModel user, String userID) async {
+    await _db.collection("Users").doc(userID).update(user.updateToJson()).then((value) => Get.snackbar(
+        "Good", "Details Updated Successfully",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.white,
+        colorText: Colors.green),
+    ).catchError((error, setTrack){
+      Get.snackbar("Error", "Something went wrong. Try again.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.white,
-          colorText: Colors.green),
-      ).catchError((error, setTrack){
-        Get.snackbar("Error", "Something went wrong. Try again.",
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.white,
-            colorText: Colors.red);
-      });
-    }
-    else {
-      UserModel userInfo = await getUserDetailsWithPhone(phone!);
-      await _db.collection("Users").doc(userInfo.id).update(user.updateToJson());
-    }
+          colorText: Colors.red);
+    });
   }
 
   ///Updating Phone Number
@@ -219,7 +237,7 @@ class UserRepository extends GetxController {
       final email = userId!.email;
       final snapshot = await _db.collection("supportTickets").where("email", isEqualTo: email).get();
       final bookingData = snapshot.docs.map((e) => SupportModel.fromSnapshot(e)).toList();
-      print(bookingData.first.name);
+      // print(bookingData.first.name);
       return bookingData;
     }
 
@@ -267,7 +285,7 @@ class UserRepository extends GetxController {
     return _supportTypeModel;
   }
 
-  ///Fetch  User Details
+  ///Fetch  Booking Details
   Future<BookingModel> getBookingDetails(String bookingNumber) async {
     final snapshot = await _db.collection("Bookings").where("Booking Number", isEqualTo: bookingNumber).get();
     final bookinData = snapshot.docs.map((e) => BookingModel.fromSnapshot(e)).single;
@@ -292,15 +310,15 @@ class UserRepository extends GetxController {
       });
 
   ///Fetch  User Details using stream
-  Stream<DriverModel> getDriverData(){
-    final email = FirebaseAuth.instance.currentUser!.email;
-    return _db.collection("Drivers")
-        .where("Email", isEqualTo: email)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((document) => DriverModel.fromSnapshot(document)).first
-    );
-  }
+  // Stream<DriverModel> getDriverData(){
+  //   final email = FirebaseAuth.instance.currentUser!.email;
+  //   return _db.collection("Drivers")
+  //       .where("Email", isEqualTo: email)
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //       .map((document) => DriverModel.fromSnapshot(document)).first
+  //   );
+  // }
 
   Stream<OrderStatusModel> getOrderStatusData( String num){
     return _db.collection("Order_Status")

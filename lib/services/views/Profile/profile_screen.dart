@@ -1,5 +1,4 @@
 
-
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,6 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   var myUserDetail = const UserModel().obs;
   final AuthenticationRepository _authController = Get.put(AuthenticationRepository());
   final GetXSwitchState getXSwitchState = Get.find();
+  ProfileController controller = Get.put(ProfileController());
+
 
 
   @override
@@ -129,21 +130,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // )
                             ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          provider.pickImage(context);
-                        },
-                        child: Container(
-                            width: 35.0,
-                            height: 35.0,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(100),
-                                color: moSecondarColor),
-                            child: const Icon(
-                                LineAwesomeIcons.alternate_pencil,
-                                size: 20.0,
-                                color: Colors.black)),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            provider.pickImage(context);
+                          },
+                          child: Container(
+                              width: 35.0,
+                              height: 35.0,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(100),
+                                  color: moSecondarColor),
+                              child: const Icon(
+                                  LineAwesomeIcons.alternate_pencil,
+                                  size: 20.0,
+                                  color: Colors.black)),
+                        ),
                       ),
                       ],
                     ),

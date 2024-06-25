@@ -24,32 +24,42 @@ class ProfileController extends GetxController {
   FirebaseFirestore _db = FirebaseFirestore.instance;
 
   /// Get User Email and Pass it to UserRepository to fetch user record.
-  getUserData() async {
-    final email = _user!.email;
-    return await _userRepo.getUserDetailsWithEmail(email!);
+  // getUserData() async {
+  //   final email = _user!.email;
+  //   return await _userRepo.getUserDetailsWithEmail(email!);
+  // }
+
+  // fetching user details by ID
+  Future<UserModel> fetchUserData() async{
+     return await _userRepo.getUserById(_user!.uid);
+  }
+
+  // fetching user details by ID with the return method
+  Future<UserModel> fetchUserDetails() async{
+    return await _userRepo.getUserById(_user!.uid);
   }
 
 
-  Future<List<UserModel>> getAllUser() async {
-    return await _userRepo.getAllUserDetails();
-  }
+  // Future<List<UserModel>> getAllUser() async {
+  //   return await _userRepo.getAllUserDetails();
+  // }
 
   updateRecord(UserModel user) async {
-    await _userRepo.updateUserRecord(user);
+    await _userRepo.updateUserRecord(user, _user!.uid);
   }
 
   /// Get User Id and Pass it to UserRepository to fetch Package record.
-  Future<Future>getPackageData() async {
-    return _memoizer.runOnce(()  async {
-      final email =_user!.email;
-      UserModel userInfo = await _userRepo.getUserDetailsWithEmail(email!);
-      if (userInfo != null) {
-        //return await _userRepo.getPackageDetails(userInfo.id!);
-      } else {
-        Get.snackbar("Error", "Can't fetch package");
-      }
-    });
-  }
+  // Future<Future>getPackageData() async {
+  //   return _memoizer.runOnce(()  async {
+  //     final email =_user!.email;
+  //     UserModel userInfo = await _userRepo.getUserDetailsWithEmail(email!);
+  //     if (userInfo != null) {
+  //       //return await _userRepo.getPackageDetails(userInfo.id!);
+  //     } else {
+  //       Get.snackbar("Error", "Can't fetch package");
+  //     }
+  //   });
+  // }
 
   Future<List<PackageDetails>> getAllPackage() async {
     return await _userRepo.getPackageDetails();
@@ -72,17 +82,13 @@ class ProfileController extends GetxController {
   }
 
   Future<List<DeliveryModeModel>?> getAllMode() async {
-    print('hitting');
     return await _userRepo.getModes();
   }
 
   Stream<UserModel> getUserDataStream(){
-      final email = _user!.email;
       return _db.collection("Users")
-          .where("Email", isEqualTo: email)
+          .doc(_user!.uid)
           .snapshots()
-          .map((snapshot) => snapshot.docs
-          .map((document) => UserModel.fromSnapshot(document))
-          .single);
+          .map((document) => UserModel.fromSnapshot(document));
   }
 }

@@ -60,7 +60,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
               child: Container(
                 padding: const EdgeInsets.all(20.0),
                 child: FutureBuilder(
-                  future: _controller.getUserData(),
+                  future: _controller.fetchUserDetails(),
                   builder: (context,  snapshot) {
                     if (snapshot.connectionState == ConnectionState.done){
                       if (snapshot.hasData){
@@ -110,7 +110,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileName, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.fullname == null || userData.fullname == "" ? "Complete profile" : userData.fullname!, style: Theme.of(context).textTheme.titleSmall,),
+                                    Text(userData.fullname == null || userData.fullname == "" ? "update profile" : userData.fullname!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -118,7 +118,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileEmail, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.email == null || userData.email == "" ? "Complete profile" : userData.email!, style: Theme.of(context).textTheme.titleSmall,),
+                                    Text(userData.email == null || userData.email == "" ? "update profile" : userData.email!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -126,7 +126,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfilePhone, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text(userData.phoneNo == null || userData.phoneNo == "" ? "Complete profile" : userData.phoneNo!,  style: Theme.of(context).textTheme.titleSmall,),
+                                    Text(userData.phoneNo == null || userData.phoneNo == "" ? "update profile" : userData.phoneNo!,  style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -134,7 +134,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(moProfileAddress, style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.address == null || userData.address == "" ? "Complete profile" : userData.address!, style: Theme.of(context).textTheme.titleSmall,),
+                                    Text( userData.address == null || userData.address == "" ? "update profile" : userData.address!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -142,7 +142,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Date of Birth", style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.dateOfBirth == null || userData.dateOfBirth == "" ? "Complete profile" : userData.dateOfBirth!, style: Theme.of(context).textTheme.titleSmall,),
+                                    Text( userData.dateOfBirth == null || userData.dateOfBirth == "" ? "update profile" : userData.dateOfBirth!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 20,),
@@ -150,7 +150,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Gender", style: Theme.of(context).textTheme.headlineSmall,),
-                                    Text( userData.gender == null || userData.gender == "" ? "Complete profile" : userData.gender!, style: Theme.of(context).textTheme.titleSmall,),
+                                    Text( userData.gender == null || userData.gender == "" ? "update profile" : userData.gender!, style: Theme.of(context).textTheme.titleSmall,),
                                   ],
                                 ),
                                 const SizedBox(height: 30.0,),
@@ -169,7 +169,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                         );
                       }
                       else if (snapshot.hasError) {
-                        return Center(
+                        return const Center(
                           child: Text("Profile incomplete: click here to complete profile"),
                         );
                       }

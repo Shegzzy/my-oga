@@ -50,13 +50,13 @@ class UserModel {
   updateToJson() {
     return {
       "FullName": fullname,
-      "Email": email,
-      "Password": password,
       "Phone": phoneNo,
       "Address": address,
-      "Profile Photo": profilePic,
       "Gender": gender,
       "Date of Birth": dateOfBirth,
+      // "Email": email,
+      // "Password": password,
+      // "Profile Photo": profilePic,
       // "Token": token,
       // "timeStamp": timeStamp,
       // "Date Created": dateCreated,
