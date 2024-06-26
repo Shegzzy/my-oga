@@ -156,14 +156,14 @@ class _RatingScreenState extends State<RatingScreen> {
                     child: Text("Rate Your Rider".toUpperCase()),
                   )
                       : OutlinedButton(
-                    onPressed: (){
+                    onPressed: isLoading ? null : (){
                       saveRating();
                     },
                     style: Theme
                         .of(context)
                         .elevatedButtonTheme
                         .style,
-                    child: isLoading ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(),) : Text("Submit Rating".toUpperCase()),
+                    child: isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(),) : Text("Submit Rating".toUpperCase()),
                   ),
                 ),
                 const SizedBox(

@@ -19,7 +19,7 @@ class CancelledBookingDetails extends StatefulWidget {
 
 class _CancelledBookingDetailsState extends State<CancelledBookingDetails> {
 
-  late StreamSubscription<CancelledBookingModel> _bookingStatusSubscription;
+  late StreamSubscription<CancelledBookingModel?> _bookingStatusSubscription;
   final userController = Get.put(UserRepository());
   CancelledBookingModel? cancelledBookingModel;
 
@@ -79,7 +79,7 @@ class _CancelledBookingDetailsState extends State<CancelledBookingDetails> {
                       style: theme.textTheme.headlineSmall,
                     ),
 
-                    if(cancelledBookingModel?.refunded == '0' || cancelledBookingModel?.refunded == null)...[
+                    if(cancelledBookingModel?.status == 'cancelled' || cancelledBookingModel?.status == null)...[
                       const Center(
                         child: Text("Awaiting Refund",
                           style: TextStyle(fontSize: 12.0, color: Colors.amber ),
@@ -87,7 +87,7 @@ class _CancelledBookingDetailsState extends State<CancelledBookingDetails> {
                           overflow: TextOverflow.ellipsis,),
                       ),
 
-                    ]else if(cancelledBookingModel?.refunded == '1')...const [
+                    ]else if(cancelledBookingModel?.status == 'refunded')...const [
                       Center(
                         child: Text("Refunded",
                             style: TextStyle(fontSize: 12.0, color: Colors.green )),

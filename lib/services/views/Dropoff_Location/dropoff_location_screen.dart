@@ -100,7 +100,17 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
         if(mounted){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRideScreen()),);
         }
-      }else{
+      } else if(pickUpPlaceMark.first.administrativeArea != dropOffPlaceMark.first.administrativeArea){
+        Get.snackbar(
+            "Notice", "MyOga services are not interstate",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
+        setState(() {
+          notWithinRegion = true;
+        });
+      }
+      else{
         setState(() {
           notWithinRegion = true;
         });
@@ -525,11 +535,11 @@ class _DropOffLocationScreenState extends State<DropOffLocationScreen> {
                   width: 30.0,
                   child: CircularProgressIndicator()) : Visibility(
                 visible: notWithinRegion ? true : false,
-                child: ElevatedButton(
-                  onPressed: (){},
-                    child: const Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: Text("MyOga service is unavailable in this region", style: TextStyle(fontSize: 11.0,),),
+                child: const ElevatedButton(
+                  onPressed: null,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Text("MyOga service is currently unavailable in this state", style: TextStyle(fontSize: 11.0,),),
                     )
                 ),
               ),

@@ -110,7 +110,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
   ProfileController _pController = Get.put(ProfileController());
   OrderStatusModel? _orderStats;
   BookingModel? bookingModel;
-  late StreamSubscription<BookingModel> _bookingStatusSubscription;
+  late StreamSubscription<BookingModel?> _bookingStatusSubscription;
   double? pickUpLat;
   double? pickUpLng;
   double? dropOffLat;
@@ -309,9 +309,11 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       //   });
       // });
       _bookingStatusSubscription = userRepo.getBookingStatusData(bookingNumber).listen((event) {
-        setState(() {
-          bookingModel = event;
-        });
+        if(mounted){
+          setState(() {
+            bookingModel = event;
+          });
+        }
       });
 
       if(!mounted) {
@@ -349,7 +351,9 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
       ),
       builder: (context) => SizedBox(
         height: 380,
-          child: SingleChildScrollView(child: DriverStatusScreen(driverID: bookingModel?.driver_id, bookingModel: bookingModel,)),
+          child: PopScope(
+              canPop: false,
+              child: SingleChildScrollView(child: DriverStatusScreen(driverID: bookingModel?.driver_id, bookingModel: bookingModel,))),
         ),
     );
   }
@@ -587,11 +591,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    // _pController.dispose();
-    //controller.dispose();
-    //_addController.dispose();
-    // userRepo.dispose();
+    _bookingStatusSubscription.cancel();
     super.dispose();
   }
   
@@ -661,8 +661,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: SelectRide(
-                                  index == 0 ?
-                                    Icons.electric_rickshaw : LineAwesomeIcons.motorcycle,
+                                    LineAwesomeIcons.motorcycle,
                                     '${userRepo.vehiclesModel[index].name}',
                                     '${userRepo.vehiclesModel[index].name}'),
                               );

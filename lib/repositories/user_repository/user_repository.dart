@@ -320,31 +320,49 @@ class UserRepository extends GetxController {
   //   );
   // }
 
-  Stream<OrderStatusModel> getOrderStatusData( String num){
+  Stream<OrderStatusModel?> getOrderStatusData(String num) {
     return _db.collection("Order_Status")
         .where("Booking Number", isEqualTo: num)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((document) => OrderStatusModel.fromSnapshot(document)).first
-    );
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return OrderStatusModel.fromSnapshot(snapshot.docs.first);
+      } else {
+        // throw Exception('No order status found for the given booking number.');
+        return null;
+      }
+    });
   }
 
-  Stream<BookingModel> getBookingStatusData(String num){
+
+  Stream<BookingModel?> getBookingStatusData(String num) {
     return _db.collection("Bookings")
         .where("Booking Number", isEqualTo: num)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((document) => BookingModel.fromSnapshot(document)).first
-    );
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return BookingModel.fromSnapshot(snapshot.docs.first);
+      } else {
+        return null;
+        // throw Exception('No booking status found for the given booking number.');
+      }
+    });
   }
 
-  Stream<CancelledBookingModel> getCancelledBookingStatusData(String num){
+
+  Stream<CancelledBookingModel?> getCancelledBookingStatusData(String num) {
     return _db.collection("Cancelled Bookings")
         .where("Booking Number", isEqualTo: num)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((document) => CancelledBookingModel.fromSnapshot(document)).first
-    );
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return CancelledBookingModel.fromSnapshot(snapshot.docs.first);
+      } else {
+        return null;
+        // throw Exception('No cancelled booking status found for the given booking number.');
+      }
+    });
   }
+
 
 }

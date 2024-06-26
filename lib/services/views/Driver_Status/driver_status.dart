@@ -63,9 +63,8 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    // _userRepo.dispose();
     super.dispose();
-    _userRepo.dispose();
   }
 
   @override
@@ -98,6 +97,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(child: Text("Rider Details", style: Theme.of(context).textTheme.headlineSmall,)),
+                        const SizedBox(height: 10.0,),
                         Center(
                           child: SizedBox(
                             width: 80.0,
@@ -112,8 +112,9 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                                   fit: BoxFit.cover,
                                   loadingBuilder: (context,
                                       child, loadingProgress) {
-                                    if (loadingProgress == null)
+                                    if (loadingProgress == null) {
                                       return child;
+                                    }
                                     return const Center(
                                         child:
                                         CircularProgressIndicator());
@@ -129,6 +130,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                                 )),
                           ),
                         ),
+                        const SizedBox(height: 10.0,),
                         Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -200,7 +202,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   // Navigator.pop(context);
-                                  Get.to(BookingDetailsScreen(bookingData: widget.bookingModel!));
+                                  Get.to(() => BookingDetailsScreen(bookingData: widget.bookingModel!));
                                 },
                                 style: Theme.of(context).elevatedButtonTheme.style,
                                 child: Text("View".toUpperCase()),

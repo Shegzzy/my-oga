@@ -66,7 +66,6 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
         rate = element.data()["rating"];
         setState(() {
           _total = _total + rate;
-          print(_total);
 
           counter = counter+1;
         });
@@ -116,10 +115,6 @@ class _DriverFoundScreenState extends State<DriverFoundScreen> {
           padding: const EdgeInsets.all(30.0),
           width: double.infinity,
           height: 620,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-          ),
           child: loadingData ? const Center(
             child: CircularProgressIndicator(),
           ) : Column(

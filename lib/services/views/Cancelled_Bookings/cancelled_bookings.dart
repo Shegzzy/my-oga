@@ -132,7 +132,7 @@ class _CancelledBookingsState extends State<CancelledBookings> {
                                   ),
 
 
-                                  if(snapshot.data![index].refunded == '0' || snapshot.data![index].refunded == null)...[
+                                  if(snapshot.data![index].status == 'cancelled' || snapshot.data![index].status == null)...[
                                     const Center(
                                       child: Text("Awaiting Refund",
                                         style: TextStyle(fontSize: 12.0, color: Colors.amber ),
@@ -140,7 +140,7 @@ class _CancelledBookingsState extends State<CancelledBookings> {
                                         overflow: TextOverflow.ellipsis,),
                                     ),
 
-                                  ]else if(snapshot.data![index].refunded == '1')...const [
+                                  ]else if(snapshot.data![index].status == 'refunded')...const [
                                     Center(
                                       child: Text("Refunded",
                                         style: TextStyle(fontSize: 12.0, color: Colors.green )),

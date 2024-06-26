@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,15 +26,19 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
   OrderStatusModel? _orderStats;
   DriverModel? _driverModel;
   final _userRepo = Get.put(UserRepository());
+  late StreamSubscription<OrderStatusModel?> _orderStatusSubscription;
+
   //final _db = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-    _userRepo.getOrderStatusData(widget.bookingData!.bookingNumber!).listen((event) {
-      setState(() {
-        _orderStats = event;
-      });
+    _orderStatusSubscription = _userRepo.getOrderStatusData(widget.bookingData!.bookingNumber!).listen((event) {
+      if(mounted){
+        setState(() {
+          _orderStats = event;
+        });
+      }
       if (_orderStats != null) {
         Int1 = int.tryParse(_orderStats!.orderAssign!);
         Int2 = int.tryParse(_orderStats!.outForPick!);
@@ -53,10 +59,11 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
 
   @override
   void dispose() {
+    _orderStatusSubscription.cancel();
     super.dispose();
-    if(mounted){
-      _userRepo.dispose();
-    }
+    // if(mounted){
+    //   _userRepo.dispose();
+    // }
   }
 
   @override
@@ -324,7 +331,7 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
                                       Navigator.pop(context);
                                       if(Int6 == 1){
                                         if(widget.bookingData?.rated == '0' || widget.bookingData?.rated == null){
-                                          Get.to(RatingScreen(driverID: _driverModel!.id!, bookingID: widget.bookingData!.bookingNumber!));
+                                          Get.to(()=> RatingScreen(driverID: _driverModel!.id!, bookingID: widget.bookingData!.bookingNumber!));
                                         }
                                       }
                                     },

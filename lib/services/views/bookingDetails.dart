@@ -42,10 +42,11 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   final GetXSwitchState getXSwitchState = GetXSwitchState();
   SignUpController signUpController = Get.put(SignUpController());
   DriverModel? _driverModel;
-  CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
-  CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
+  final CollectionReference _ref = FirebaseFirestore.instance.collection("Bookings");
+  final CollectionReference _refOrderStatus = FirebaseFirestore.instance.collection("Order_Status");
   bool cancelingBooking = false;
-  late StreamSubscription<BookingModel> _bookingStatusSubscription;
+  late StreamSubscription<BookingModel?> _bookingStatusSubscription;
+  late StreamSubscription<OrderStatusModel?> _orderStatusSubscription;
   final bookingsRef = FirebaseFirestore.instance.collection('Bookings');
   final _db = FirebaseFirestore.instance;
   int counter = 0;
@@ -53,6 +54,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   double _total = 0;
   double _average = 0;
   List<double> ratings = [0.1, 0.3, 0.5, 0.7, 0.9];
+  OrderStatusModel? _orderStats;
 
 
 
@@ -61,11 +63,19 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     super.initState();
     _startListeningToBookingStatusChanges();
     getRatingCount();
+    _orderStatusSubscription = userController.getOrderStatusData(widget.bookingData.bookingNumber!).listen((event) {
+      if (mounted) {
+        setState(() {
+          _orderStats = event;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _bookingStatusSubscription.cancel();
+    _orderStatusSubscription.cancel();
     super.dispose();
     // controller.dispose();
     // userController.dispose();
@@ -103,10 +113,6 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   // canceling booking
   Future<void> cancelBookingRequest(String bookingNumber) async {
     try{
-      setState(() {
-        cancelingBooking = true;
-      });
-
       BookingModel bookingInfo = await userController.getBookingDetails(bookingNumber);
       OrderStatusModel? orderStatusModel = await userController.getBookingOrderStatus(bookingNumber);
 
@@ -340,51 +346,61 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     );
   }
 
-  void showDeleteAlert(BuildContext context, String bookingNumber) async {
-    return await showDialog(context: context, builder: (context){
+  void showCancelAlert(BuildContext context, String bookingNumber) async {
+    return await showDialog(
+        barrierDismissible: cancelingBooking ? false : true,
+        context: context, builder: (context){
       print(bookingNumber);
       var isDark = getXSwitchState.isDarkMode;
-      return AlertDialog(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.warning_rounded, size: 22, color: Colors.redAccent,),
-            const SizedBox(height: 5,),
-
-            Text("Notice!", style: Theme.of(context).textTheme.titleLarge,),
-            const SizedBox(height: 10,),
-
-            Text("Are you sure you want to cancel this booking?",
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 10,),
-            Row(
+      return StatefulBuilder(builder: (context, setState){
+        return PopScope(
+          canPop: cancelingBooking ? false : true,
+          child: AlertDialog(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: Theme.of(context).outlinedButtonTheme.style,
-                    child: Text("No".toUpperCase()),
-                  ),
+                const Icon(Icons.warning_rounded, size: 22, color: Colors.redAccent,),
+                const SizedBox(height: 5,),
+
+                Text("Notice!", style: Theme.of(context).textTheme.titleLarge,),
+                const SizedBox(height: 10,),
+
+                Text("Are you sure you want to cancel this booking?",
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
-                const SizedBox(width: 10.0,),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: cancelingBooking ? null : () async{
-                      await cancelBookingRequest(bookingNumber);
-                    },
-                    style: Theme.of(context).elevatedButtonTheme.style,
-                    child: cancelingBooking ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
-                  ),
-                )
+                const SizedBox(height: 10,),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: cancelingBooking ? null : () {
+                          Navigator.pop(context);
+                        },
+                        style: Theme.of(context).outlinedButtonTheme.style,
+                        child: Text("No".toUpperCase()),
+                      ),
+                    ),
+                    const SizedBox(width: 10.0,),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: cancelingBooking ? null : () async{
+                          setState(() {
+                            cancelingBooking = true;
+                          });
+                          await cancelBookingRequest(bookingNumber);
+                        },
+                        style: Theme.of(context).elevatedButtonTheme.style,
+                        child: cancelingBooking ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(),) : Text("Yes".toUpperCase()),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      );
+          ),
+        );
+      });
     });
   }
 
@@ -423,12 +439,12 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                       style: theme.textTheme.headlineSmall,
                     ),
 
-                    if(bookingModel?.status == 'active' || bookingModel?.status == 'pending')
+                    if(_orderStats?.percelPicked != '1')
                       Center(
                         child: TextButton(
                             onPressed: () async {
                               // print(snapshot.data![index].bookingNumber);
-                              showDeleteAlert(context, bookingData.bookingNumber!);
+                              showCancelAlert(context, bookingData.bookingNumber!);
                             },
                             child: Text('Cancel Booking', style: TextStyle(
                                 color: isDark ? Colors.amberAccent : PButtonColor
