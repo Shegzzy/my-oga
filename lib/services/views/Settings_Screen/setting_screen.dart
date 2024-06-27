@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:myoga/services/views/Settings_Screen/about_us_screen.dart';
+import 'package:myoga/services/views/Settings_Screen/privacy_policy.dart';
+import 'package:myoga/services/views/Settings_Screen/terms_and_condition_screen.dart';
 
 import '../../../constants/texts_string.dart';
 import '../../controllers/getXSwitchStateController.dart';
@@ -55,19 +58,36 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20.0,),
-            Text(moPrivacy, style: Theme.of(context).textTheme.headlineMedium,),
-            const SizedBox(height: 20.0,),
-            Text(moTerms, style: Theme.of(context).textTheme.headlineMedium,),
-            const SizedBox(height: 20.0,),
-            Text(moAbout, style: Theme.of(context).textTheme.headlineMedium,),
-            const SizedBox(height: 20.0,),
-            GestureDetector(
+
+            const SizedBox(height: 22.0,),
+            InkWell(
+                onTap: (){
+                  Get.to(() => const PrivacyPolicyScreen());
+                },
+                child: Text(moPrivacy, style: Theme.of(context).textTheme.headlineMedium,)),
+
+            const SizedBox(height: 22.0,),
+            InkWell(
+                onTap: (){
+                  Get.to(() => const TermsAndConditionScreen());
+                },
+                child: Text(moTerms, style: Theme.of(context).textTheme.headlineMedium,)),
+
+            const SizedBox(height: 22.0,),
+            InkWell(
+                onTap: (){
+                  Get.to(() => const AboutUsScreen());
+                },
+                child: Text(moAbout, style: Theme.of(context).textTheme.headlineMedium,)),
+
+            const SizedBox(height: 22.0,),
+            InkWell(
               onTap: (){
                 Get.to(() => const SupportScreen());
               },
                 child: Text("Support", style: Theme.of(context).textTheme.headlineMedium,)
             ),
+
             const SizedBox(height: 20.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
