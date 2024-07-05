@@ -308,20 +308,20 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                   ),
 
 
-                                  // if(snapshot.data![index].status == 'active' || snapshot.data![index].status == 'pending')
-                                  //   Center(
-                                  //     child: TextButton(
-                                  //         style: ButtonStyle(
-                                  //           foregroundColor: MaterialStateProperty.all(Colors.white),
-                                  //           backgroundColor: MaterialStateProperty.all(PButtonColor),
-                                  //         ),
-                                  //         onPressed: () async {
-                                  //           // print(snapshot.data![index].bookingNumber);
-                                  //           showDeleteAlert(context, snapshot.data![index].bookingNumber!);
-                                  //         },
-                                  //         child: const Text('Cancel')
-                                  //     ),
-                                  //   ),
+                                  if(snapshot.data![index].status == 'active' || snapshot.data![index].status == 'pending')
+                                    Center(
+                                      child: TextButton(
+                                          style: ButtonStyle(
+                                            foregroundColor: WidgetStateProperty.all(Colors.white),
+                                            backgroundColor: WidgetStateProperty.all(PButtonColor),
+                                          ),
+                                          onPressed: () async {
+                                            // print(snapshot.data![index].bookingNumber);
+                                            showDeleteAlert(context, snapshot.data![index].bookingNumber!);
+                                          },
+                                          child: const Text('Cancel')
+                                      ),
+                                    ),
 
                                   const SizedBox(height: 5,),
                                   Row(

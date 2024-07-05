@@ -439,11 +439,11 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                       style: theme.textTheme.headlineSmall,
                     ),
 
-                    if(_orderStats?.percelPicked != '1')
+                    // if(_orderStats?.percelPicked != '1')
+                    if(bookingModel?.status == 'active' || bookingModel?.status == 'pending')
                       Center(
                         child: TextButton(
                             onPressed: () async {
-                              // print(snapshot.data![index].bookingNumber);
                               showCancelAlert(context, bookingData.bookingNumber!);
                             },
                             child: Text('Cancel Booking', style: TextStyle(

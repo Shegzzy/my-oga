@@ -783,7 +783,7 @@ class _SelectRideScreenState extends State<SelectRideScreen> with TickerProvider
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 8.0),
                                       child: SelectDeveryMode(
-                                          LineAwesomeIcons.car_side,
+                                          LineAwesomeIcons.motorcycle,
                                           snapshot.data![index].name,
                                           snapshot.data![index].name,
                                           snapshot.data![index].duration,
