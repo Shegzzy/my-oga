@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../constants/colors.dart';
 import '../../../constants/texts_string.dart';
 import '../../controllers/signup_controller.dart';
 import '../../models/user_model.dart';
@@ -23,6 +25,9 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
   bool _isPasswordEightChar = false;
   bool _isPasswordOneNum = false;
   bool _isLoading = false;
+  final countryPicker = const FlCountryCodePicker();
+  CountryCode countryCode = const CountryCode(name: "Nigeria", code: "NG", dialCode: "+234");
+
 
   onPasswordChanged(String password){
     final numericRegx = RegExp(r'[0-9]');
@@ -42,6 +47,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
     final user = UserModel(
       email: controller.email.text.trim(),
       fullname: controller.name.text.trim(),
+      phoneNo: '+234${controller.phoneNo.text.trim()}',
       password: controller.password.text.trim(),
       dateCreated: DateTime.now().toString(),
       timeStamp: Timestamp.now(),
@@ -53,7 +59,8 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
       });
       await controller.registerUser(controller.email.text.trim(), controller.password.text.trim());
       await controller.createUser(user);
-      Get.offAll(() => const PhoneNumberScreen());
+
+      // controller.auth.auth.currentUser!.emailVerified ? Get.offAll(() => const PhoneNumberScreen());
     }catch (e){
       print('Error $e');
     }finally{
@@ -66,7 +73,6 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.onClose();
   }
@@ -99,6 +105,7 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
                 decoration: const InputDecoration(
                     label: Text(moEmail),
                     prefixIcon: Icon(Icons.email_outlined)),
+                keyboardType: TextInputType.emailAddress,
                 validator: (value){
                   if(value == null || value.isEmpty)
                   {
@@ -112,6 +119,47 @@ class _SignupFormWidgetState extends State<SignupFormWidget> {
                 controller: controller.email,
               ),
               const SizedBox(height: 10.0),
+        TextFormField(
+          controller: controller.phoneNo,
+          decoration: InputDecoration(
+            label: const Text(moPhoneTitle),
+            hintText: moPhoneHintTitle,
+            prefixIcon: InkWell(
+              onTap: () async {
+                final code = await countryPicker.showPicker(context: context);
+                if (code != null) {
+                  setState(() {
+                    countryCode = code;
+                  });
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // Prevents Row overflow
+                children: [
+                  const SizedBox(width: 10),
+                  countryCode.flagImage,
+                  const SizedBox(width: 4),
+                  Text(
+                    countryCode.dialCode,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const Icon(Icons.keyboard_arrow_down_rounded),
+                ],
+              ),
+            ),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter a mobile number";
+            }
+            if (value.length != 10) {
+              return "Please enter a valid mobile number without 0";
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 10.0),
               TextFormField(
                 onChanged: (password) => onPasswordChanged(password),
                 obscureText: !_isVisible,

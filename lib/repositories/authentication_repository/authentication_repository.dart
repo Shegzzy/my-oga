@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:myoga/services/views/Email_Verification_Screen/email_verification_screen.dart';
 import 'package:myoga/services/views/Permission_request/permission_request_info.dart';
 import 'package:myoga/services/views/User_Dashboard/user_dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,17 +21,17 @@ import 'exceptions/signup_email_password_failure.dart';
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
+  late Timer timer;
 
   //Variables
-  final _auth = FirebaseAuth.instance;
+  final auth = FirebaseAuth.instance;
   var verificationId = "".obs;
   final _userRepo = Get.put(UserRepository());
   UserModel? _userModel;
 
-
 // Functions
   void phoneAuthentication(String phoneNo) async {
-    await _auth.verifyPhoneNumber(
+    await auth.verifyPhoneNumber(
       phoneNumber: phoneNo,
       verificationCompleted: (credential) async {},
       codeSent: (verificationId, resendToken) {
@@ -48,7 +51,7 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<bool> verifyOTP(String otp) async {
-    var credentials = await _auth.signInWithCredential(PhoneAuthProvider.credential(verificationId: verificationId.value, smsCode: otp));
+    var credentials = await auth.signInWithCredential(PhoneAuthProvider.credential(verificationId: verificationId.value, smsCode: otp));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await SignUpController.instance.updatePhoneNumber(prefs.getString("Phone")!);
     return credentials.user != null ? true : false;
@@ -56,14 +59,15 @@ class AuthenticationRepository extends GetxController {
 
   Future<void> createUserWithEmailAndPassword(String email, String password) async {
     try {
-      final firebaseUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      final firebaseUser = await auth.createUserWithEmailAndPassword(email: email, password: password);
       if(firebaseUser.user != null){
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("aUserID", firebaseUser.user!.uid);
         prefs.setString("email", email);
         prefs.setString("password", password);
-        final user = firebaseUser.user!;
-        user.sendEmailVerification();
+        // final user = firebaseUser.user!;
+        // await user.sendEmailVerification();
+        await loginUserWithEmailAndPassword(email, password);
       }
     } on FirebaseAuthException catch (e) {
       final ex = SignUpWithEmailAndPasswordFailure.code(e.code);
@@ -86,16 +90,18 @@ class AuthenticationRepository extends GetxController {
 
   Future<void> loginUserWithEmailAndPassword(String email, String password) async {
     try {
-      final firebaseUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final firebaseUser = await auth.signInWithEmailAndPassword(email: email, password: password);
       if(firebaseUser.user != null){
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("userID", firebaseUser.user!.uid);
         final user = firebaseUser.user!;
+
+        // user.sendEmailVerification();
         if(user.emailVerified){
-          _checkUserType();
+          checkUserType();
         }else{
-          user.sendEmailVerification();
-          _checkUserType();
+          await user.sendEmailVerification();
+          Get.to(() => const EmailVerificationScreen());
         }
       }
       else {
@@ -144,7 +150,7 @@ class AuthenticationRepository extends GetxController {
   }
 
   Future<void> logout() async {
-    await _auth.signOut();
+    await auth.signOut();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("userID");
     prefs.remove("aUserID");
@@ -178,7 +184,7 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
-  _checkUserType() async {
+  checkUserType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final iD = prefs.getString("userID");
     final userDoc =  await FirebaseFirestore.instance.collection("Users").doc(iD).get();
@@ -201,6 +207,24 @@ class AuthenticationRepository extends GetxController {
           colorText: Colors.red);
       logout();
     }
+  }
+
+  void autoRedirectTimer() {
+    timer = Timer.periodic(const Duration(seconds: 3), (timer){
+      print(timer);
+      auth.currentUser?.reload();
+      final user = auth.currentUser;
+
+      if(user != null){
+        if(user.emailVerified){
+          timer.cancel();
+          checkUserType();
+        }
+      } else {
+        // timer.cancel();
+        return;
+      }
+    });
   }
 
 }

@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:myoga/repositories/authentication_repository/authentication_repository.dart';
 import 'package:myoga/repositories/user_repository/user_repository.dart';
 import 'package:myoga/services/controllers/Data_handler/appData.dart';
 import 'package:myoga/services/controllers/getXSwitchStateController.dart';
@@ -30,6 +31,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 final UserRepository _userRepo = Get.put(UserRepository());
+final AuthenticationRepository authRepo = Get.put(AuthenticationRepository());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,8 +52,15 @@ void main() async {
 _init() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("userID");
+  final user = authRepo.auth.currentUser;
   if (token != null) {
-    _checkUserType();
+    if(user != null) {
+      if(user.emailVerified){
+        authRepo.checkUserType();
+      } else{
+        authRepo.logout();
+      }
+    }
   }
   else {
     _checkSeen();
@@ -65,8 +74,7 @@ _checkUserType() async {
   final iD = prefs.getString("aUserID");
   if (iD == null) {
     final iDd = prefs.getString("userID");
-    final userDoc = await FirebaseFirestore.instance.collection("Users").doc(
-        iDd).get();
+    final userDoc = await FirebaseFirestore.instance.collection("Users").doc(iDd).get();
     if (userDoc.exists) {
       if(Platform.isAndroid){
         if(permission == LocationPermission.denied){

@@ -16,7 +16,7 @@ class SignUpController extends GetxController {
   static SignUpController get instance => Get.find();
 
   // Repo
-  final _auth = Get.put(AuthenticationRepository());
+  final auth = Get.put(AuthenticationRepository());
 
   //TextField Controller to get data from TextFields
   final name = TextEditingController();
@@ -27,7 +27,7 @@ class SignUpController extends GetxController {
 
   // Function to register user using email & password
   Future<void> registerUser(String email, String password) async {
-    await _auth.createUserWithEmailAndPassword(email, password);
+    await auth.createUserWithEmailAndPassword(email, password);
     //String? error = AuthenticationRepository.instance.createUserWithEmailAndPassword(email, password) as String?;
     //if(error != null) {
       //Get.showSnackbar(GetSnackBar(message: error.toString()));
@@ -39,7 +39,7 @@ class SignUpController extends GetxController {
   }
 
   void phoneAuthentication(String phoneNo){
-    _auth.phoneAuthentication(phoneNo);
+    auth.phoneAuthentication(phoneNo);
   }
 
   updatePhoneNumber(String phone) async {
