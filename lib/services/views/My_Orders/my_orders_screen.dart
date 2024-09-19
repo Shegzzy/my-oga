@@ -312,8 +312,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                                     Center(
                                       child: TextButton(
                                           style: ButtonStyle(
-                                            foregroundColor: WidgetStateProperty.all(Colors.white),
-                                            backgroundColor: WidgetStateProperty.all(PButtonColor),
+                                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                                            backgroundColor: MaterialStateProperty.all(PButtonColor),
                                           ),
                                           onPressed: () async {
                                             // print(snapshot.data![index].bookingNumber);
